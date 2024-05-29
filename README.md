@@ -1,7 +1,10 @@
-## Hi there 👋
+# Welcome to My GitHub Profile!
 
-<!--
-**JoshiMinh/JoshiMinh** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
--->
+## My System
+[![System](https://skillicons.dev/icons?i=docker,windows,ubuntu&perline=3)](https://skillicons.dev)
 
-[![My Skills](https://skillicons.dev/icons?i=aws,gcp,azure,react,vue,flutter&perline=3)](https://skillicons.dev)
+## My Tools
+[![Tools](https://skillicons.dev/icons?i=photoshop,illustrator,aftereffects,premiere,blender,unity,vscode,notion&perline=4)](https://skillicons.dev)
+
+## My Skills
+[![Skills](https://skillicons.dev/icons?i=arduino,java,py,cpp,html,js,css,bootstrap&perline=4)](https://skillicons.dev)
