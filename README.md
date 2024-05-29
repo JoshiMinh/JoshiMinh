@@ -1,10 +1,10 @@
 # Welcome to My GitHub Profile!
 
 ## My System
-[![System](https://skillicons.dev/icons?i=docker,windows,ubuntu&perline=3)](https://skillicons.dev)
+[![System](https://skillicons.dev/icons?i=windows,ubuntu,docker)](https://skillicons.dev)
 
 ## My Tools
-[![Tools](https://skillicons.dev/icons?i=photoshop,illustrator,aftereffects,premiere,blender,unity,vscode,notion&perline=4)](https://skillicons.dev)
+[![Tools](https://skillicons.dev/icons?i=photoshop,illustrator,aftereffects,premiere,vscode,blender,unity,notion&perline=4)](https://skillicons.dev)
 
 ## My Skills
-[![Skills](https://skillicons.dev/icons?i=arduino,java,py,cpp,html,js,css,bootstrap&perline=4)](https://skillicons.dev)
+[![Skills](https://skillicons.dev/icons?i=arduino,java,py,cpp,html,css,js,bootstrap&perline=4)](https://skillicons.dev)
