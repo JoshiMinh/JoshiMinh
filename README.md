@@ -1,9 +1,8 @@
-# Welcome to My GitHub Profile!
+## Welcome to My GitHub Profile!
 
-## Introduction
 **`Creative Creator`**
 
-I'm Joshi Minh, an enthusiastic full-stack developer and content creator with a passion for tech and mechatronics. I build my digital projects from the ground up, focusing on solving real-life problems with code. My content creation process is similarly comprehensive, from ideation to the final artistic touches.
+I'm Joshi Minh, an enthusiastic developer and content creator with a passion for tech and mechatronics. And I suck at every single one of them.
 
 ## My System
 [![System](https://skillicons.dev/icons?i=windows,ubuntu,docker)](https://skillicons.dev)
@@ -30,3 +29,7 @@ I'm Joshi Minh, an enthusiastic full-stack developer and content creator with a 
 Feel free to explore my repositories and projects. Connect with me for any collaboration or queries!
 
 ![JoshiMinh's GitHub stats](https://github-readme-stats.vercel.app/api?username=JoshiMinh&show_icons=true&theme=gruvbox)
+
+[![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=JoshiMinh&layout=compact&theme=gruvbox)](https://github.com/JoshiMinh)
+
+[![JoshiMinh's Wakatime Stats](https://github-readme-stats.vercel.app/api/wakatime?username=JoshiMinh&theme=gruvbox)](https://github.com/JoshiMinh)
