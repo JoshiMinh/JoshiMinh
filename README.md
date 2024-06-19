@@ -1,17 +1,6 @@
-## Welcome to My GitHub Profile!
+## Welcome to GitHub!
 
-**`Creative Creator`**
-
-I'm Joshi Minh, an enthusiastic developer and content creator with a passion for tech and mechatronics. And I suck at every single one of them.
-
-## My System
-[![System](https://skillicons.dev/icons?i=windows,ubuntu,docker)](https://skillicons.dev)
-
-## My Tools
-[![Tools](https://skillicons.dev/icons?i=photoshop,illustrator,aftereffects,premiere,vscode,blender,unity,notion&perline=4)](https://skillicons.dev)
-
-## My Skills
-[![Skills](https://skillicons.dev/icons?i=arduino,java,py,cpp,html,css,js,bootstrap&perline=4)](https://skillicons.dev)
+Joshi Minh - **`Creative Creator`**, an enthusiastic developer with a passion for tech and mechatronics. And I suck at every single one of them.
 
 <p align="left">
    <a href="https://www.youtube.com/channel/UCkt3Mhwb3bduqwtRDZtjvsg?sub_confirmation=1">
@@ -24,12 +13,16 @@ I'm Joshi Minh, an enthusiastic developer and content creator with a passion for
       <img alt="total stars" title="Total stars on GitHub" src="https://custom-icon-badges.demolab.com/github/stars/JoshiMinh?color=55960c&style=for-the-badge&labelColor=488207&logo=star"/></a>
 </p>
 
+## My System
+[![System](https://skillicons.dev/icons?i=windows,ubuntu,docker)](https://skillicons.dev)
+
+## My Tools
+[![Tools](https://skillicons.dev/icons?i=photoshop,illustrator,aftereffects,premiere,vscode,blender,unity,notion&perline=4)](https://skillicons.dev)
+
+## My Skills
+[![Skills](https://skillicons.dev/icons?i=arduino,java,py,cpp,html,css,js,bootstrap&perline=4)](https://skillicons.dev)
 ---
 
 Feel free to explore my repositories and projects. Connect with me for any collaboration or queries!
 
 ![JoshiMinh's GitHub stats](https://github-readme-stats.vercel.app/api?username=JoshiMinh&show_icons=true&theme=gruvbox)
-
-[![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=JoshiMinh&layout=compact&theme=gruvbox)](https://github.com/JoshiMinh)
-
-[![JoshiMinh's Wakatime Stats](https://github-readme-stats.vercel.app/api/wakatime?username=JoshiMinh&theme=gruvbox)](https://github.com/JoshiMinh)
