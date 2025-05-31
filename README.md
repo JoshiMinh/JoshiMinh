@@ -18,10 +18,10 @@ My name is Minh Nguyen, an enthusiastic developer with a passion for tech and me
       <br><br><div style="display: flex; gap: 10px; align-items: stretch; justify-content: center;align:center">
   <img src="https://github-readme-stats.vercel.app/api?username=joshiminh&theme=blueberry&show_icons=true&hide_border=true&count_private=true" 
        alt="joshiminh's Stats" 
-       style="height: 180px;" />
+       style="height: 200px;" />
   <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=joshiminh&theme=blueberry&show_icons=true&hide_border=true&layout=compact" 
        alt="joshiminh's Top Languages" 
-       style="height: 180px;" />
+       style="height: 200px;" />
 </div>
 
 
