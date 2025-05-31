@@ -15,13 +15,13 @@ My name is Minh Nguyen, an enthusiastic developer with a passion for tech and me
       <a href="https://github.com/JoshiMinh?tab=repositories&sort=stargazers">
       <img alt="GitHub Stars" title="Total stars on GitHub" src="https://custom-icon-badges.demolab.com/github/stars/JoshiMinh?color=55960c&style=for-the-badge&labelColor=488207&logo=star"/>
       </a>
-      <br><br><div style="display: flex; gap: 10px; align-items: stretch; justify-content: center;">
+      <br><br><div style="display: flex; gap: 10px; align-items: stretch; justify-content: center;align:center">
   <img src="https://github-readme-stats.vercel.app/api?username=joshiminh&theme=blueberry&show_icons=true&hide_border=true&count_private=true" 
        alt="joshiminh's Stats" 
-       style="height: 150px;" />
+       style="height: 180px;" />
   <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=joshiminh&theme=blueberry&show_icons=true&hide_border=true&layout=compact" 
        alt="joshiminh's Top Languages" 
-       style="height: 150px;" />
+       style="height: 180px;" />
 </div>
 
 
