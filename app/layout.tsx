@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Joshi Minh - Portfolio",
   description: "Software Engineer, AI Developer & Designer",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.ico",
+  },
 }
 
 export default function RootLayout({

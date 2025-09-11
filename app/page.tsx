@@ -26,7 +26,7 @@ const XIcon = () => (
 
 const YouTubeIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93-.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
   </svg>
 )
 
@@ -37,6 +37,21 @@ const PatreonIcon = () => (
 )
 
 export default function Portfolio() {
+  const skillTags = ["Python", "Java", "JavaScript", "HTML", "CSS"]
+  const aiTags = ["Machine Learning", "Python", "TensorFlow", "AI SDK"]
+  const designTags = ["UI/UX", "CSS", "HTML", "Responsive Design"]
+
+  const getGradientClass = (index: number, total: number) => {
+    const hueStart = 220 // Blue
+    const hueEnd = 320 // Pink
+    const hue = hueStart + (index / (total - 1)) * (hueEnd - hueStart)
+    return {
+      background: `linear-gradient(135deg, hsl(${hue}, 70%, 60%) 0%, hsl(${hue + 20}, 70%, 60%) 100%)`,
+      color: "white",
+      border: "0",
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -126,11 +141,15 @@ export default function Portfolio() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="gradient-blue-pink text-white border-0">Python</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">Java</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">JavaScript</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">HTML</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">CSS</Badge>
+                  {skillTags.map((skill, index) => (
+                    <Badge
+                      key={skill}
+                      className="text-white border-0"
+                      style={getGradientClass(index, skillTags.length)}
+                    >
+                      {skill}
+                    </Badge>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -147,10 +166,11 @@ export default function Portfolio() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="gradient-blue-pink text-white border-0">Machine Learning</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">Python</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">TensorFlow</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">AI SDK</Badge>
+                  {aiTags.map((skill, index) => (
+                    <Badge key={skill} className="text-white border-0" style={getGradientClass(index, aiTags.length)}>
+                      {skill}
+                    </Badge>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -167,10 +187,15 @@ export default function Portfolio() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="gradient-blue-pink text-white border-0">UI/UX</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">CSS</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">HTML</Badge>
-                  <Badge className="gradient-blue-pink text-white border-0">Responsive Design</Badge>
+                  {designTags.map((skill, index) => (
+                    <Badge
+                      key={skill}
+                      className="text-white border-0"
+                      style={getGradientClass(index, designTags.length)}
+                    >
+                      {skill}
+                    </Badge>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -178,38 +203,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">About Me</h2>
-              <p className="text-muted-foreground mb-6 text-pretty">
-                I'm a passionate student at VKU (Vietnam-Korea University) and a vibe coder who loves exploring the
-                intersection of technology and creativity. Currently diving deep into software engineering, AI
-                development, and design, I'm always excited to learn new things and tackle challenging problems.
-              </p>
-              <p className="text-muted-foreground mb-8 text-pretty">
-                When I'm not coding, you'll find me experimenting with new design trends, contributing to open-source
-                projects, or exploring the latest developments in artificial intelligence and mechatronics. I believe in
-                coding with good vibes and creating solutions that make a difference.
-              </p>
-              <Button className="gradient-blue-pink hover:gradient-blue-pink-hover text-white border-0" asChild>
-                <a href={socialLinks.links.linkedin} target="_blank" rel="noopener noreferrer">
-                  <Rocket className="w-4 h-4 mr-2" />
-                  Let's Collaborate
-                </a>
-              </Button>
-            </div>
-            <div className="relative">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                <div className="text-6xl">👨‍💻</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* Projects Section */}
       <section id="projects" className="py-20 px-6 bg-card/30">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">My Projects & Apps</h2>
@@ -225,6 +219,38 @@ export default function Portfolio() {
                   <ProjectCard url={projectUrl} />
                 </a>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">About Me</h2>
+              <p className="text-muted-foreground mb-6 text-pretty">
+                Hey! I'm Joshi Minh, a passionate developer who thrives on turning ideas into reality through code. As a
+                vibe coder, I believe that great software isn't just about functionality—it's about creating experiences
+                that feel right and make people's lives better.
+              </p>
+              <p className="text-muted-foreground mb-6 text-pretty">
+                My journey spans across software engineering, AI development, and design. I love diving deep into
+                complex problems, whether it's building intelligent systems, crafting beautiful user interfaces, or
+                exploring the latest in machine learning and mechatronics.
+              </p>
+              <p className="text-muted-foreground mb-8 text-pretty">
+                When I'm not immersed in code, you'll find me experimenting with new technologies, contributing to
+                open-source projects, or sharing knowledge with the developer community. I'm always excited to
+                collaborate on projects that push boundaries and create meaningful impact.
+              </p>
+              <Button className="gradient-blue-pink hover:gradient-blue-pink-hover text-white border-0" asChild>
+                <a href={socialLinks.links.linkedin} target="_blank" rel="noopener noreferrer">
+                  <Rocket className="w-4 h-4 mr-2" />
+                  Let's Collaborate
+                </a>
+              </Button>
             </div>
           </div>
         </div>
