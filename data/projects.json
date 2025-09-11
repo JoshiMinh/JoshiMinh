@@ -1,7 +1,3 @@
 {
-  "projects": [
-    "https://github.com/JoshiMinh/project1",
-    "https://github.com/JoshiMinh/project2",
-    "https://github.com/JoshiMinh/project3"
-  ]
+  "projects": ["https://markbase-joshiminh.vercel.app/"]
 }
