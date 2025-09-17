@@ -11,7 +11,11 @@ export const metadata: Metadata = {
   description: "Software Engineer, AI Developer & Designer",
   generator: "v0.app",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { rel: "icon", url: "/favicon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 }
 
