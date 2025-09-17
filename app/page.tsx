@@ -16,31 +16,34 @@ import {
 import socialLinks from "@/data/social-links.json"
 
 const GitHubIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.41 6-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+  <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      fill="currentColor"
+      d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.387.6.111.82-.261.82-.577 0-.287-.01-1.244-.015-2.444-3.338.724-4.043-1.61-4.043-1.61-.546-1.385-1.333-1.754-1.333-1.754-1.089-.745.084-.729.084-.729 1.205.084 1.84 1.236 1.84 1.236 1.07 1.835 2.807 1.305 3.492.998.108-.775.418-1.305.76-1.605-2.665-.303-5.466-1.335-5.466-5.93 0-1.31.469-2.381 1.236-3.221-.124-.304-.536-1.524.117-3.176 0 0 1.008-.322 3.3 1.23a11.52 11.52 0 0 1 3.003-.404c1.02.005 2.044.138 3.003.404 2.29-1.552 3.295-1.23 3.295-1.23.653 1.653.241 2.873.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.807 5.624-5.479 5.921.43.372.823 1.105.823 2.226 0 1.606-.014 2.898-.014 3.293 0 .319.216.694.825.576C20.565 22.092 24 17.592 24 12.297 24 5.373 18.627 0 12 .297Z"
+    />
   </svg>
 )
 
 const LinkedInIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
   </svg>
 )
 
 const XIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
     <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
   </svg>
 )
 
 const YouTubeIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93-.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
   </svg>
 )
 
 const PatreonIcon = () => (
-  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
     <path d="M0 .48v23.04h4.22V.48zm15.385 0c-4.764 0-8.641 3.88-8.641 8.65 0 4.755 3.877 8.623 8.641 8.623 4.75 0 8.615-3.868 8.615-8.623C24 4.36 20.136.48 15.385.48z" />
   </svg>
 )
@@ -161,26 +164,26 @@ const HOW_I_WORK_TAGS = ["AI", "Full-stack", "Design Systems", "Community"] as c
 export default function Portfolio() {
   return (
     <div className="relative min-h-screen bg-background text-foreground">
-      <section className="relative overflow-hidden px-6 py-24">
+      <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:py-24">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute left-1/2 top-[-25%] h-96 w-96 -translate-x-1/2 rounded-full bg-primary/30 blur-3xl" />
           <div className="absolute bottom-[-30%] left-[-10%] h-80 w-80 rounded-full bg-secondary/25 blur-3xl" />
           <div className="absolute right-[-20%] top-1/3 h-72 w-72 rounded-full bg-accent/25 blur-3xl" />
         </div>
         <div className="relative mx-auto grid max-w-6xl items-center gap-16 lg:grid-cols-[1.15fr,0.85fr]">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-sm text-primary backdrop-blur">
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left lg:max-w-xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-sm text-primary backdrop-blur lg:self-start">
               <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
               <span>Joshi Minh · Software · AI · Design</span>
             </div>
             <h1 className="mt-6 text-balance text-4xl font-semibold leading-tight md:text-6xl lg:text-7xl">
-              Crafting soulful software with <span className="text-gradient">AI & design</span>
+              Hi, I'm <span className="text-gradient">Joshi Minh</span>.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg text-muted-foreground text-pretty md:text-xl">
+            <p className="mt-6 max-w-2xl text-lg text-muted-foreground text-pretty md:text-xl mx-auto lg:mx-0 lg:text-left">
               I'm a software engineer and vibe coder building human-centered experiences across full-stack web, AI
               systems, and visual design. I love taking ideas from messy sketch to polished product.
             </p>
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap justify-center gap-4 lg:justify-start">
               <Button className="gradient-blue-pink hover:gradient-blue-pink-hover border-0 text-white" asChild>
                 <a href={socialLinks.links.linkedin} target="_blank" rel="noopener noreferrer">
                   <Rocket className="mr-2 h-4 w-4" />
@@ -215,7 +218,7 @@ export default function Portfolio() {
                 )
               })}
             </div>
-            <div className="mt-10 flex flex-wrap items-center gap-3">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <span className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Connect</span>
               {SOCIAL_BUTTONS.map((social) => {
                 const Icon = social.icon
@@ -235,7 +238,7 @@ export default function Portfolio() {
               })}
             </div>
           </div>
-          <div className="relative">
+          <div className="relative mx-auto w-full max-w-xl lg:mx-0">
             <Card className="relative overflow-hidden border border-border/60 bg-card/70 shadow-[0_25px_70px_-40px_rgba(191,90,242,0.6)] backdrop-blur">
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/20" />
               <CardHeader className="relative space-y-3">
@@ -279,7 +282,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section className="px-6 py-24">
+      <section className="px-4 py-20 sm:px-6 lg:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-semibold md:text-4xl">What I do</h2>
@@ -320,7 +323,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section id="projects" className="relative overflow-hidden px-6 py-24">
+      <section id="projects" className="relative overflow-hidden px-4 py-20 sm:px-6 lg:py-24">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
@@ -342,8 +345,8 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <section className="px-6 py-24">
-        <div className="mx-auto max-w-5xl grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
+      <section className="px-4 py-20 sm:px-6 lg:py-24">
+        <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[1.1fr,0.9fr] lg:gap-16">
           <div>
             <h2 className="text-3xl font-semibold md:text-4xl">About me</h2>
             <p className="mt-6 text-muted-foreground text-pretty">
@@ -412,7 +415,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      <footer className="border-t border-border/60 px-6 py-12">
+      <footer className="border-t border-border/60 px-4 py-12 sm:px-6">
         <div className="mx-auto flex max-w-5xl flex-col gap-6 text-center md:flex-row md:items-center md:justify-between md:text-left">
           <div>
             <p className="text-muted-foreground">
