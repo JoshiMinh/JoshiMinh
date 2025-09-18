@@ -5,10 +5,12 @@ import { ProjectCard } from "@/components/project-card"
 import {
   Brain,
   Code,
+  Coffee,
   Layers,
   Palette,
   Rocket,
   Sparkles,
+  HeartHandshake,
   Wand2,
   Workflow,
   type LucideIcon,
@@ -66,6 +68,15 @@ type FocusArea = {
   title: string
   description: string
   icon: LucideIcon
+}
+
+type DonationLink = {
+  label: string
+  shortLabel: string
+  href: string
+  icon: LucideIcon
+  heroClass: string
+  footerClass: string
 }
 
 const createGradientStyle = (index: number, total: number) => {
@@ -153,6 +164,25 @@ const SOCIAL_BUTTONS = [
   { label: "Patreon", href: socialLinks.links.patreon, icon: PatreonIcon },
 ]
 
+const DONATION_LINKS: DonationLink[] = [
+  {
+    label: "Support on Ko-fi",
+    shortLabel: "Ko-fi",
+    href: "https://ko-fi.com/joshiminh",
+    icon: Coffee,
+    heroClass: "border-sky-400/60 bg-background/60 text-sky-200 hover:bg-sky-500/15 hover:text-white",
+    footerClass: "border-sky-400/60 bg-sky-500/10 text-sky-200 hover:bg-sky-500/20 hover:text-white",
+  },
+  {
+    label: "Join on Patreon",
+    shortLabel: "Patreon",
+    href: "https://www.patreon.com/c/u16604577",
+    icon: HeartHandshake,
+    heroClass: "border-rose-400/60 bg-background/60 text-rose-200 hover:bg-rose-500/15 hover:text-white",
+    footerClass: "border-rose-400/60 bg-rose-500/10 text-rose-200 hover:bg-rose-500/20 hover:text-white",
+  },
+]
+
 const CORE_VALUES = [
   "Software should feel like a conversation, not a chore.",
   "Learning in public keeps craft honest and energized.",
@@ -232,6 +262,26 @@ export default function Portfolio() {
                   >
                     <a href={social.href} target="_blank" rel="noopener noreferrer" aria-label={social.label}>
                       <Icon />
+                    </a>
+                  </Button>
+                )
+              })}
+            </div>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <span className="text-xs uppercase tracking-[0.32em] text-muted-foreground">Support</span>
+              {DONATION_LINKS.map((donation) => {
+                const Icon = donation.icon
+                return (
+                  <Button
+                    key={donation.shortLabel}
+                    variant="outline"
+                    size="sm"
+                    className={`border ${donation.heroClass}`}
+                    asChild
+                  >
+                    <a href={donation.href} target="_blank" rel="noopener noreferrer" aria-label={donation.label}>
+                      <Icon className="h-4 w-4" />
+                      <span>{donation.shortLabel}</span>
                     </a>
                   </Button>
                 )
@@ -423,18 +473,42 @@ export default function Portfolio() {
             </p>
             <p className="mt-2 text-sm text-muted-foreground">© 2025 Joshi Minh. Built with ❤️ and plenty of ☕.</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-3">
-            {SOCIAL_BUTTONS.slice(0, 4).map((social) => {
-              const Icon = social.icon
-              return (
-                <Button key={social.label} variant="ghost" size="sm" className="hover:bg-accent/20" asChild>
-                  <a href={social.href} target="_blank" rel="noopener noreferrer">
-                    <Icon />
-                    <span className="ml-2 text-sm">{social.label}</span>
-                  </a>
-                </Button>
-              )
-            })}
+          <div className="flex flex-col items-center gap-5 md:items-end">
+            <div className="flex flex-wrap justify-center gap-3 md:justify-end">
+              {SOCIAL_BUTTONS.slice(0, 4).map((social) => {
+                const Icon = social.icon
+                return (
+                  <Button key={social.label} variant="ghost" size="sm" className="hover:bg-accent/20" asChild>
+                    <a href={social.href} target="_blank" rel="noopener noreferrer">
+                      <Icon />
+                      <span className="ml-2 text-sm">{social.label}</span>
+                    </a>
+                  </Button>
+                )
+              })}
+            </div>
+            <div className="flex flex-col items-center gap-2 md:items-end">
+              <span className="text-xs uppercase tracking-[0.32em] text-muted-foreground">Support</span>
+              <div className="flex flex-wrap justify-center gap-2 md:justify-end">
+                {DONATION_LINKS.map((donation) => {
+                  const Icon = donation.icon
+                  return (
+                    <Button
+                      key={`footer-${donation.shortLabel}`}
+                      variant="outline"
+                      size="sm"
+                      className={`border ${donation.footerClass}`}
+                      asChild
+                    >
+                      <a href={donation.href} target="_blank" rel="noopener noreferrer">
+                        <Icon className="h-4 w-4" />
+                        <span>{donation.shortLabel}</span>
+                      </a>
+                    </Button>
+                  )
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </footer>
