@@ -7,7 +7,7 @@
     <link rel="icon" href="favicon.png" type="image/png">
     <meta
       name="description"
-      content="Portfolio of Joshi Minh – software engineer and vibe coder building human-centered experiences across full-stack web, AI systems, and visual design."
+      content="Portfolio of Joshi Minh – cross-platform engineer, designer, and vibe coder building AI-infused experiences across Android, web, and Windows."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -29,18 +29,21 @@
         </div>
         <div class="hero__content">
           <div class="hero__text">
-            <div class="status-pill">
+            <div class="status-pill animate-in" style="--delay: 0s">
               <span class="status-pill__dot" aria-hidden="true"></span>
-              <span class="status-pill__text">Joshi Minh · Software · AI · Design</span>
+              <span class="status-pill__text">Joshi Minh · Undergraduate cross-platform builder</span>
             </div>
-            <h1 id="intro-heading" class="hero__title">
+            <h1 id="intro-heading" class="hero__title animate-in" style="--delay: 0.05s">
               Hi, I'm <span class="text-gradient">Joshi Minh</span>.
             </h1>
-            <p class="hero__lead">
-              I'm a software engineer and vibe coder building human-centered experiences across full-stack web, AI systems,
-              and visual design. I love taking ideas from messy sketch to polished product.
+            <p class="hero__subtitle animate-in" style="--delay: 0.1s">
+              Undergraduate software engineer · Product designer · AI tinkerer
             </p>
-            <div class="hero__actions">
+            <p class="hero__lead animate-in" style="--delay: 0.15s">
+              I love building apps and software across Android, web, and Windows—blending AI and design to vibe-code
+              cross-platform experiences that feel alive.
+            </p>
+            <div class="hero__actions animate-in" style="--delay: 0.22s">
               <a class="button button--primary" href="https://www.linkedin.com/in/nguyen-binh-minh-jm" target="_blank" rel="noopener noreferrer">
                 <i data-lucide="rocket" aria-hidden="true"></i>
                 <span>Get in touch</span>
@@ -56,28 +59,26 @@
               </a>
             </div>
             <div class="hero__highlights" id="hero-highlights"></div>
-            <div class="hero__social">
+            <div class="hero__social animate-in" style="--delay: 0.32s">
               <span class="hero__social-label">Connect</span>
               <div class="hero__social-buttons" id="social-buttons"></div>
             </div>
-            <div class="hero__support">
+            <div class="hero__support animate-in" style="--delay: 0.38s">
               <span class="hero__support-label">Support</span>
               <div class="hero__support-buttons" id="donation-buttons"></div>
             </div>
           </div>
-          <div class="hero__card">
-            <article class="feature-card" aria-labelledby="feature-heading">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <header class="feature-card__header">
-                <h2 id="feature-heading">Designing experiences for humans</h2>
-                <p>
-                  I'm currently exploring how AI can extend craftsmanship. From idea validation to launch-ready products, I love
-                  pairing rigorous systems thinking with a strong sense of vibe.
-                </p>
-              </header>
-              <div class="feature-card__list" id="focus-areas"></div>
-              <div class="feature-card__chips" id="focus-chips"></div>
-            </article>
+          <div class="hero__profile animate-in" style="--delay: 0.25s" aria-labelledby="identity-heading">
+            <div class="hero__profile-glow" aria-hidden="true"></div>
+            <header class="hero__profile-header">
+              <h2 id="identity-heading">Identity snapshot</h2>
+              <p>
+                Undergraduate maker mixing craft, play, and technology. I chase the edges of cross-platform products while
+                keeping people at the center.
+              </p>
+            </header>
+            <ul class="hero__profile-list" id="identity-list"></ul>
+            <div class="hero__profile-tags" id="identity-tags"></div>
           </div>
         </div>
       </header>
@@ -87,8 +88,8 @@
           <div class="section__intro">
             <h2 id="expertise-heading">What I do</h2>
             <p>
-              I move comfortably between shipping reliable software, experimenting with machine intelligence, and shaping design
-              systems that make teams faster.
+              I bounce between code, pixels, and AI—shipping reliable software while shaping playful experiences that travel
+              across platforms.
             </p>
           </div>
           <div class="card-grid" id="expertise-grid"></div>
@@ -112,27 +113,19 @@
             <div class="about__text">
               <h2 id="about-heading">About me</h2>
               <p>
-                Hey! I'm Joshi Minh—a developer who lives at the intersection of software engineering, AI experimentation, and
-                thoughtful design. I thrive on turning fuzzy ideas into systems that feel alive and intentional.
+                Hey! I'm Joshi Minh—an undergraduate, multi-disciplinary maker blending software engineering, product design,
+                and AI experimentation. I live for turning fuzzy ideas into cross-platform systems that feel intentional and
+                joyful.
               </p>
               <p>
-                Whether it's crafting intelligent tooling, building full-stack products, or hosting build-in-public jams, I love
-                working with curious teams who care about people as much as pixels.
+                From Android apps and responsive web builds to Windows tools and creative experiments, I care about the energy
+                the work carries as much as the features it ships.
               </p>
               <ul class="about__values" id="core-values"></ul>
               <a class="button button--primary" href="https://www.linkedin.com/in/nguyen-binh-minh-jm" target="_blank" rel="noopener noreferrer">
                 Let's collaborate
               </a>
             </div>
-            <article class="work-card" aria-labelledby="work-style-heading">
-              <div class="work-card__glow" aria-hidden="true"></div>
-              <header>
-                <h3 id="work-style-heading">How I work</h3>
-                <p>Intentional systems, rapid iteration, and empathy for the humans in the loop.</p>
-              </header>
-              <div class="work-card__list" id="work-style"></div>
-              <div class="work-card__chips" id="work-chips"></div>
-            </article>
           </div>
         </section>
       </main>
@@ -143,13 +136,7 @@
             <p>Thanks for visiting my little corner of the internet. Let's build something incredible together.</p>
             <p class="site-footer__meta">© 2025 Joshi Minh. Built with ❤️ and plenty of ☕.</p>
           </div>
-          <div class="site-footer__actions">
-            <div class="site-footer__links" id="footer-links"></div>
-            <div class="site-footer__donate">
-              <span class="site-footer__donate-label">Support</span>
-              <div class="site-footer__donate-links" id="footer-donations"></div>
-            </div>
-          </div>
+          <a class="site-footer__return animate-in" style="--delay: 0.1s" href="#top">Back to top</a>
         </div>
       </footer>
     </div>
