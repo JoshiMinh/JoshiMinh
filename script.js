@@ -1,97 +1,79 @@
 const heroHighlights = [
   {
-    title: "Joyful digital products",
-    description:
-      "Blending design and engineering to deliver experiences that feel personal, polished, and fast.",
+    title: "Cross-platform builds",
+    description: "Crafting native-feeling apps for Android, web, and Windows from a single creative spine.",
+    icon: "app-window",
+  },
+  {
+    title: "Playful AI energy",
+    description: "Designing features where machine intelligence amplifies vibe, creativity, and speed.",
     icon: "sparkles",
   },
   {
-    title: "AI-native workflows",
-    description: "Prototyping copilots and automation that take teams from idea to production quickly.",
-    icon: "workflow",
+    title: "Design-led systems",
+    description: "Pairing interaction design with robust systems thinking to keep products intentional.",
+    icon: "layers",
   },
 ]
 
-const focusAreas = [
+const identityPoints = [
   {
-    title: "Creative AI copilots",
-    description: "Exploring interfaces that amplify imagination and unlock new creative rituals.",
-    icon: "wand-2",
+    label: "Home base",
+    value: "Ho Chi Minh City, Vietnam",
   },
   {
-    title: "Design systems that scale",
-    description: "Establishing cohesive visual languages and component libraries that keep teams aligned.",
-    icon: "layers",
+    label: "Undergraduate focus",
+    value: "Computer science, product thinking, and immersive storytelling",
   },
   {
-    title: "Delightful developer experience",
-    description: "Automating the boring parts so builders can focus on shipping meaningful value.",
-    icon: "rocket",
+    label: "Currently crafting",
+    value: "Indie cross-platform products, creative tooling, and community jams",
+  },
+  {
+    label: "Energy",
+    value: "Curious, collaborative, and always down to vibe-code new ideas",
   },
 ]
+
+const identityTags = ["Cross-platform apps", "AI + creativity", "Experience design", "Undergraduate life"]
 
 const expertiseAreas = [
   {
-    title: "Software Engineering",
-    description: "Building resilient, scalable applications with thoughtful architecture and clean code.",
-    icon: "code",
+    title: "Cross-platform Engineering",
+    description: "Shipping resilient apps that travel seamlessly between Android, web, and desktop.",
+    icon: "app-window",
     gradient: "linear-gradient(90deg, rgba(56,189,248,0.9), rgba(99,102,241,0.9))",
-    tags: ["Python", "Java", "JavaScript", "HTML", "CSS"],
+    tags: ["Android", "Web", "Windows", "APIs"],
   },
   {
-    title: "AI Development",
-    description: "Designing intelligent systems and bringing machine learning ideas into joyful products.",
-    icon: "brain",
+    title: "AI-powered Experiences",
+    description: "Weaving intelligent features into products so builders and communities move faster.",
+    icon: "bot",
     gradient: "linear-gradient(90deg, rgba(217,70,239,0.9), rgba(129,140,248,0.9))",
-    tags: ["Machine Learning", "Python", "TensorFlow", "AI SDK"],
+    tags: ["AI SDK", "LLMs", "Automation", "Agents"],
   },
   {
-    title: "Design & Experience",
-    description: "Crafting beautiful, intuitive interfaces where aesthetics meet accessible, human-centered UX.",
+    title: "Design Direction",
+    description: "Crafting clear interfaces, motion, and systems that keep the vibe intentional.",
     icon: "palette",
     gradient: "linear-gradient(90deg, rgba(244,114,182,0.95), rgba(251,191,36,0.95))",
-    tags: ["UI/UX", "CSS", "HTML", "Responsive Design"],
+    tags: ["Design Systems", "Motion", "Accessibility"],
   },
 ]
 
-const projectCards = [
+const projectSources = [
   {
-    title: "Markbase",
-    description: "An indie SaaS for capturing build-in-public notes with AI-powered summaries and publishing tools.",
     url: "https://markbase-joshiminh.vercel.app/",
-    favicon: "https://www.google.com/s2/favicons?domain=markbase-joshiminh.vercel.app&sz=32",
   },
   {
-    title: "Watchbase",
-    description: "Curated catalog of favourite timepieces with wishlists, notes, and delightful watch nerd details.",
     url: "https://watchbase.vercel.app/",
-    favicon: "https://www.google.com/s2/favicons?domain=watchbase.vercel.app&sz=32",
   },
 ]
-
-const workStyle = [
-  {
-    title: "Product loops",
-    body: "Discover → prototype → learn → refine. Short feedback loops keep momentum high.",
-  },
-  {
-    title: "Collaborative energy",
-    body: "I love jamming with designers, storytellers, and engineers to co-create resonant work.",
-  },
-  {
-    title: "Beyond the screen",
-    body: "Workshops, content, and community events keep me exploring new perspectives.",
-  },
-]
-
-const workChips = ["AI", "Full-stack", "Design Systems", "Community"]
-
-const focusChips = ["Product thinking", "Rapid prototyping", "Community-first"]
 
 const coreValues = [
-  "Software should feel like a conversation, not a chore.",
-  "Learning in public keeps craft honest and energized.",
-  "Great systems elevate the humans who rely on them.",
+  "I build with heart—software should feel like a conversation, not a chore.",
+  "Learning in public keeps the craft honest and the vibe collaborative.",
+  "Great systems elevate the humans who rely on them every day.",
 ]
 
 const socialLinks = [
@@ -115,11 +97,6 @@ const socialLinks = [
     url: "https://www.youtube.com/channel/UCkt3Mhwb3bduqwtRDZtjvsg",
     icon: youtubeIcon,
   },
-  {
-    label: "Patreon",
-    url: "https://www.patreon.com/c/u16604577",
-    icon: patreonIcon,
-  },
 ]
 
 const donationLinks = [
@@ -129,7 +106,6 @@ const donationLinks = [
     url: "https://ko-fi.com/joshiminh",
     icon: "coffee",
     heroClass: "support-button--kofi",
-    footerClass: "site-footer__support-link--kofi",
   },
   {
     label: "Join on Patreon",
@@ -137,9 +113,96 @@ const donationLinks = [
     url: "https://www.patreon.com/c/u16604577",
     icon: "heart-handshake",
     heroClass: "support-button--patreon",
-    footerClass: "site-footer__support-link--patreon",
   },
 ]
+
+let animationObserver = null
+const pendingAnimationQueue = []
+
+function setupAnimationObserver() {
+  if (animationObserver) {
+    animationObserver.disconnect()
+    animationObserver = null
+  }
+
+  const animatedElements = document.querySelectorAll(".animate-in")
+  const supportsObserver = typeof window !== "undefined" && "IntersectionObserver" in window
+
+  if (supportsObserver) {
+    animationObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible")
+            animationObserver.unobserve(entry.target)
+          }
+        })
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "0px 0px -10%",
+      }
+    )
+
+    animatedElements.forEach((element) => {
+      animationObserver.observe(element)
+    })
+
+    if (pendingAnimationQueue.length > 0) {
+      const queuedElements = pendingAnimationQueue.splice(0)
+      queuedElements.forEach((element) => {
+        if (element instanceof Element) {
+          animationObserver.observe(element)
+        }
+      })
+    }
+  } else {
+    animatedElements.forEach((element) => {
+      element.classList.add("is-visible")
+    })
+
+    if (pendingAnimationQueue.length > 0) {
+      const queuedElements = pendingAnimationQueue.splice(0)
+      queuedElements.forEach((element) => {
+        if (element instanceof Element) {
+          element.classList.add("is-visible")
+        }
+      })
+    }
+  }
+}
+
+function applyEntrance(element, delaySeconds = 0) {
+  if (!element) {
+    return
+  }
+
+  element.classList.add("animate-in")
+
+  if (typeof delaySeconds === "number" && Number.isFinite(delaySeconds)) {
+    element.style.setProperty("--delay", `${Math.max(delaySeconds, 0).toFixed(2)}s`)
+  }
+
+  const scheduleFrame =
+    typeof window !== "undefined" && typeof window.requestAnimationFrame === "function"
+      ? window.requestAnimationFrame.bind(window)
+      : (callback) => setTimeout(callback, 16)
+
+  scheduleFrame(() => {
+    if (animationObserver) {
+      animationObserver.observe(element)
+      return
+    }
+
+    const supportsObserver = typeof window !== "undefined" && "IntersectionObserver" in window
+
+    if (supportsObserver) {
+      pendingAnimationQueue.push(element)
+    } else {
+      element.classList.add("is-visible")
+    }
+  })
+}
 
 function githubIcon() {
   return `
@@ -185,17 +248,6 @@ function youtubeIcon() {
   `
 }
 
-function patreonIcon() {
-  return `
-    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        fill="currentColor"
-        d="M0 .48v23.04h4.22V.48zm15.385 0c-4.764 0-8.641 3.88-8.641 8.65 0 4.755 3.877 8.623 8.641 8.623 4.75 0 8.615-3.868 8.615-8.623C24 4.36 20.136.48 15.385.48z"
-      ></path>
-    </svg>
-  `
-}
-
 function createGradient(index, total) {
   const hueStart = 220
   const hueEnd = 320
@@ -215,8 +267,86 @@ function formatUrl(urlString) {
   }
 }
 
+function prettifyHostname(hostname) {
+  const primary = hostname.split(".")[0]
+  return primary
+    .split(/[-_]/)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(" ")
+}
+
+function resolveFaviconHref(href, baseUrl) {
+  if (!href) {
+    return null
+  }
+
+  try {
+    return new URL(href, baseUrl).href
+  } catch (error) {
+    return href
+  }
+}
+
+async function fetchProjectMetadata(url) {
+  const fallback = () => {
+    const { hostname } = formatUrl(url)
+    const title = prettifyHostname(hostname)
+    return {
+      title,
+      description: `Explore ${title} — a build straight from my playground.`,
+      favicon: `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`,
+    }
+  }
+
+  const fallbackMeta = fallback()
+
+  try {
+    const response = await fetch(url, { mode: "cors" })
+
+    if (!response.ok) {
+      return fallbackMeta
+    }
+
+    const html = await response.text()
+    const parser = new DOMParser()
+    const doc = parser.parseFromString(html, "text/html")
+
+    const title =
+      doc.querySelector("meta[property='og:title']")?.getAttribute("content") ||
+      doc.querySelector("meta[name='twitter:title']")?.getAttribute("content") ||
+      doc.querySelector("title")?.textContent?.trim()
+
+    const description =
+      doc.querySelector("meta[property='og:description']")?.getAttribute("content") ||
+      doc.querySelector("meta[name='description']")?.getAttribute("content") ||
+      doc.querySelector("meta[name='twitter:description']")?.getAttribute("content") ||
+      fallbackMeta.description
+
+    const faviconHref =
+      doc.querySelector("link[rel='icon']")?.getAttribute("href") ||
+      doc.querySelector("link[rel='shortcut icon']")?.getAttribute("href") ||
+      doc.querySelector("link[rel='apple-touch-icon']")?.getAttribute("href") ||
+      null
+
+    const resolvedFavicon = resolveFaviconHref(faviconHref, url) || fallbackMeta.favicon
+
+    return {
+      title: title || fallbackMeta.title,
+      description,
+      favicon: resolvedFavicon,
+    }
+  } catch (error) {
+    console.warn(`Falling back to metadata for ${url}`, error)
+    return fallbackMeta
+  }
+}
+
 function renderHighlights() {
   const container = document.getElementById("hero-highlights")
+  if (!container) {
+    return
+  }
+
   heroHighlights.forEach((item) => {
     const card = document.createElement("article")
     card.className = "highlight-card"
@@ -229,38 +359,18 @@ function renderHighlights() {
         <p>${item.description}</p>
       </div>
     `
+    const delay = 0.2 + container.children.length * 0.08
+    applyEntrance(card, delay)
     container.appendChild(card)
-  })
-}
-
-function renderFocusAreas() {
-  const list = document.getElementById("focus-areas")
-  focusAreas.forEach((item) => {
-    const row = document.createElement("div")
-    row.className = "focus-row"
-    row.innerHTML = `
-      <span class="focus-row__icon" aria-hidden="true">
-        <i data-lucide="${item.icon}"></i>
-      </span>
-      <div class="focus-row__body">
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-      </div>
-    `
-    list.appendChild(row)
-  })
-
-  const chipContainer = document.getElementById("focus-chips")
-  focusChips.forEach((chip) => {
-    const span = document.createElement("span")
-    span.className = "chip"
-    span.textContent = chip
-    chipContainer.appendChild(span)
   })
 }
 
 function renderExpertise() {
   const grid = document.getElementById("expertise-grid")
+  if (!grid) {
+    return
+  }
+
   expertiseAreas.forEach((area) => {
     const card = document.createElement("article")
     card.className = "expertise-card"
@@ -285,146 +395,165 @@ function renderExpertise() {
       badgeRow.appendChild(badge)
     })
 
+    const cardIndex = grid.children.length
+    const delay = 0.25 + cardIndex * 0.12
+    applyEntrance(card, delay)
     grid.appendChild(card)
   })
 }
 
-function renderProjects() {
-  const grid = document.getElementById("project-grid")
-  projectCards.forEach((project) => {
-    const { hostname, segments } = formatUrl(project.url)
-    const card = document.createElement("a")
-    card.className = "project-card"
-    card.href = project.url
-    card.target = "_blank"
-    card.rel = "noopener noreferrer"
+function createProjectCard(project) {
+  const { hostname, segments } = formatUrl(project.url)
 
-    const tags = segments.length
-      ? segments.map((segment) => segment.replace(/-/g, " "))
-      : ["Live project"]
+  const tags = segments.length
+    ? segments.map((segment) => segment.replace(/-/g, " "))
+    : ["Live project"]
 
-    card.innerHTML = `
-      <div class="project-card__header">
-        <div class="project-card__info">
-          <span class="project-card__favicon" aria-hidden="true">
-            <img src="${project.favicon}" alt="" loading="lazy" />
-          </span>
-          <div>
-            <h3>${project.title}</h3>
-            <div class="project-card__domain">${hostname}</div>
-          </div>
+  const card = document.createElement("a")
+  card.className = "project-card"
+  card.href = project.url
+  card.target = "_blank"
+  card.rel = "noopener noreferrer"
+  card.innerHTML = `
+    <div class="project-card__header">
+      <div class="project-card__info">
+        <span class="project-card__favicon" aria-hidden="true">
+          <img src="${project.favicon}" alt="" loading="lazy" />
+        </span>
+        <div>
+          <h3>${project.title}</h3>
+          <div class="project-card__domain">${hostname}</div>
         </div>
-        <span class="project-card__cta">Visit <i data-lucide="external-link"></i></span>
       </div>
-      <p class="project-card__description">${project.description}</p>
-      <div class="project-card__tags"></div>
-    `
+      <span class="project-card__cta">Visit <i data-lucide="external-link"></i></span>
+    </div>
+    <p class="project-card__description">${project.description}</p>
+    <div class="project-card__tags"></div>
+  `
 
-    const tagContainer = card.querySelector(".project-card__tags")
-    tags.forEach((tag) => {
-      const span = document.createElement("span")
-      span.className = "project-card__tag"
-      span.textContent = tag
-      tagContainer.appendChild(span)
-    })
+  const tagContainer = card.querySelector(".project-card__tags")
+  tags.forEach((tag) => {
+    const span = document.createElement("span")
+    span.className = "project-card__tag"
+    span.textContent = tag
+    tagContainer.appendChild(span)
+  })
 
+  return card
+}
+
+async function renderProjects() {
+  const grid = document.getElementById("project-grid")
+  if (!grid) {
+    return
+  }
+  grid.innerHTML = ""
+
+  const projectsWithMetadata = await Promise.all(
+    projectSources.map(async (source) => ({
+      url: source.url,
+      metadata: await fetchProjectMetadata(source.url),
+    }))
+  )
+
+  projectsWithMetadata.forEach((item, index) => {
+    const card = createProjectCard({ ...item.metadata, url: item.url })
+    applyEntrance(card, 0.2 + index * 0.12)
     grid.appendChild(card)
   })
 }
 
 function renderSocialButtons() {
   const socialContainer = document.getElementById("social-buttons")
-  socialLinks.forEach((item) => {
+  if (!socialContainer) {
+    return
+  }
+
+  socialLinks.forEach((item, index) => {
     const link = document.createElement("a")
     link.className = "social-button"
     link.href = item.url
     link.target = "_blank"
     link.rel = "noopener noreferrer"
     link.setAttribute("aria-label", item.label)
+    link.title = item.label
     link.innerHTML = item.icon()
+    applyEntrance(link, 0.42 + index * 0.06)
     socialContainer.appendChild(link)
-  })
-
-  const footer = document.getElementById("footer-links")
-  socialLinks.slice(0, 4).forEach((item) => {
-    const link = document.createElement("a")
-    link.className = "site-footer__link"
-    link.href = item.url
-    link.target = "_blank"
-    link.rel = "noopener noreferrer"
-    link.innerHTML = `${item.icon()}<span>${item.label}</span>`
-    footer.appendChild(link)
   })
 }
 
 function renderDonations() {
   const donationContainer = document.getElementById("donation-buttons")
-  const footerContainer = document.getElementById("footer-donations")
+  if (!donationContainer) {
+    return
+  }
 
-  donationLinks.forEach((item) => {
-    if (donationContainer) {
-      const link = document.createElement("a")
-      link.className = `support-button ${item.heroClass}`
-      link.href = item.url
-      link.target = "_blank"
-      link.rel = "noopener noreferrer"
-      link.setAttribute("aria-label", item.label)
-      link.title = item.label
-      link.innerHTML = `<i data-lucide="${item.icon}"></i><span>${item.shortLabel}</span>`
-      donationContainer.appendChild(link)
-    }
-
-    if (footerContainer) {
-      const footerLink = document.createElement("a")
-      footerLink.className = `site-footer__support-link ${item.footerClass}`
-      footerLink.href = item.url
-      footerLink.target = "_blank"
-      footerLink.rel = "noopener noreferrer"
-      footerLink.setAttribute("aria-label", item.label)
-      footerLink.title = item.label
-      footerLink.innerHTML = `<i data-lucide="${item.icon}"></i><span>${item.shortLabel}</span>`
-      footerContainer.appendChild(footerLink)
-    }
-  })
-}
-
-function renderWorkStyle() {
-  const list = document.getElementById("work-style")
-  workStyle.forEach((item) => {
-    const entry = document.createElement("div")
-    entry.className = "work-card__item"
-    entry.innerHTML = `<h4>${item.title}</h4><p>${item.body}</p>`
-    list.appendChild(entry)
-  })
-
-  const chipContainer = document.getElementById("work-chips")
-  workChips.forEach((chip) => {
-    const span = document.createElement("span")
-    span.className = "work-card__chip"
-    span.textContent = chip
-    chipContainer.appendChild(span)
+  donationLinks.forEach((item, index) => {
+    const link = document.createElement("a")
+    link.className = `support-button ${item.heroClass}`
+    link.href = item.url
+    link.target = "_blank"
+    link.rel = "noopener noreferrer"
+    link.setAttribute("aria-label", item.label)
+    link.title = item.label
+    link.innerHTML = `<i data-lucide="${item.icon}"></i><span>${item.shortLabel}</span>`
+    applyEntrance(link, 0.48 + index * 0.06)
+    donationContainer.appendChild(link)
   })
 }
 
 function renderCoreValues() {
   const list = document.getElementById("core-values")
-  coreValues.forEach((value) => {
+  if (!list) {
+    return
+  }
+
+  coreValues.forEach((value, index) => {
     const li = document.createElement("li")
     const text = document.createElement("span")
     text.textContent = value
     li.appendChild(text)
+    applyEntrance(li, 0.2 + index * 0.08)
     list.appendChild(li)
   })
 }
 
-function initPage() {
+function renderIdentitySnapshot() {
+  const list = document.getElementById("identity-list")
+  const tags = document.getElementById("identity-tags")
+  if (!list || !tags) {
+    return
+  }
+
+  identityPoints.forEach((item, index) => {
+    const li = document.createElement("li")
+    li.className = "identity-point"
+    li.innerHTML = `
+      <span class="identity-point__label">${item.label}</span>
+      <span class="identity-point__value">${item.value}</span>
+    `
+    applyEntrance(li, 0.32 + index * 0.08)
+    list.appendChild(li)
+  })
+
+  identityTags.forEach((tag, index) => {
+    const span = document.createElement("span")
+    span.className = "identity-tag"
+    span.textContent = tag
+    applyEntrance(span, 0.5 + index * 0.08)
+    tags.appendChild(span)
+  })
+}
+
+async function initPage() {
+  setupAnimationObserver()
   renderHighlights()
-  renderFocusAreas()
+  renderIdentitySnapshot()
   renderExpertise()
-  renderProjects()
+  await renderProjects()
   renderSocialButtons()
   renderDonations()
-  renderWorkStyle()
   renderCoreValues()
 
   if (window.lucide && typeof window.lucide.createIcons === "function") {
@@ -432,4 +561,8 @@ function initPage() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", initPage)
+document.addEventListener("DOMContentLoaded", () => {
+  initPage().catch((error) => {
+    console.error("Failed to initialise page", error)
+  })
+})
