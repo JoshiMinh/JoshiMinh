@@ -408,42 +408,149 @@ function renderExpertise() {
   })
 }
 
+function createElement(tag, options = {}) {
+  const element = document.createElement(tag)
+  const { className, text, attrs, props } = options
+
+  if (className) {
+    element.className = className
+  }
+
+  if (text != null) {
+    element.textContent = text
+  }
+
+  if (attrs) {
+    Object.entries(attrs).forEach(([name, value]) => {
+      if (value != null) {
+        element.setAttribute(name, value)
+      }
+    })
+  }
+
+  if (props) {
+    Object.entries(props).forEach(([name, value]) => {
+      if (value != null) {
+        element[name] = value
+      }
+    })
+  }
+
+  return element
+}
+
+function safeDecodeURIComponent(value) {
+  try {
+    return decodeURIComponent(value)
+  } catch (error) {
+    return value
+  }
+}
+
+function formatPathSegment(segment) {
+  return segment
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ")
+}
+
+function normaliseProjectCopy(value, fallback = "") {
+  if (typeof value !== "string") {
+    return fallback
+  }
+
+  const trimmed = value.trim()
+  return trimmed.length > 0 ? trimmed : fallback
+}
+
 function createProjectCard(project) {
+  if (!project || !project.url) {
+    console.warn("Skipped rendering project due to missing URL", project)
+    return null
+  }
+
   const { hostname, segments } = formatUrl(project.url)
 
-  const tags = segments.length
-    ? segments.map((segment) => segment.replace(/-/g, " "))
-    : ["Live project"]
+  const tags = segments
+    .map((segment) => normaliseProjectCopy(formatPathSegment(safeDecodeURIComponent(segment))))
+    .filter(Boolean)
 
-  const card = document.createElement("a")
-  card.className = "project-card"
-  card.href = project.url
-  card.target = "_blank"
-  card.rel = "noopener noreferrer"
-  card.innerHTML = `
-    <div class="project-card__header">
-      <div class="project-card__info">
-        <span class="project-card__favicon" aria-hidden="true">
-          <img src="${project.favicon}" alt="" loading="lazy" />
-        </span>
-        <div>
-          <h3>${project.title}</h3>
-          <div class="project-card__domain">${hostname}</div>
-        </div>
-      </div>
-      <span class="project-card__cta">Visit <i data-lucide="external-link"></i></span>
-    </div>
-    <p class="project-card__description">${project.description}</p>
-    <div class="project-card__tags"></div>
-  `
+  if (tags.length === 0) {
+    tags.push("Live project")
+  }
 
-  const tagContainer = card.querySelector(".project-card__tags")
-  tags.forEach((tag) => {
-    const span = document.createElement("span")
-    span.className = "project-card__tag"
-    span.textContent = tag
-    tagContainer.appendChild(span)
+  const fallbackTitle = normaliseProjectCopy(prettifyHostname(hostname), "Untitled project")
+  const titleText = normaliseProjectCopy(project.title, fallbackTitle)
+  const descriptionText = normaliseProjectCopy(
+    project.description,
+    `Explore ${fallbackTitle} — a build straight from my playground.`
+  )
+
+  const card = createElement("a", {
+    className: "project-card",
+    attrs: {
+      href: project.url,
+      target: "_blank",
+      rel: "noopener noreferrer",
+    },
   })
+
+  const header = createElement("div", { className: "project-card__header" })
+  const info = createElement("div", { className: "project-card__info" })
+
+  const faviconWrapper = createElement("span", {
+    className: "project-card__favicon",
+    attrs: { "aria-hidden": "true" },
+  })
+
+  const faviconImage = createElement("img", {
+    attrs: { alt: "", loading: "lazy" },
+    props: { src: project.favicon },
+  })
+  faviconWrapper.appendChild(faviconImage)
+
+  const textContainer = document.createElement("div")
+
+  const title = createElement("h3", { text: titleText })
+  const domain = createElement("div", {
+    className: "project-card__domain",
+    text: hostname,
+  })
+  textContainer.append(title, domain)
+
+  info.append(faviconWrapper, textContainer)
+
+  const cta = createElement("span", { className: "project-card__cta" })
+  cta.append("Visit ")
+  cta.appendChild(
+    createElement("i", {
+      attrs: { "data-lucide": "external-link" },
+    })
+  )
+
+  header.append(info, cta)
+
+  const description = createElement("p", {
+    className: "project-card__description",
+    text: descriptionText,
+  })
+
+  const tagContainer = createElement("div", { className: "project-card__tags" })
+  const tagsFragment = document.createDocumentFragment()
+
+  tags.forEach((tag) => {
+    tagsFragment.appendChild(
+      createElement("span", {
+        className: "project-card__tag",
+        text: tag,
+      })
+    )
+  })
+
+  tagContainer.appendChild(tagsFragment)
+
+  card.append(header, description, tagContainer)
 
   return card
 }
@@ -462,11 +569,19 @@ async function renderProjects() {
     }))
   )
 
+  const fragment = document.createDocumentFragment()
+
   projectsWithMetadata.forEach((item, index) => {
     const card = createProjectCard({ ...item.metadata, url: item.url })
+    if (!card) {
+      return
+    }
+
     applyEntrance(card, 0.2 + index * 0.12)
-    grid.appendChild(card)
+    fragment.appendChild(card)
   })
+
+  grid.appendChild(fragment)
 }
 
 function renderSocialButtons() {
