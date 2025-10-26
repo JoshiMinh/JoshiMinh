@@ -1,127 +1,3 @@
-const heroHighlights = [
-  {
-    title: "Cross-platform builds",
-    description: "Crafting native-feeling apps for Android, web, and Windows from a single creative spine.",
-    icon: "app-window",
-  },
-  {
-    title: "Playful AI energy",
-    description: "Designing features where machine intelligence amplifies vibe, creativity, and speed.",
-    icon: "sparkles",
-  },
-  {
-    title: "Design-led systems",
-    description: "Pairing interaction design with robust systems thinking to keep products intentional.",
-    icon: "layers",
-  },
-]
-
-const identityPoints = [
-  {
-    label: "Home base",
-    value: "Ho Chi Minh City, Vietnam",
-  },
-  {
-    label: "Undergraduate focus",
-    value: "Computer science, product thinking, and immersive storytelling",
-  },
-  {
-    label: "Currently crafting",
-    value: "Indie cross-platform products, creative tooling, and community jams",
-  },
-  {
-    label: "Energy",
-    value: "Curious, collaborative, and always down to vibe-code new ideas",
-  },
-]
-
-const identityTags = ["Cross-platform apps", "AI + creativity", "Experience design", "Undergraduate life"]
-
-const expertiseAreas = [
-  {
-    title: "Cross-platform Engineering",
-    description: "Shipping resilient apps that travel seamlessly between Android, web, and desktop.",
-    icon: "app-window",
-    gradient: "linear-gradient(90deg, rgba(56,189,248,0.9), rgba(99,102,241,0.9))",
-    tags: ["Android", "Web", "Windows", "APIs"],
-  },
-  {
-    title: "AI-powered Experiences",
-    description: "Weaving intelligent features into products so builders and communities move faster.",
-    icon: "bot",
-    gradient: "linear-gradient(90deg, rgba(217,70,239,0.9), rgba(129,140,248,0.9))",
-    tags: ["AI SDK", "LLMs", "Automation", "Agents"],
-  },
-  {
-    title: "Design Direction",
-    description: "Crafting clear interfaces, motion, and systems that keep the vibe intentional.",
-    icon: "palette",
-    gradient: "linear-gradient(90deg, rgba(244,114,182,0.95), rgba(251,191,36,0.95))",
-    tags: ["Design Systems", "Motion", "Accessibility"],
-  },
-]
-
-const projectSources = [
-  {
-    url: "https://markbase-joshiminh.vercel.app/",
-  },
-  {
-    url: "https://watchbase.vercel.app/",
-  },
-  {
-    url: "https://moneybase.vercel.app/",
-  },
-  {
-    url: "https://writebase-joshiminh.vercel.app/",
-  },
-]
-
-const coreValues = [
-  "I build with heart—software should feel like a conversation, not a chore.",
-  "Learning in public keeps the craft honest and the vibe collaborative.",
-  "Great systems elevate the humans who rely on them every day.",
-]
-
-const socialLinks = [
-  {
-    label: "GitHub",
-    url: "https://github.com/JoshiMinh",
-    icon: githubIcon,
-  },
-  {
-    label: "LinkedIn",
-    url: "https://www.linkedin.com/in/nguyen-binh-minh-jm",
-    icon: linkedinIcon,
-  },
-  {
-    label: "X/Twitter",
-    url: "https://x.com/js_minh",
-    icon: xIcon,
-  },
-  {
-    label: "YouTube",
-    url: "https://www.youtube.com/channel/UCkt3Mhwb3bduqwtRDZtjvsg",
-    icon: youtubeIcon,
-  },
-]
-
-const donationLinks = [
-  {
-    label: "Support on Ko-fi",
-    shortLabel: "Ko-fi",
-    url: "https://ko-fi.com/joshiminh",
-    icon: "coffee",
-    heroClass: "support-button--kofi",
-  },
-  {
-    label: "Join on Patreon",
-    shortLabel: "Patreon",
-    url: "https://www.patreon.com/c/u16604577",
-    icon: "heart-handshake",
-    heroClass: "support-button--patreon",
-  },
-]
-
 let animationObserver = null
 const pendingAnimationQueue = []
 
@@ -254,6 +130,13 @@ function youtubeIcon() {
   `
 }
 
+const iconMap = {
+  github: githubIcon,
+  linkedin: linkedinIcon,
+  x: xIcon,
+  youtube: youtubeIcon,
+}
+
 function createGradient(index, total) {
   const hueStart = 220
   const hueEnd = 320
@@ -347,7 +230,7 @@ async function fetchProjectMetadata(url) {
   }
 }
 
-function renderHighlights() {
+function renderHighlights(heroHighlights) {
   const container = document.getElementById("hero-highlights")
   if (!container) {
     return
@@ -371,7 +254,7 @@ function renderHighlights() {
   })
 }
 
-function renderExpertise() {
+function renderExpertise(expertiseAreas) {
   const grid = document.getElementById("expertise-grid")
   if (!grid) {
     return
@@ -555,7 +438,7 @@ function createProjectCard(project) {
   return card
 }
 
-async function renderProjects() {
+async function renderProjects(projectSources) {
   const grid = document.getElementById("project-grid")
   if (!grid) {
     return
@@ -584,7 +467,7 @@ async function renderProjects() {
   grid.appendChild(fragment)
 }
 
-function renderSocialButtons() {
+function renderSocialButtons(socialLinks) {
   const socialContainer = document.getElementById("social-buttons")
   if (!socialContainer) {
     return
@@ -598,13 +481,13 @@ function renderSocialButtons() {
     link.rel = "noopener noreferrer"
     link.setAttribute("aria-label", item.label)
     link.title = item.label
-    link.innerHTML = item.icon()
+    link.innerHTML = iconMap[item.icon]()
     applyEntrance(link, 0.42 + index * 0.06)
     socialContainer.appendChild(link)
   })
 }
 
-function renderDonations() {
+function renderDonations(donationLinks) {
   const donationContainer = document.getElementById("donation-buttons")
   if (!donationContainer) {
     return
@@ -624,7 +507,7 @@ function renderDonations() {
   })
 }
 
-function renderCoreValues() {
+function renderCoreValues(coreValues) {
   const list = document.getElementById("core-values")
   if (!list) {
     return
@@ -640,7 +523,7 @@ function renderCoreValues() {
   })
 }
 
-function renderIdentitySnapshot() {
+function renderIdentitySnapshot(identityPoints, identityTags) {
   const list = document.getElementById("identity-list")
   const tags = document.getElementById("identity-tags")
   if (!list || !tags) {
@@ -667,15 +550,49 @@ function renderIdentitySnapshot() {
   })
 }
 
+async function fetchData() {
+  const [
+    heroHighlights,
+    identityPoints,
+    identityTags,
+    expertiseAreas,
+    projectSources,
+    coreValues,
+    socialLinks,
+    donationLinks,
+  ] = await Promise.all([
+    fetch("./data/hero-highlights.json").then((res) => res.json()),
+    fetch("./data/identity-points.json").then((res) => res.json()),
+    fetch("./data/identity-tags.json").then((res) => res.json()),
+    fetch("./data/expertise-areas.json").then((res) => res.json()),
+    fetch("./data/project-sources.json").then((res) => res.json()),
+    fetch("./data/core-values.json").then((res) => res.json()),
+    fetch("./data/social-links.json").then((res) => res.json()),
+    fetch("./data/donation-links.json").then((res) => res.json()),
+  ]);
+
+  return {
+    heroHighlights,
+    identityPoints,
+    identityTags,
+    expertiseAreas,
+    projectSources,
+    coreValues,
+    socialLinks,
+    donationLinks,
+  };
+}
+
 async function initPage() {
   setupAnimationObserver()
-  renderHighlights()
-  renderIdentitySnapshot()
-  renderExpertise()
-  await renderProjects()
-  renderSocialButtons()
-  renderDonations()
-  renderCoreValues()
+  const data = await fetchData();
+  renderHighlights(data.heroHighlights)
+  renderIdentitySnapshot(data.identityPoints, data.identityTags)
+  renderExpertise(data.expertiseAreas)
+  await renderProjects(data.projectSources)
+  renderSocialButtons(data.socialLinks)
+  renderDonations(data.donationLinks)
+  renderCoreValues(data.coreValues)
 
   if (window.lucide && typeof window.lucide.createIcons === "function") {
     window.lucide.createIcons()

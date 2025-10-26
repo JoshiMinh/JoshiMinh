@@ -1,0 +1,22 @@
+[
+  {
+    "label": "GitHub",
+    "url": "https://github.com/JoshiMinh",
+    "icon": "github"
+  },
+  {
+    "label": "LinkedIn",
+    "url": "https://www.linkedin.com/in/nguyen-binh-minh-jm",
+    "icon": "linkedin"
+  },
+  {
+    "label": "X/Twitter",
+    "url": "https://x.com/js_minh",
+    "icon": "x"
+  },
+  {
+    "label": "YouTube",
+    "url": "https://www.youtube.com/channel/UCkt3Mhwb3bduqwtRDZtjvsg",
+    "icon": "youtube"
+  }
+]
