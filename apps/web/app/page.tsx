@@ -25,6 +25,7 @@ import {
   getDonationLinks,
 } from "@/lib/data";
 import { createGradient, formatUrl, prettifyHostname, normaliseProjectCopy, formatPathSegment } from "@/lib/utils";
+import { createAnimationStyle, safeDecodeURIComponent } from "@/lib/animation";
 import styles from "./styles.module.css";
 import { AsciiArt } from "@/components/AsciiArt";
 
@@ -97,21 +98,21 @@ export default async function Home() {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <AsciiArt />
-            <div className={`${styles.statusPill} animate-in`} style={{ "--delay": "0s" } as React.CSSProperties}>
+            <div className={`${styles.statusPill} animate-in`} style={createAnimationStyle(0)}>
               <span className={styles.statusPillDot} aria-hidden="true"></span>
               <span>Joshi Minh · Undergraduate cross-platform builder</span>
             </div>
-            <h1 id="intro-heading" className={`${styles.heroTitle} animate-in`} style={{ "--delay": "0.05s" } as React.CSSProperties}>
+            <h1 id="intro-heading" className={`${styles.heroTitle} animate-in`} style={createAnimationStyle(0.05)}>
               Hi, I&apos;m <span className={styles.textGradient}>Joshi Minh</span>.
             </h1>
-            <p className={`${styles.heroSubtitle} animate-in`} style={{ "--delay": "0.1s" } as React.CSSProperties}>
+            <p className={`${styles.heroSubtitle} animate-in`} style={createAnimationStyle(0.1)}>
               Undergraduate software engineer · Product designer · AI tinkerer
             </p>
-            <p className={`${styles.heroLead} animate-in`} style={{ "--delay": "0.15s" } as React.CSSProperties}>
+            <p className={`${styles.heroLead} animate-in`} style={createAnimationStyle(0.15)}>
               I love building apps and software across Android, web, and Windows—blending AI and design to vibe-code
               cross-platform experiences that feel alive.
             </p>
-            <div className={`${styles.heroActions} animate-in`} style={{ "--delay": "0.22s" } as React.CSSProperties}>
+            <div className={`${styles.heroActions} animate-in`} style={createAnimationStyle(0.22)}>
               <a
                 className={`${styles.button} ${styles.buttonPrimary}`}
                 href="https://www.linkedin.com/in/nguyen-binh-minh-jm"
@@ -133,7 +134,7 @@ export default async function Home() {
                   <article
                     key={index}
                     className={`${styles.highlightCard} animate-in`}
-                    style={{ "--delay": `${0.2 + index * 0.08}s` } as React.CSSProperties}
+                    style={createAnimationStyle(0.2 + index * 0.08)}
                   >
                     <span className={styles.highlightCardIcon} aria-hidden="true">
                       <Icon size={20} />
@@ -146,7 +147,7 @@ export default async function Home() {
                 );
               })}
             </div>
-            <div className={`${styles.heroSocial} animate-in`} style={{ "--delay": "0.32s" } as React.CSSProperties}>
+            <div className={`${styles.heroSocial} animate-in`} style={createAnimationStyle(0.32)}>
               <span className={styles.heroSocialLabel}>Connect</span>
               <div className={styles.heroSocialButtons}>
                 {socialLinks.map((link, index) => {
@@ -160,7 +161,7 @@ export default async function Home() {
                       rel="noopener noreferrer"
                       aria-label={link.label}
                       title={link.label}
-                      style={{ "--delay": `${0.42 + index * 0.06}s` } as React.CSSProperties}
+                      style={createAnimationStyle(0.42 + index * 0.06)}
                     >
                       <Icon size={20} />
                     </a>
@@ -168,7 +169,7 @@ export default async function Home() {
                 })}
               </div>
             </div>
-            <div className={`${styles.heroSupport} animate-in`} style={{ "--delay": "0.38s" } as React.CSSProperties}>
+            <div className={`${styles.heroSupport} animate-in`} style={createAnimationStyle(0.38)}>
               <span className={styles.heroSupportLabel}>Support</span>
               <div className={styles.heroSupportButtons}>
                 {donationLinks.map((link, index) => {
@@ -185,7 +186,7 @@ export default async function Home() {
                       rel="noopener noreferrer"
                       aria-label={link.label}
                       title={link.label}
-                      style={{ "--delay": `${0.48 + index * 0.06}s` } as React.CSSProperties}
+                      style={createAnimationStyle(0.48 + index * 0.06)}
                     >
                       <Icon size={18} />
                       <span>{link.shortLabel}</span>
@@ -195,7 +196,7 @@ export default async function Home() {
               </div>
             </div>
           </div>
-          <div className={`${styles.heroProfile} animate-in`} style={{ "--delay": "0.25s" } as React.CSSProperties} aria-labelledby="identity-heading">
+          <div className={`${styles.heroProfile} animate-in`} style={createAnimationStyle(0.25)} aria-labelledby="identity-heading">
             <div className={styles.heroProfileGlow} aria-hidden="true"></div>
             <header className={styles.heroProfileHeader}>
               <h2 id="identity-heading">Identity snapshot</h2>
@@ -209,7 +210,7 @@ export default async function Home() {
                 <li
                   key={index}
                   className={`${styles.identityPoint} animate-in`}
-                  style={{ "--delay": `${0.32 + index * 0.08}s` } as React.CSSProperties}
+                  style={createAnimationStyle(0.32 + index * 0.08)}
                 >
                   <span className={styles.identityPointLabel}>{item.label}</span>
                   <span className={styles.identityPointValue}>{item.value}</span>
@@ -221,7 +222,7 @@ export default async function Home() {
                 <span
                   key={index}
                   className={`${styles.identityTag} animate-in`}
-                  style={{ "--delay": `${0.5 + index * 0.08}s` } as React.CSSProperties}
+                  style={createAnimationStyle(0.5 + index * 0.08)}
                 >
                   {tag}
                 </span>
@@ -247,7 +248,7 @@ export default async function Home() {
                 <article
                   key={index}
                   className={`${styles.expertiseCard} animate-in`}
-                  style={{ "--delay": `${0.25 + index * 0.12}s` } as React.CSSProperties}
+                  style={createAnimationStyle(0.25 + index * 0.12)}
                 >
                   <span className={styles.expertiseCardIcon} aria-hidden="true">
                     <Icon size={24} />
@@ -286,7 +287,7 @@ export default async function Home() {
             {projectsWithMetadata.map((project, index) => {
               const { hostname, segments } = formatUrl(project.url);
               const tags = segments
-                .map((segment) => normaliseProjectCopy(formatPathSegment(decodeURIComponent(segment))))
+                .map((segment) => normaliseProjectCopy(formatPathSegment(safeDecodeURIComponent(segment))))
                 .filter(Boolean);
 
               if (tags.length === 0) {
@@ -307,7 +308,7 @@ export default async function Home() {
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ "--delay": `${0.2 + index * 0.12}s` } as React.CSSProperties}
+                  style={createAnimationStyle(0.2 + index * 0.12)}
                 >
                   <div className={styles.projectCardHeader}>
                     <div className={styles.projectCardInfo}>
@@ -356,7 +357,7 @@ export default async function Home() {
                   <li
                     key={index}
                     className="animate-in"
-                    style={{ "--delay": `${0.2 + index * 0.08}s` } as React.CSSProperties}
+                    style={createAnimationStyle(0.2 + index * 0.08)}
                   >
                     <span>{value}</span>
                   </li>
@@ -383,7 +384,7 @@ export default async function Home() {
           </div>
           <a
             className={`${styles.siteFooterReturn} animate-in`}
-            style={{ "--delay": "0.1s" } as React.CSSProperties}
+            style={createAnimationStyle(0.1)}
             href="#top"
           >
             Back to top
