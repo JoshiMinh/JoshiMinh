@@ -1,0 +1,27 @@
+{
+  "name": "joshiminh",
+  "version": "1.0.0",
+  "description": "Hi there! I'm **Minh Nguyen**, an enthusiastic developer with a passion for technology and mechatronics. Welcome to my corner of the internet, where I showcase my projects and contributions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx turbo run build",
+    "start": "pnpm --filter web start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshiMinh/JoshiMinh.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JoshiMinh/JoshiMinh/issues"
+  },
+  "homepage": "https://github.com/JoshiMinh/JoshiMinh#readme",
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "turbo": "^2.6.0"
+  }
+}
