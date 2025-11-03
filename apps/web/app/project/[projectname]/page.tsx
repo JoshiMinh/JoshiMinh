@@ -22,9 +22,14 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: { params: { projectname: string } }) {
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ projectname: string }> 
+}) {
+  const { projectname } = await params;
   const projects = await getProjectSources();
-  const project = projects.find((p) => p.slug === params.projectname);
+  const project = projects.find((p) => p.slug === projectname);
 
   if (!project) {
     return {
@@ -38,9 +43,14 @@ export async function generateMetadata({ params }: { params: { projectname: stri
   };
 }
 
-export default async function ProjectPage({ params }: { params: { projectname: string } }) {
+export default async function ProjectPage({ 
+  params 
+}: { 
+  params: Promise<{ projectname: string }> 
+}) {
+  const { projectname } = await params;
   const projects = await getProjectSources();
-  const project = projects.find((p) => p.slug === params.projectname);
+  const project = projects.find((p) => p.slug === projectname);
 
   if (!project) {
     notFound();
