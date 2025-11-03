@@ -1,0 +1,16 @@
+[
+  {
+    "label": "Support on Ko-fi",
+    "shortLabel": "Ko-fi",
+    "url": "https://ko-fi.com/joshiminh",
+    "icon": "coffee",
+    "heroClass": "support-button--kofi"
+  },
+  {
+    "label": "Join on Patreon",
+    "shortLabel": "Patreon",
+    "url": "https://www.patreon.com/c/u16604577",
+    "icon": "heart-handshake",
+    "heroClass": "support-button--patreon"
+  }
+]

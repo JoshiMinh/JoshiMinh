@@ -1,65 +1,395 @@
+import {
+  Rocket,
+  Github,
+  Linkedin,
+  Twitter,
+  Youtube,
+  Coffee,
+  HeartHandshake,
+  ExternalLink,
+  AppWindow,
+  Sparkles,
+  Layers,
+  Bot,
+  Palette,
+} from "lucide-react";
 import Image from "next/image";
+import {
+  getHeroHighlights,
+  getIdentityPoints,
+  getIdentityTags,
+  getExpertiseAreas,
+  getProjectSources,
+  getCoreValues,
+  getSocialLinks,
+  getDonationLinks,
+} from "@/lib/data";
+import { createGradient, formatUrl, prettifyHostname, normaliseProjectCopy, formatPathSegment } from "@/lib/utils";
+import styles from "./styles.module.css";
+import { AsciiArt } from "@/components/AsciiArt";
 
-export default function Home() {
+const iconMap = {
+  rocket: Rocket,
+  github: Github,
+  linkedin: Linkedin,
+  x: Twitter,
+  youtube: Youtube,
+  coffee: Coffee,
+  "heart-handshake": HeartHandshake,
+  "external-link": ExternalLink,
+  "app-window": AppWindow,
+  sparkles: Sparkles,
+  layers: Layers,
+  bot: Bot,
+  palette: Palette,
+} as const;
+
+function getIcon(iconName: string) {
+  return iconMap[iconName as keyof typeof iconMap] || AppWindow;
+}
+
+async function fetchProjectMetadata(url: string) {
+  const { hostname } = formatUrl(url);
+  const title = prettifyHostname(hostname);
+  return {
+    title,
+    description: `Explore ${title} — a build straight from my playground.`,
+    favicon: `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`,
+  };
+}
+
+export default async function Home() {
+  const [
+    heroHighlights,
+    identityPoints,
+    identityTags,
+    expertiseAreas,
+    projectSources,
+    coreValues,
+    socialLinks,
+    donationLinks,
+  ] = await Promise.all([
+    getHeroHighlights(),
+    getIdentityPoints(),
+    getIdentityTags(),
+    getExpertiseAreas(),
+    getProjectSources(),
+    getCoreValues(),
+    getSocialLinks(),
+    getDonationLinks(),
+  ]);
+
+  const projectsWithMetadata = await Promise.all(
+    projectSources.map(async (source) => ({
+      url: source.url,
+      ...(await fetchProjectMetadata(source.url)),
+    }))
+  );
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className={styles.page} id="top">
+      <header className={styles.hero} aria-labelledby="intro-heading">
+        <div className={styles.heroBackground} aria-hidden="true">
+          <span className={`${styles.blurBall} ${styles.blurBallPrimary}`}></span>
+          <span className={`${styles.blurBall} ${styles.blurBallSecondary}`}></span>
+          <span className={`${styles.blurBall} ${styles.blurBallAccent}`}></span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className={styles.heroContent}>
+          <div className={styles.heroText}>
+            <AsciiArt />
+            <div className={`${styles.statusPill} animate-in`} style={{ "--delay": "0s" } as React.CSSProperties}>
+              <span className={styles.statusPillDot} aria-hidden="true"></span>
+              <span>Joshi Minh · Undergraduate cross-platform builder</span>
+            </div>
+            <h1 id="intro-heading" className={`${styles.heroTitle} animate-in`} style={{ "--delay": "0.05s" } as React.CSSProperties}>
+              Hi, I&apos;m <span className={styles.textGradient}>Joshi Minh</span>.
+            </h1>
+            <p className={`${styles.heroSubtitle} animate-in`} style={{ "--delay": "0.1s" } as React.CSSProperties}>
+              Undergraduate software engineer · Product designer · AI tinkerer
+            </p>
+            <p className={`${styles.heroLead} animate-in`} style={{ "--delay": "0.15s" } as React.CSSProperties}>
+              I love building apps and software across Android, web, and Windows—blending AI and design to vibe-code
+              cross-platform experiences that feel alive.
+            </p>
+            <div className={`${styles.heroActions} animate-in`} style={{ "--delay": "0.22s" } as React.CSSProperties}>
+              <a
+                className={`${styles.button} ${styles.buttonPrimary}`}
+                href="https://www.linkedin.com/in/nguyen-binh-minh-jm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Rocket aria-hidden="true" size={18} />
+                <span>Get in touch</span>
+              </a>
+              <a className={`${styles.button} ${styles.buttonOutline}`} href="#projects">
+                <Github aria-hidden="true" size={18} />
+                <span>View projects</span>
+              </a>
+            </div>
+            <div className={styles.heroHighlights}>
+              {heroHighlights.map((item, index) => {
+                const Icon = getIcon(item.icon);
+                return (
+                  <article
+                    key={index}
+                    className={`${styles.highlightCard} animate-in`}
+                    style={{ "--delay": `${0.2 + index * 0.08}s` } as React.CSSProperties}
+                  >
+                    <span className={styles.highlightCardIcon} aria-hidden="true">
+                      <Icon size={20} />
+                    </span>
+                    <div className={styles.highlightCardBody}>
+                      <h3>{item.title}</h3>
+                      <p>{item.description}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <div className={`${styles.heroSocial} animate-in`} style={{ "--delay": "0.32s" } as React.CSSProperties}>
+              <span className={styles.heroSocialLabel}>Connect</span>
+              <div className={styles.heroSocialButtons}>
+                {socialLinks.map((link, index) => {
+                  const Icon = getIcon(link.icon);
+                  return (
+                    <a
+                      key={index}
+                      className={`${styles.socialButton} animate-in`}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                      title={link.label}
+                      style={{ "--delay": `${0.42 + index * 0.06}s` } as React.CSSProperties}
+                    >
+                      <Icon size={20} />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+            <div className={`${styles.heroSupport} animate-in`} style={{ "--delay": "0.38s" } as React.CSSProperties}>
+              <span className={styles.heroSupportLabel}>Support</span>
+              <div className={styles.heroSupportButtons}>
+                {donationLinks.map((link, index) => {
+                  const Icon = getIcon(link.icon);
+                  const buttonClass = link.heroClass === "support-button--kofi" 
+                    ? styles.supportButtonKofi 
+                    : styles.supportButtonPatreon;
+                  return (
+                    <a
+                      key={index}
+                      className={`${styles.supportButton} ${buttonClass} animate-in`}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.label}
+                      title={link.label}
+                      style={{ "--delay": `${0.48 + index * 0.06}s` } as React.CSSProperties}
+                    >
+                      <Icon size={18} />
+                      <span>{link.shortLabel}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+          <div className={`${styles.heroProfile} animate-in`} style={{ "--delay": "0.25s" } as React.CSSProperties} aria-labelledby="identity-heading">
+            <div className={styles.heroProfileGlow} aria-hidden="true"></div>
+            <header className={styles.heroProfileHeader}>
+              <h2 id="identity-heading">Identity snapshot</h2>
+              <p>
+                Undergraduate maker mixing craft, play, and technology. I chase the edges of cross-platform products
+                while keeping people at the center.
+              </p>
+            </header>
+            <ul className={styles.heroProfileList}>
+              {identityPoints.map((item, index) => (
+                <li
+                  key={index}
+                  className={`${styles.identityPoint} animate-in`}
+                  style={{ "--delay": `${0.32 + index * 0.08}s` } as React.CSSProperties}
+                >
+                  <span className={styles.identityPointLabel}>{item.label}</span>
+                  <span className={styles.identityPointValue}>{item.value}</span>
+                </li>
+              ))}
+            </ul>
+            <div className={styles.heroProfileTags}>
+              {identityTags.map((tag, index) => (
+                <span
+                  key={index}
+                  className={`${styles.identityTag} animate-in`}
+                  style={{ "--delay": `${0.5 + index * 0.08}s` } as React.CSSProperties}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
+      </header>
+
+      <main>
+        <section className={styles.section} aria-labelledby="expertise-heading">
+          <div className={styles.sectionIntro}>
+            <h2 id="expertise-heading">What I do</h2>
+            <p>
+              I bounce between code, pixels, and AI—shipping reliable software while shaping playful experiences that
+              travel across platforms.
+            </p>
+          </div>
+          <div className={styles.cardGrid}>
+            {expertiseAreas.map((area, index) => {
+              const Icon = getIcon(area.icon);
+              return (
+                <article
+                  key={index}
+                  className={`${styles.expertiseCard} animate-in`}
+                  style={{ "--delay": `${0.25 + index * 0.12}s` } as React.CSSProperties}
+                >
+                  <span className={styles.expertiseCardIcon} aria-hidden="true">
+                    <Icon size={24} />
+                  </span>
+                  <div>
+                    <h3>{area.title}</h3>
+                    <p>{area.description}</p>
+                  </div>
+                  <div className={styles.badgeRow}>
+                    {area.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className={styles.badge}
+                        style={{ background: createGradient(tagIndex, area.tags.length) }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className={`${styles.section} ${styles.sectionProjects}`} id="projects" aria-labelledby="projects-heading">
+          <div className={styles.sectionIntro}>
+            <span className={styles.pill}>Projects</span>
+            <h2 id="projects-heading">Featured builds &amp; explorations</h2>
+            <p>
+              Each project is a playground for new ideas—ranging from indie SaaS products to delightful experiments that
+              push my understanding of what&apos;s possible.
+            </p>
+          </div>
+          <div className={`${styles.cardGrid} ${styles.cardGridProjects}`}>
+            {projectsWithMetadata.map((project, index) => {
+              const { hostname, segments } = formatUrl(project.url);
+              const tags = segments
+                .map((segment) => normaliseProjectCopy(formatPathSegment(decodeURIComponent(segment))))
+                .filter(Boolean);
+
+              if (tags.length === 0) {
+                tags.push("Live project");
+              }
+
+              const fallbackTitle = normaliseProjectCopy(prettifyHostname(hostname), "Untitled project");
+              const titleText = normaliseProjectCopy(project.title, fallbackTitle);
+              const descriptionText = normaliseProjectCopy(
+                project.description,
+                `Explore ${fallbackTitle} — a build straight from my playground.`
+              );
+
+              return (
+                <a
+                  key={index}
+                  className={`${styles.projectCard} animate-in`}
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ "--delay": `${0.2 + index * 0.12}s` } as React.CSSProperties}
+                >
+                  <div className={styles.projectCardHeader}>
+                    <div className={styles.projectCardInfo}>
+                      <span className={styles.projectCardFavicon} aria-hidden="true">
+                        <Image src={project.favicon} alt="" width={20} height={20} />
+                      </span>
+                      <div>
+                        <h3>{titleText}</h3>
+                        <div className={styles.projectCardDomain}>{hostname}</div>
+                      </div>
+                    </div>
+                    <span className={styles.projectCardCta}>
+                      Visit <ExternalLink size={14} />
+                    </span>
+                  </div>
+                  <p className={styles.projectCardDescription}>{descriptionText}</p>
+                  <div className={styles.projectCardTags}>
+                    {tags.map((tag, tagIndex) => (
+                      <span key={tagIndex} className={styles.projectCardTag}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+          <p className={styles.sectionNote}>Links open in a new tab.</p>
+        </section>
+
+        <section className={`${styles.section} ${styles.sectionAbout}`} aria-labelledby="about-heading">
+          <div className={styles.about}>
+            <div className={styles.aboutText}>
+              <h2 id="about-heading">About me</h2>
+              <p>
+                Hey! I&apos;m Joshi Minh—an undergraduate, multi-disciplinary maker blending software engineering,
+                product design, and AI experimentation. I live for turning fuzzy ideas into cross-platform systems that
+                feel intentional and joyful.
+              </p>
+              <p>
+                From Android apps and responsive web builds to Windows tools and creative experiments, I care about the
+                energy the work carries as much as the features it ships.
+              </p>
+              <ul className={styles.aboutValues}>
+                {coreValues.map((value, index) => (
+                  <li
+                    key={index}
+                    className="animate-in"
+                    style={{ "--delay": `${0.2 + index * 0.08}s` } as React.CSSProperties}
+                  >
+                    <span>{value}</span>
+                  </li>
+                ))}
+              </ul>
+              <a
+                className={`${styles.button} ${styles.buttonPrimary}`}
+                href="https://www.linkedin.com/in/nguyen-binh-minh-jm"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Let&apos;s collaborate
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
+
+      <footer className={styles.siteFooter}>
+        <div className={styles.siteFooterContent}>
+          <div>
+            <p>Thanks for visiting my little corner of the internet. Let&apos;s build something incredible together.</p>
+            <p className={styles.siteFooterMeta}>© 2025 Joshi Minh. Built with ❤️ and plenty of ☕.</p>
+          </div>
+          <a
+            className={`${styles.siteFooterReturn} animate-in`}
+            style={{ "--delay": "0.1s" } as React.CSSProperties}
+            href="#top"
+          >
+            Back to top
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
