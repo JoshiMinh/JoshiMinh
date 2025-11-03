@@ -32,7 +32,7 @@ export async function getExpertiseAreas(): Promise<ExpertiseArea[]> {
 }
 
 export async function getProjectSources(): Promise<ProjectSource[]> {
-  return loadJsonData<ProjectSource[]>("project-sources.json");
+  return loadJsonData<ProjectSource[]>("projects.json");
 }
 
 export async function getCoreValues(): Promise<string[]> {

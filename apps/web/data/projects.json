@@ -1,14 +1,22 @@
 [
   {
+    "slug": "markbase",
+    "name": "Markbase",
     "url": "https://markbase-joshiminh.vercel.app/"
   },
   {
+    "slug": "watchbase",
+    "name": "Watchbase",
     "url": "https://watchbase.vercel.app/"
   },
   {
+    "slug": "moneybase",
+    "name": "Moneybase",
     "url": "https://moneybase.vercel.app/"
   },
   {
+    "slug": "writebase",
+    "name": "Writebase",
     "url": "https://writebase-joshiminh.vercel.app/"
   }
 ]

@@ -18,6 +18,8 @@ export interface ExpertiseArea {
 }
 
 export interface ProjectSource {
+  slug: string;
+  name: string;
   url: string;
 }
 
