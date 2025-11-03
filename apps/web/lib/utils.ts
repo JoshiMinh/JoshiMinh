@@ -1,12 +1,10 @@
-import type { ProjectSource } from "@/types/data";
-
 export function formatUrl(urlString: string) {
   try {
     const url = new URL(urlString);
     const hostname = url.hostname.replace(/^www\./, "");
     const segments = url.pathname.split("/").filter(Boolean).slice(0, 3);
     return { hostname, segments };
-  } catch (error) {
+  } catch {
     return { hostname: urlString, segments: [] };
   }
 }
