@@ -14,3 +14,20 @@ Hi there! I'm **Minh Nguyen**, an enthusiastic developer with a passion for tech
     height="195px"
   />
 </div>
+
+### 🎮 Ball Game (Interactive Physics Sandbox)
+
+Build and play with bouncing balls and simple walls/shapes right in the browser.
+
+- Open at: `/ball-game`
+- Tools:
+  - Ball: click–drag to set launch direction and speed
+  - Line: click–drag to draw a wall segment
+  - Square: click–drag to draw an axis-aligned rectangle
+  - Circle: click–drag to set center and radius
+  - Triangle: click three points to create
+  - Move: drag any item to reposition
+  - Delete: click any item to remove
+- Balls deflect off shapes and canvas edges with elastic collisions.
+
+Your scene is auto-saved locally (browser storage), so you can come back and continue.
