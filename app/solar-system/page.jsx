@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import "../styles/game-page.css";
 
+// Utility function to convert hex color number to CSS hex string
+const colorToHex = (color) => {
+  if (typeof color !== 'number') return '#000000';
+  return `#${color.toString(16).padStart(6, '0')}`;
+};
+
 // Planet data with realistic relative sizes and orbital periods
 const PLANETS_DATA = [
   { 
@@ -99,6 +105,9 @@ export default function SolarSystemPage() {
       const width = container.clientWidth;
       const height = container.clientHeight;
 
+      // Declare variables for cleanup
+      let sunGeometry, sunMaterial, starsGeometry, starsMaterial;
+
       // Scene setup
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x000000);
@@ -125,8 +134,8 @@ export default function SolarSystemPage() {
       scene.add(ambientLight);
 
       // Sun
-      const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
-      const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFDB813 });
+      sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+      sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFDB813 });
       sun = new THREE.Mesh(sunGeometry, sunMaterial);
       scene.add(sun);
 
@@ -135,8 +144,8 @@ export default function SolarSystemPage() {
       sun.add(sunLight);
 
       // Stars
-      const starsGeometry = new THREE.BufferGeometry();
-      const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
+      starsGeometry = new THREE.BufferGeometry();
+      starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.7 });
       const starsVertices = [];
       for (let i = 0; i < 5000; i++) {
         const x = (Math.random() - 0.5) * 200;
@@ -186,7 +195,11 @@ export default function SolarSystemPage() {
           group: planetGroup,
           mesh: planet,
           data: planetData,
-          angle: Math.random() * Math.PI * 2
+          geometry: planetGeometry,
+          material: planetMaterial,
+          orbitGeometry: orbitGeometry,
+          orbitMaterial: orbitMaterial,
+          angle: planetData.distance * 0.5  // Fixed starting positions based on distance
         });
       });
 
@@ -223,14 +236,42 @@ export default function SolarSystemPage() {
       };
       window.addEventListener('resize', handleResize);
 
-      sceneRef.current = { scene, camera, renderer, controls, cleanup: () => {
-        window.removeEventListener('resize', handleResize);
-        if (animationId) cancelAnimationFrame(animationId);
-        if (renderer) {
-          renderer.dispose();
-          container.removeChild(renderer.domElement);
+      sceneRef.current = { 
+        scene, 
+        camera, 
+        renderer, 
+        controls, 
+        sun,
+        sunGeometry,
+        sunMaterial,
+        starsGeometry,
+        starsMaterial,
+        planets,
+        cleanup: () => {
+          window.removeEventListener('resize', handleResize);
+          if (animationId) cancelAnimationFrame(animationId);
+          
+          // Dispose of all geometries and materials
+          if (sunGeometry) sunGeometry.dispose();
+          if (sunMaterial) sunMaterial.dispose();
+          if (starsGeometry) starsGeometry.dispose();
+          if (starsMaterial) starsMaterial.dispose();
+          
+          planets.forEach(planet => {
+            if (planet.geometry) planet.geometry.dispose();
+            if (planet.material) planet.material.dispose();
+            if (planet.orbitGeometry) planet.orbitGeometry.dispose();
+            if (planet.orbitMaterial) planet.orbitMaterial.dispose();
+          });
+          
+          if (renderer) {
+            renderer.dispose();
+            if (container && container.contains(renderer.domElement)) {
+              container.removeChild(renderer.domElement);
+            }
+          }
         }
-      }};
+      };
     };
 
     initScene();
@@ -339,9 +380,9 @@ export default function SolarSystemPage() {
                   width: "60px", 
                   height: "60px", 
                   borderRadius: "50%", 
-                  background: `#${selectedPlanet.color.toString(16).padStart(6, '0')}`,
+                  background: colorToHex(selectedPlanet.color),
                   margin: "12px auto",
-                  boxShadow: `0 0 20px #${selectedPlanet.color.toString(16).padStart(6, '0')}`
+                  boxShadow: `0 0 20px ${colorToHex(selectedPlanet.color)}`
                 }}></div>
                 <p style={{ fontSize: "16px", marginBottom: "12px" }}>
                   {selectedPlanet.info}
