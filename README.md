@@ -31,3 +31,21 @@ Build and play with bouncing balls and simple walls/shapes right in the browser.
 - Balls deflect off shapes and canvas edges with elastic collisions.
 
 Your scene is auto-saved locally (browser storage), so you can come back and continue.
+
+### 🌌 Solar System Simulator (3D Interactive Experience)
+
+Explore our solar system in an interactive 3D environment with realistic orbital mechanics.
+
+- Open at: `/solar-system`
+- Features:
+  - 3D visualization of the Sun and all 8 planets
+  - Realistic orbital paths and speeds (scaled for visibility)
+  - Interactive camera controls (rotate, pan, zoom)
+  - Click on any planet to learn more about it
+  - Beautiful starfield background
+  - Relative planet sizes and distances
+- Controls:
+  - Left click + drag: rotate the view
+  - Right click + drag: pan the camera
+  - Scroll wheel: zoom in/out
+  - Click planets: view detailed information

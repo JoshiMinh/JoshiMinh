@@ -12,6 +12,7 @@
     "bootstrap": "^5.3.3",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "three": "^0.169.0"
   }
 }
