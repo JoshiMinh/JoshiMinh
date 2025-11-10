@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import "../styles/game-page.css";
+import "./styles.css";
 
 // Simple utility helpers
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));

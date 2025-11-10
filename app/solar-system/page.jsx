@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import "../styles/game-page.css";
+import "./styles.css";
 
 // Utility function to convert hex color number to CSS hex string
 const colorToHex = (color) => {

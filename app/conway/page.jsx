@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import '../styles/game-page.css';
 import './styles.css';
 
 const numRows = 30;
