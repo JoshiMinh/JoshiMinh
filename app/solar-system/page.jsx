@@ -129,6 +129,13 @@ export default function SolarSystemPage() {
       const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
 
       const container = containerRef.current;
+      
+      // Ensure container has dimensions
+      if (!container.clientWidth || !container.clientHeight) {
+        console.error('Container has no dimensions');
+        return;
+      }
+      
       const width = container.clientWidth;
       const height = container.clientHeight;
 
@@ -144,7 +151,7 @@ export default function SolarSystemPage() {
       // Renderer with enhanced settings
       renderer = new THREE.WebGLRenderer({ 
         antialias: true,
-        alpha: true 
+        alpha: false 
       });
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -167,12 +174,10 @@ export default function SolarSystemPage() {
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
       scene.add(ambientLight);
 
-      // Create an enhanced Sun
+      // Create an enhanced Sun with proper material
       const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
       const sunMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0xFDB813,
-        emissive: 0xFDB813,
-        emissiveIntensity: 1
+        color: 0xFDB813
       });
       sun = new THREE.Mesh(sunGeometry, sunMaterial);
       sun.castShadow = false;
@@ -490,8 +495,7 @@ export default function SolarSystemPage() {
         <div className="stage">
           <div 
             ref={containerRef} 
-            className="canvas-wrapper" 
-            style={{ background: "linear-gradient(to bottom, #000011, #000033)", position: "relative" }}
+            className="canvas-wrapper"
           />
 
           {/* Enhanced control instructions */}
