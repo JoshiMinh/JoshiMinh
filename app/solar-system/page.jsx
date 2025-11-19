@@ -548,7 +548,7 @@ export default function SolarSystemPage() {
           {/* Enhanced planet selector */}
           <div style={{
             position: "absolute",
-            top: 20,
+            top: 80,
             right: 20,
             background: "rgba(0, 0, 0, 0.85)",
             color: "white",

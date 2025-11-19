@@ -1,20 +1,29 @@
 .game-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000000;
   color: white;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
 }
 
 .topbar {
-  padding: 0.9rem 1.25rem;
-  background: rgba(0, 0, 0, 0.25);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .back-link {
@@ -32,7 +41,7 @@
 
 .topbar h1 {
   margin: 0;
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 700;
   background: linear-gradient(90deg, #fff, #f0f0f0);
   -webkit-background-clip: text;
@@ -41,29 +50,26 @@
 }
 
 .game-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  padding: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .stage {
   position: relative;
-  display: flex;
-  flex: 1;
-  min-height: 0;
   width: 100%;
+  height: 100%;
 }
 
 .canvas-wrapper {
-  position: relative;
-  flex: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  border-radius: 16px;
-  overflow: hidden;
-  background: linear-gradient(to bottom, #000011, #000033);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  height: 100%;
+  background: #000000;
 }
 
 .canvas-wrapper canvas {
@@ -125,15 +131,20 @@
 
 @media (max-width: 768px) {
   .topbar h1 {
-    font-size: 2rem;
+    font-size: 1.2rem;
   }
 
   .topbar {
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 0.75rem 1rem;
   }
 
   .topbar-actions {
     flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .tool-btn {
+    font-size: 0.85rem;
+    padding: 6px 10px;
   }
 }
