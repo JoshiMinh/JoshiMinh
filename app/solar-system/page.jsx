@@ -112,6 +112,17 @@ export default function SolarSystemPage() {
   const [showOrbits, setShowOrbits] = useState(true);
   const [cameraMode, setCameraMode] = useState('free'); // 'free' or 'follow'
   const sceneRef = useRef(null);
+  const timeSpeedRef = useRef(timeSpeed);
+  const isPausedRef = useRef(isPaused);
+  
+  // Keep refs in sync with state
+  useEffect(() => {
+    timeSpeedRef.current = timeSpeed;
+  }, [timeSpeed]);
+  
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return;
@@ -204,7 +215,7 @@ export default function SolarSystemPage() {
       const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000033, 0.3);
       scene.add(hemisphereLight);
 
-      // Enhanced starfield
+      // Enhanced starfield with reduced star count
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({ 
         color: 0xffffff, 
@@ -214,7 +225,7 @@ export default function SolarSystemPage() {
         opacity: 0.8
       });
       const starsVertices = [];
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 2000; i++) {
         const x = (Math.random() - 0.5) * 1500;
         const y = (Math.random() - 0.5) * 1500;
         const z = (Math.random() - 0.5) * 1500;
@@ -346,14 +357,14 @@ export default function SolarSystemPage() {
         }
 
         // Update planets with time speed
-        if (!isPaused) {
+        if (!isPausedRef.current) {
           planets.forEach(planet => {
             // Orbital motion
-            planet.angle += planet.data.speed * 0.00005 * timeSpeed;
+            planet.angle += planet.data.speed * 0.00005 * timeSpeedRef.current;
             planet.group.rotation.y = planet.angle;
             
             // Planetary rotation
-            planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeed;
+            planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
           });
         }
 
@@ -396,6 +407,7 @@ export default function SolarSystemPage() {
         sun,
         planets,
         orbitLines,
+        THREE,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.domElement.removeEventListener('click', onMouseClick);
@@ -429,7 +441,7 @@ export default function SolarSystemPage() {
         sceneRef.current.cleanup();
       }
     };
-  }, [isPaused, timeSpeed, cameraMode, selectedPlanet]);
+  }, [cameraMode, selectedPlanet]);
 
   // Update orbit visibility
   useEffect(() => {
@@ -439,6 +451,64 @@ export default function SolarSystemPage() {
       });
     }
   }, [showOrbits]);
+
+  // Keyboard controls for camera movement (WASD and Arrow keys)
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!sceneRef.current?.camera || !sceneRef.current?.controls || !sceneRef.current?.THREE) return;
+      
+      const { camera, controls, THREE } = sceneRef.current;
+      const moveSpeed = 5;
+      
+      // Get camera direction vectors
+      const forward = new THREE.Vector3();
+      const right = new THREE.Vector3();
+      
+      camera.getWorldDirection(forward);
+      forward.y = 0; // Keep movement on horizontal plane
+      forward.normalize();
+      
+      right.crossVectors(camera.up, forward).normalize();
+      
+      let moved = false;
+      
+      switch(event.key.toLowerCase()) {
+        case 'w':
+        case 'arrowup':
+          camera.position.addScaledVector(forward, -moveSpeed);
+          controls.target.addScaledVector(forward, -moveSpeed);
+          moved = true;
+          break;
+        case 's':
+        case 'arrowdown':
+          camera.position.addScaledVector(forward, moveSpeed);
+          controls.target.addScaledVector(forward, moveSpeed);
+          moved = true;
+          break;
+        case 'a':
+        case 'arrowleft':
+          camera.position.addScaledVector(right, -moveSpeed);
+          controls.target.addScaledVector(right, -moveSpeed);
+          moved = true;
+          break;
+        case 'd':
+        case 'arrowright':
+          camera.position.addScaledVector(right, moveSpeed);
+          controls.target.addScaledVector(right, moveSpeed);
+          moved = true;
+          break;
+      }
+      
+      if (moved) {
+        controls.update();
+        // Switch to free camera mode when using keyboard
+        setCameraMode('free');
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleCloseInfo = useCallback(() => {
     setShowInfo(false);
@@ -520,6 +590,7 @@ export default function SolarSystemPage() {
               <div>🖱️ Left drag - Rotate view</div>
               <div>🖱️ Right drag - Pan camera</div>
               <div>🔍 Scroll - Zoom in/out</div>
+              <div>⌨️ WASD/Arrows - Move camera</div>
               <div>👆 Click planet - View details</div>
             </div>
             
