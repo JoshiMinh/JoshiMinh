@@ -159,15 +159,15 @@ export default function SolarSystemPage() {
       camera.position.set(0, 50, 100);
       camera.lookAt(0, 0, 0);
 
-      // Renderer with enhanced settings
+      // Renderer optimized for 120fps
       renderer = new THREE.WebGLRenderer({ 
         antialias: true,
-        alpha: false 
+        alpha: false,
+        powerPreference: "high-performance"
       });
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.shadowMap.enabled = true;
-      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.shadowMap.enabled = false; // Disable shadows for better performance
       container.appendChild(renderer.domElement);
 
       // Enhanced controls
@@ -206,26 +206,23 @@ export default function SolarSystemPage() {
 
       // Point light from the sun
       const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
-      sunLight.castShadow = true;
-      sunLight.shadow.mapSize.width = 2048;
-      sunLight.shadow.mapSize.height = 2048;
       sun.add(sunLight);
 
       // Add more distant ambient glow
       const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x000033, 0.3);
       scene.add(hemisphereLight);
 
-      // Enhanced starfield with reduced star count
+      // Minimal starfield for cleaner look
       const starsGeometry = new THREE.BufferGeometry();
       const starsMaterial = new THREE.PointsMaterial({ 
         color: 0xffffff, 
-        size: 1.5,
+        size: 0.8,
         sizeAttenuation: true,
         transparent: true,
-        opacity: 0.8
+        opacity: 0.6
       });
       const starsVertices = [];
-      for (let i = 0; i < 2000; i++) {
+      for (let i = 0; i < 500; i++) {
         const x = (Math.random() - 0.5) * 1500;
         const y = (Math.random() - 0.5) * 1500;
         const z = (Math.random() - 0.5) * 1500;
@@ -269,8 +266,6 @@ export default function SolarSystemPage() {
           metalness: 0.2
         });
         const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-        planet.castShadow = true;
-        planet.receiveShadow = true;
         
         // Add subtle atmosphere glow for some planets
         if (['Earth', 'Venus', 'Neptune', 'Uranus'].includes(planetData.name)) {
@@ -320,6 +315,32 @@ export default function SolarSystemPage() {
         });
       });
 
+      // Create asteroid belt between Mars and Jupiter
+      const asteroidBeltGeometry = new THREE.BufferGeometry();
+      const asteroidPositions = [];
+      const asteroidBeltInnerRadius = 35; // Between Mars (22.8) and Jupiter (77.8)
+      const asteroidBeltOuterRadius = 65;
+      const asteroidCount = 1500;
+      
+      for (let i = 0; i < asteroidCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = asteroidBeltInnerRadius + Math.random() * (asteroidBeltOuterRadius - asteroidBeltInnerRadius);
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        const y = (Math.random() - 0.5) * 2; // Small vertical spread
+        asteroidPositions.push(x, y, z);
+      }
+      
+      asteroidBeltGeometry.setAttribute('position', new THREE.Float32BufferAttribute(asteroidPositions, 3));
+      const asteroidMaterial = new THREE.PointsMaterial({
+        color: 0x999999,
+        size: 0.3,
+        transparent: true,
+        opacity: 0.7
+      });
+      const asteroidBelt = new THREE.Points(asteroidBeltGeometry, asteroidMaterial);
+      scene.add(asteroidBelt);
+
       // Raycaster for planet clicking
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
@@ -368,7 +389,7 @@ export default function SolarSystemPage() {
           });
         }
 
-        // Camera follow mode
+        // Camera follow mode with smoother transitions
         if (cameraMode === 'follow' && selectedPlanet) {
           const planet = planets.find(p => p.data.name === selectedPlanet.name);
           if (planet) {
@@ -376,8 +397,13 @@ export default function SolarSystemPage() {
             planet.mesh.getWorldPosition(planetWorldPos);
             const offset = new THREE.Vector3(0, 10, 20);
             const targetPos = planetWorldPos.clone().add(offset);
-            camera.position.lerp(targetPos, 0.05);
-            camera.lookAt(planetWorldPos);
+            camera.position.lerp(targetPos, 0.02); // Smoother transition
+            
+            // Smooth camera rotation
+            const targetLookAt = planetWorldPos.clone();
+            const currentLookAt = new THREE.Vector3();
+            controls.target.lerp(targetLookAt, 0.02);
+            camera.lookAt(controls.target);
           }
         } else {
           controls.update();
@@ -475,14 +501,14 @@ export default function SolarSystemPage() {
       switch(event.key.toLowerCase()) {
         case 'w':
         case 'arrowup':
-          camera.position.addScaledVector(forward, -moveSpeed);
-          controls.target.addScaledVector(forward, -moveSpeed);
+          camera.position.addScaledVector(forward, moveSpeed);
+          controls.target.addScaledVector(forward, moveSpeed);
           moved = true;
           break;
         case 's':
         case 'arrowdown':
-          camera.position.addScaledVector(forward, moveSpeed);
-          controls.target.addScaledVector(forward, moveSpeed);
+          camera.position.addScaledVector(forward, -moveSpeed);
+          controls.target.addScaledVector(forward, -moveSpeed);
           moved = true;
           break;
         case 'a':
@@ -537,7 +563,7 @@ export default function SolarSystemPage() {
     <div className="game-container">
       <div className="topbar">
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/" className="back-link">← Home</Link>
+          <Link href="/" className="back-link" title="Back to Home">←</Link>
           <h1 style={{ fontSize: 24, margin: 0 }}>Solar System Simulator 3D</h1>
         </div>
         <div className="topbar-actions">
