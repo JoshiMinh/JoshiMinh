@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import '../styles/game-page.css';
+import './styles.css';
 
 export default function LivingRPSPage() {
   return (
