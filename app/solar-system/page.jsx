@@ -102,6 +102,34 @@ const PLANETS_DATA = [
   }
 ];
 
+// Dwarf planets and other celestial bodies
+const DWARF_PLANETS_DATA = [
+  {
+    name: "Pluto",
+    color: 0xC4A582,
+    size: 0.18,
+    distance: 590.6,
+    speed: 0.47,
+    rotationSpeed: -0.008,
+    info: "Former 9th planet, now classified as a dwarf planet. Has 5 known moons.",
+    realDistance: "5.906 billion km",
+    realSize: "2,377 km diameter",
+    isDwarf: true
+  },
+  {
+    name: "Ceres",
+    color: 0x8B8680,
+    size: 0.07,
+    distance: 41.4,
+    speed: 1.78,
+    rotationSpeed: 0.035,
+    info: "Largest object in the asteroid belt, classified as a dwarf planet.",
+    realDistance: "413.7 million km",
+    realSize: "940 km diameter",
+    isDwarf: true
+  }
+];
+
 // Main component
 export default function SolarSystemPage() {
   const containerRef = useRef(null);
@@ -111,9 +139,16 @@ export default function SolarSystemPage() {
   const [timeSpeed, setTimeSpeed] = useState(1);
   const [showOrbits, setShowOrbits] = useState(true);
   const [cameraMode, setCameraMode] = useState('free'); // 'free' or 'follow'
+  const [showDwarfPlanets, setShowDwarfPlanets] = useState(true);
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [comparePlanets, setComparePlanets] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stats, setStats] = useState({ fps: 0, objects: 0 });
   const sceneRef = useRef(null);
   const timeSpeedRef = useRef(timeSpeed);
   const isPausedRef = useRef(isPaused);
+  const fpsCounterRef = useRef({ frames: 0, lastTime: Date.now() });
   
   // Keep refs in sync with state
   useEffect(() => {
@@ -234,6 +269,16 @@ export default function SolarSystemPage() {
 
       // Create planets with enhanced materials
       PLANETS_DATA.forEach((planetData, index) => {
+        createPlanetWithOrbit(planetData, scene, planets, orbitLines, THREE);
+      });
+
+      // Create dwarf planets if enabled
+      DWARF_PLANETS_DATA.forEach((planetData) => {
+        createPlanetWithOrbit(planetData, scene, planets, orbitLines, THREE);
+      });
+
+      // Helper function to create planets
+      function createPlanetWithOrbit(planetData, scene, planets, orbitLines, THREE) {
         // Orbit line
         const orbitGeometry = new THREE.BufferGeometry();
         const orbitPoints = [];
@@ -248,13 +293,13 @@ export default function SolarSystemPage() {
         }
         orbitGeometry.setAttribute('position', new THREE.Float32BufferAttribute(orbitPoints, 3));
         const orbitMaterial = new THREE.LineBasicMaterial({ 
-          color: 0x444444, 
-          opacity: 0.4, 
+          color: planetData.isDwarf ? 0x666666 : 0x444444, 
+          opacity: planetData.isDwarf ? 0.3 : 0.4, 
           transparent: true 
         });
         const orbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
         scene.add(orbitLine);
-        orbitLines.push(orbitLine);
+        orbitLines.push({ line: orbitLine, isDwarf: planetData.isDwarf || false });
 
         // Planet with enhanced material
         const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
@@ -313,7 +358,7 @@ export default function SolarSystemPage() {
           material: planetMaterial,
           angle: Math.random() * Math.PI * 2  // Random starting position
         });
-      });
+      }
 
       // Create asteroid belt between Mars and Jupiter
       const asteroidBeltGeometry = new THREE.BufferGeometry();
@@ -371,6 +416,19 @@ export default function SolarSystemPage() {
       const animate = () => {
         animationId = requestAnimationFrame(animate);
         const delta = clock.getDelta();
+
+        // Update FPS counter
+        fpsCounterRef.current.frames++;
+        const now = Date.now();
+        if (now - fpsCounterRef.current.lastTime >= 1000) {
+          setStats(prev => ({ 
+            ...prev, 
+            fps: fpsCounterRef.current.frames,
+            objects: scene.children.length 
+          }));
+          fpsCounterRef.current.frames = 0;
+          fpsCounterRef.current.lastTime = now;
+        }
 
         // Rotate sun
         if (sun) {
@@ -472,15 +530,72 @@ export default function SolarSystemPage() {
   // Update orbit visibility
   useEffect(() => {
     if (sceneRef.current?.orbitLines) {
-      sceneRef.current.orbitLines.forEach(line => {
-        line.visible = showOrbits;
+      sceneRef.current.orbitLines.forEach(orbitItem => {
+        if (typeof orbitItem === 'object' && orbitItem.line) {
+          // Handle dwarf planet visibility
+          if (orbitItem.isDwarf) {
+            orbitItem.line.visible = showOrbits && showDwarfPlanets;
+          } else {
+            orbitItem.line.visible = showOrbits;
+          }
+        } else {
+          // Legacy support for old orbit line format
+          orbitItem.visible = showOrbits;
+        }
       });
     }
-  }, [showOrbits]);
+  }, [showOrbits, showDwarfPlanets]);
+
+  // Update dwarf planet visibility
+  useEffect(() => {
+    if (sceneRef.current?.planets) {
+      sceneRef.current.planets.forEach(planet => {
+        if (planet.data.isDwarf) {
+          planet.group.visible = showDwarfPlanets;
+        }
+      });
+    }
+  }, [showDwarfPlanets]);
 
   // Keyboard controls for camera movement (WASD and Arrow keys)
   useEffect(() => {
     const handleKeyDown = (event) => {
+      // Show keyboard help with '?'
+      if (event.key === '?' && !showKeyboardHelp) {
+        setShowKeyboardHelp(true);
+        return;
+      }
+
+      // ESC to close help or info
+      if (event.key === 'Escape') {
+        if (showKeyboardHelp) {
+          setShowKeyboardHelp(false);
+        } else if (showInfo) {
+          setShowInfo(false);
+        }
+        return;
+      }
+
+      // Space to toggle pause
+      if (event.key === ' ' && !event.target.closest('input, textarea')) {
+        event.preventDefault();
+        setIsPaused(prev => !prev);
+        return;
+      }
+
+      // 'O' to toggle orbits
+      if (event.key.toLowerCase() === 'o') {
+        setShowOrbits(prev => !prev);
+        return;
+      }
+
+      // 'S' to toggle stats (if not using for movement)
+      if (event.key.toLowerCase() === 's' && event.ctrlKey) {
+        event.preventDefault();
+        setShowStats(prev => !prev);
+        return;
+      }
+
       if (!sceneRef.current?.camera || !sceneRef.current?.controls || !sceneRef.current?.THREE) return;
       
       const { camera, controls, THREE } = sceneRef.current;
@@ -534,7 +649,7 @@ export default function SolarSystemPage() {
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [showKeyboardHelp, showInfo]);
 
   const handleCloseInfo = useCallback(() => {
     setShowInfo(false);
@@ -559,6 +674,35 @@ export default function SolarSystemPage() {
     setCameraMode('follow');
   }, []);
 
+  const toggleCompare = useCallback((planetData) => {
+    setComparePlanets(prev => {
+      const exists = prev.find(p => p.name === planetData.name);
+      if (exists) {
+        return prev.filter(p => p.name !== planetData.name);
+      } else if (prev.length < 3) {
+        return [...prev, planetData];
+      }
+      return prev;
+    });
+  }, []);
+
+  const takeScreenshot = useCallback(() => {
+    if (sceneRef.current?.renderer && sceneRef.current?.scene && sceneRef.current?.camera) {
+      const { renderer, scene, camera } = sceneRef.current;
+      renderer.render(scene, camera);
+      const dataURL = renderer.domElement.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `solar-system-${Date.now()}.png`;
+      link.href = dataURL;
+      link.click();
+    }
+  }, []);
+
+  const allCelestialBodies = [...PLANETS_DATA, ...DWARF_PLANETS_DATA];
+  const filteredBodies = allCelestialBodies.filter(body => 
+    body.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="game-container">
       <div className="topbar">
@@ -571,18 +715,50 @@ export default function SolarSystemPage() {
             className="tool-btn" 
             onClick={() => setIsPaused(!isPaused)}
             style={{ background: isPaused ? 'rgba(255, 100, 100, 0.2)' : 'rgba(100, 255, 100, 0.2)' }}
+            title="Space to toggle"
           >
             {isPaused ? '▶️ Play' : '⏸️ Pause'}
           </button>
-          <button className="tool-btn" onClick={resetCamera}>
+          <button className="tool-btn" onClick={resetCamera} title="Reset camera view">
             🔄 Reset View
           </button>
           <button 
             className="tool-btn" 
             onClick={() => setShowOrbits(!showOrbits)}
             style={{ opacity: showOrbits ? 1 : 0.5 }}
+            title="Press 'O' to toggle"
           >
             {showOrbits ? '🔵 Orbits' : '⚪ Orbits'}
+          </button>
+          <button 
+            className="tool-btn" 
+            onClick={() => setShowDwarfPlanets(!showDwarfPlanets)}
+            style={{ opacity: showDwarfPlanets ? 1 : 0.5 }}
+            title="Show/hide dwarf planets"
+          >
+            {showDwarfPlanets ? '🌑 Dwarfs' : '⚫ Dwarfs'}
+          </button>
+          <button 
+            className="tool-btn" 
+            onClick={() => setShowStats(!showStats)}
+            style={{ opacity: showStats ? 1 : 0.5 }}
+            title="Ctrl+S to toggle"
+          >
+            📊 Stats
+          </button>
+          <button 
+            className="tool-btn" 
+            onClick={takeScreenshot}
+            title="Save screenshot"
+          >
+            📸 Save
+          </button>
+          <button 
+            className="tool-btn" 
+            onClick={() => setShowKeyboardHelp(true)}
+            title="Press '?' for help"
+          >
+            ❓ Help
           </button>
         </div>
       </div>
@@ -652,54 +828,191 @@ export default function SolarSystemPage() {
             padding: "16px",
             borderRadius: "12px",
             maxWidth: "220px",
+            maxHeight: "calc(100vh - 200px)",
+            overflowY: "auto",
             zIndex: 10,
             backdropFilter: "blur(10px)",
             border: "1px solid rgba(255, 255, 255, 0.1)"
           }}>
             <div style={{ fontWeight: "bold", marginBottom: "12px", fontSize: "16px" }}>
-              🪐 Planets
+              🪐 Celestial Bodies
             </div>
+            
+            {/* Search input */}
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "6px 10px",
+                marginBottom: "10px",
+                background: "rgba(255, 255, 255, 0.1)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                borderRadius: "6px",
+                color: "white",
+                fontSize: "13px"
+              }}
+            />
+
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-              {PLANETS_DATA.map((planet) => (
-                <button
-                  key={planet.name}
-                  className="tool-btn"
-                  onClick={() => focusOnPlanet(planet)}
-                  style={{ 
-                    fontSize: "13px", 
-                    padding: "8px 12px",
-                    textAlign: "left",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    background: selectedPlanet?.name === planet.name && cameraMode === 'follow' 
-                      ? 'rgba(100, 150, 255, 0.3)' 
-                      : 'rgba(255, 255, 255, 0.1)',
-                    border: selectedPlanet?.name === planet.name && cameraMode === 'follow'
-                      ? '1px solid rgba(100, 150, 255, 0.5)'
-                      : '1px solid rgba(255, 255, 255, 0.2)'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'rgba(100, 150, 255, 0.3)';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!(selectedPlanet?.name === planet.name && cameraMode === 'follow')) {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                    }
-                  }}
-                >
-                  <div style={{
-                    width: "12px",
-                    height: "12px",
-                    borderRadius: "50%",
-                    background: colorToHex(planet.color),
-                    boxShadow: `0 0 8px ${colorToHex(planet.color)}`
-                  }}></div>
-                  {planet.name}
-                </button>
+              {filteredBodies.map((body) => (
+                <div key={body.name} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <button
+                    className="tool-btn"
+                    onClick={() => focusOnPlanet(body)}
+                    style={{ 
+                      fontSize: "13px", 
+                      padding: "8px 12px",
+                      textAlign: "left",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      flex: 1,
+                      background: selectedPlanet?.name === body.name && cameraMode === 'follow' 
+                        ? 'rgba(100, 150, 255, 0.3)' 
+                        : 'rgba(255, 255, 255, 0.1)',
+                      border: selectedPlanet?.name === body.name && cameraMode === 'follow'
+                        ? '1px solid rgba(100, 150, 255, 0.5)'
+                        : '1px solid rgba(255, 255, 255, 0.2)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(100, 150, 255, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!(selectedPlanet?.name === body.name && cameraMode === 'follow')) {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                      }
+                    }}
+                  >
+                    <div style={{
+                      width: "12px",
+                      height: "12px",
+                      borderRadius: "50%",
+                      background: colorToHex(body.color),
+                      boxShadow: `0 0 8px ${colorToHex(body.color)}`
+                    }}></div>
+                    {body.name}
+                    {body.isDwarf && <span style={{ fontSize: "10px", opacity: 0.6 }}>*</span>}
+                  </button>
+                  <button
+                    className="tool-btn"
+                    onClick={() => toggleCompare(body)}
+                    style={{
+                      fontSize: "11px",
+                      padding: "6px 8px",
+                      background: comparePlanets.find(p => p.name === body.name) 
+                        ? 'rgba(100, 200, 100, 0.3)' 
+                        : 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      minWidth: 'auto'
+                    }}
+                    title="Compare"
+                  >
+                    ⚖️
+                  </button>
+                </div>
               ))}
             </div>
+            
+            {filteredBodies.some(b => b.isDwarf) && (
+              <div style={{ fontSize: "11px", opacity: 0.5, marginTop: "8px" }}>
+                * Dwarf planet
+              </div>
+            )}
           </div>
+
+          {/* Stats panel */}
+          {showStats && (
+            <div style={{
+              position: "absolute",
+              top: 80,
+              left: 20,
+              background: "rgba(0, 0, 0, 0.85)",
+              color: "white",
+              padding: "16px",
+              borderRadius: "12px",
+              maxWidth: "200px",
+              zIndex: 10,
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{ fontWeight: "bold", marginBottom: "12px", fontSize: "16px" }}>
+                📊 Statistics
+              </div>
+              <div style={{ fontSize: "13px", lineHeight: "1.8" }}>
+                <div>FPS: <strong>{stats.fps}</strong></div>
+                <div>Objects: <strong>{stats.objects}</strong></div>
+                <div>Planets: <strong>{PLANETS_DATA.length}</strong></div>
+                <div>Dwarfs: <strong>{DWARF_PLANETS_DATA.length}</strong></div>
+                <div>Time: <strong>{timeSpeed}x</strong></div>
+              </div>
+            </div>
+          )}
+
+          {/* Planet comparison panel */}
+          {comparePlanets.length > 0 && (
+            <div style={{
+              position: "absolute",
+              bottom: 20,
+              right: 20,
+              background: "rgba(0, 0, 0, 0.9)",
+              color: "white",
+              padding: "16px",
+              borderRadius: "12px",
+              maxWidth: "500px",
+              zIndex: 10,
+              backdropFilter: "blur(10px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                <div style={{ fontWeight: "bold", fontSize: "16px" }}>
+                  ⚖️ Compare Planets
+                </div>
+                <button 
+                  className="tool-btn"
+                  onClick={() => setComparePlanets([])}
+                  style={{ fontSize: "11px", padding: "4px 8px" }}
+                >
+                  Clear
+                </button>
+              </div>
+              
+              <div style={{ display: "grid", gridTemplateColumns: `repeat(${comparePlanets.length}, 1fr)`, gap: "12px", fontSize: "12px" }}>
+                {comparePlanets.map((planet) => (
+                  <div key={planet.name} style={{ 
+                    padding: "8px", 
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(255, 255, 255, 0.1)"
+                  }}>
+                    <div style={{ 
+                      fontWeight: "bold", 
+                      marginBottom: "6px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}>
+                      <div style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        background: colorToHex(planet.color)
+                      }}></div>
+                      {planet.name}
+                    </div>
+                    <div style={{ opacity: 0.8, lineHeight: "1.6" }}>
+                      <div>Size: {planet.size.toFixed(2)}x</div>
+                      <div>Distance: {planet.distance.toFixed(1)}</div>
+                      <div>Speed: {planet.speed.toFixed(2)} km/s</div>
+                      <div style={{ fontSize: "10px", marginTop: "4px", opacity: 0.6 }}>{planet.realSize}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Enhanced planet info panel */}
           {showInfo && selectedPlanet && (
@@ -790,6 +1103,89 @@ export default function SolarSystemPage() {
                     ✕ Close
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Keyboard shortcuts help overlay */}
+          {showKeyboardHelp && (
+            <div className="help-overlay" onClick={() => setShowKeyboardHelp(false)}>
+              <div 
+                className="help-card" 
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  maxWidth: "600px",
+                  background: "rgba(15, 15, 25, 0.95)",
+                  backdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <h3 style={{ margin: 0, fontSize: "24px" }}>⌨️ Keyboard Shortcuts</h3>
+                  <button 
+                    className="tool-btn"
+                    onClick={() => setShowKeyboardHelp(false)}
+                    style={{ padding: "6px 12px" }}
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <div style={{ 
+                  display: "grid", 
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "16px",
+                  fontSize: "14px"
+                }}>
+                  <div>
+                    <h4 style={{ fontSize: "16px", marginBottom: "10px", color: "#4A90E2" }}>Camera Controls</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <div><kbd>W</kbd> / <kbd>↑</kbd> - Move forward</div>
+                      <div><kbd>S</kbd> / <kbd>↓</kbd> - Move backward</div>
+                      <div><kbd>A</kbd> / <kbd>←</kbd> - Move left</div>
+                      <div><kbd>D</kbd> / <kbd>→</kbd> - Move right</div>
+                      <div><kbd>Mouse drag</kbd> - Rotate view</div>
+                      <div><kbd>Scroll</kbd> - Zoom in/out</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 style={{ fontSize: "16px", marginBottom: "10px", color: "#4A90E2" }}>Controls</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <div><kbd>Space</kbd> - Pause/Play</div>
+                      <div><kbd>O</kbd> - Toggle orbits</div>
+                      <div><kbd>Ctrl</kbd>+<kbd>S</kbd> - Toggle stats</div>
+                      <div><kbd>?</kbd> - Show this help</div>
+                      <div><kbd>ESC</kbd> - Close panels</div>
+                      <div><kbd>Click planet</kbd> - View info</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ 
+                  marginTop: "20px", 
+                  paddingTop: "16px", 
+                  borderTop: "1px solid rgba(255,255,255,0.15)",
+                  fontSize: "13px",
+                  opacity: 0.8
+                }}>
+                  <h4 style={{ fontSize: "14px", marginBottom: "8px" }}>💡 Tips</h4>
+                  <ul style={{ margin: 0, paddingLeft: "20px", lineHeight: "1.8" }}>
+                    <li>Use the planet list to quickly focus on any celestial body</li>
+                    <li>Click the compare button (⚖️) to compare up to 3 planets</li>
+                    <li>Adjust time speed to see orbital motion more clearly</li>
+                    <li>Toggle dwarf planets to see Pluto and Ceres</li>
+                    <li>Take screenshots to save your favorite views</li>
+                  </ul>
+                </div>
+
+                <button 
+                  className="tool-btn" 
+                  onClick={() => setShowKeyboardHelp(false)}
+                  style={{ width: "100%", padding: "10px", marginTop: "16px" }}
+                >
+                  Got it!
+                </button>
               </div>
             </div>
           )}

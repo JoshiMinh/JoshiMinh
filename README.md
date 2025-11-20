@@ -38,14 +38,23 @@ Explore our solar system in an interactive 3D environment with realistic orbital
 
 - Open at: `/solar-system`
 - Features:
-  - 3D visualization of the Sun and all 8 planets
+  - 3D visualization of the Sun, 8 planets, and dwarf planets (Pluto & Ceres)
   - Realistic orbital paths and speeds (scaled for visibility)
-  - Interactive camera controls (rotate, pan, zoom)
+  - Interactive camera controls (rotate, pan, zoom, WASD movement)
   - Click on any planet to learn more about it
-  - Beautiful starfield background
+  - Search celestial bodies by name
+  - Compare up to 3 planets side-by-side
+  - Real-time statistics panel (FPS, object count)
+  - Beautiful starfield background with asteroid belt
   - Relative planet sizes and distances
+  - Screenshot/export feature
+  - Comprehensive keyboard shortcuts
 - Controls:
   - Left click + drag: rotate the view
   - Right click + drag: pan the camera
   - Scroll wheel: zoom in/out
+  - WASD/Arrow keys: move camera
+  - Space: pause/play simulation
+  - O: toggle orbit visibility
+  - ?: show keyboard shortcuts help
   - Click planets: view detailed information
