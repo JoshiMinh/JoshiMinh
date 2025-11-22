@@ -12,6 +12,7 @@
 
 html {
     scroll-behavior: smooth;
+    background-color: var(--body-bg) !important;
 }
 
 * {
@@ -21,8 +22,8 @@ html {
 body {
     margin: 0;
     font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--body-bg);
-    color: var(--text-dark);
+    background-color: var(--body-bg) !important;
+    color: var(--text-dark) !important;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
 }
