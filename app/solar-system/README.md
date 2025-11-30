@@ -12,6 +12,47 @@ An interactive 3D solar system visualization built with Three.js and React.
 - 📐 Multiple scale modes (Balanced, True Distance, True Size)
 - 🎮 Comprehensive keyboard and mouse controls
 
+## Project Structure
+
+The solar system module is organized into separate files for maintainability:
+
+```
+app/solar-system/
+├── page.jsx                    # Main component with Three.js scene
+├── styles.css                  # Styling for the solar system
+├── README.md                   # This documentation
+├── components/
+│   ├── index.js               # Component exports
+│   ├── TopBar.jsx             # Navigation and toolbar
+│   ├── ControlPanels.jsx      # Controls, scale mode, date, stats panels
+│   ├── CelestialBodiesPanel.jsx # Planet list and compare feature
+│   └── Modals.jsx             # Info modal and keyboard help modal
+├── data/
+│   ├── index.js               # Data exports
+│   └── celestialBodies.js     # Planet, dwarf planet, comet, and config data
+├── hooks/
+│   ├── index.js               # Hook exports
+│   └── useKeyboardControls.js # Keyboard shortcut handling
+├── utils/
+│   ├── index.js               # Utility exports
+│   └── helpers.js             # Helper functions (colorToHex, orbit calculations)
+└── doc/
+    └── page.jsx               # Documentation page
+```
+
+### File Descriptions
+
+| File | Lines | Description |
+|------|-------|-------------|
+| `page.jsx` | ~1870 | Main component with Three.js scene initialization and animation |
+| `data/celestialBodies.js` | ~247 | Planet data, texture config, scale modes |
+| `hooks/useKeyboardControls.js` | ~266 | Keyboard event handling hook |
+| `components/Modals.jsx` | ~248 | Planet info and keyboard help modals |
+| `components/ControlPanels.jsx` | ~205 | UI control panels |
+| `components/CelestialBodiesPanel.jsx` | ~185 | Planet list and comparison |
+| `components/TopBar.jsx` | ~97 | Top navigation bar |
+| `utils/helpers.js` | ~33 | Utility functions |
+
 ## Using Custom Textures
 
 The solar system simulator supports custom textures for planets, moons, rings, and the sun. Follow these steps to add realistic textures:
