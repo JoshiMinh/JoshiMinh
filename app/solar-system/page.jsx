@@ -10,6 +10,39 @@ const colorToHex = (color) => {
   return `#${color.toString(16).padStart(6, '0')}`;
 };
 
+// Texture paths configuration - set these to your texture image paths
+// Textures should be placed in the /public/textures/solar-system/ folder
+const TEXTURE_CONFIG = {
+  enabled: false, // Set to true to enable texture loading
+  basePath: '/textures/solar-system/',
+  sun: 'sun.jpg',
+  planets: {
+    Mercury: 'mercury.jpg',
+    Venus: 'venus.jpg',
+    Earth: 'earth.jpg',
+    Mars: 'mars.jpg',
+    Jupiter: 'jupiter.jpg',
+    Saturn: 'saturn.jpg',
+    Uranus: 'uranus.jpg',
+    Neptune: 'neptune.jpg',
+    Pluto: 'pluto.jpg',
+    Ceres: 'ceres.jpg',
+  },
+  rings: {
+    Saturn: 'saturn_ring.png',
+    Uranus: 'uranus_ring.png',
+  },
+  moons: {
+    Moon: 'moon.jpg',
+    Io: 'io.jpg',
+    Europa: 'europa.jpg',
+    Ganymede: 'ganymede.jpg',
+    Callisto: 'callisto.jpg',
+    Titan: 'titan.jpg',
+    Enceladus: 'enceladus.jpg',
+  }
+};
+
 // Enhanced planet data with more realistic properties including axial tilt and orbital eccentricity
 const PLANETS_DATA = [
   { 
@@ -364,14 +397,35 @@ export default function SolarSystemPage() {
       controls.rotateSpeed = 0.6;
       controls.zoomSpeed = 1.2;
 
+      // Texture loader for loading planet textures
+      const textureLoader = new THREE.TextureLoader();
+      
+      // Helper function to load texture or return null
+      const loadTexture = (path) => {
+        if (!TEXTURE_CONFIG.enabled) return null;
+        try {
+          return textureLoader.load(
+            TEXTURE_CONFIG.basePath + path,
+            undefined,
+            undefined,
+            (error) => console.warn(`Could not load texture: ${path}`, error.message || error)
+          );
+        } catch (e) {
+          console.warn(`Error loading texture: ${path}`, e.message || e);
+          return null;
+        }
+      };
+
       // Lighting - ambient light for overall visibility
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
       scene.add(ambientLight);
 
-      // Create an enhanced Sun with proper material
+      // Create an enhanced Sun with proper material (supports texture)
       const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
+      const sunTexture = loadTexture(TEXTURE_CONFIG.sun);
       const sunMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0xFDB813
+        color: 0xFDB813,
+        map: sunTexture
       });
       sun = new THREE.Mesh(sunGeometry, sunMaterial);
       sun.castShadow = false;
@@ -456,7 +510,7 @@ export default function SolarSystemPage() {
         };
       }
 
-      // Helper function to create planets with elliptical orbits, axial tilts, and moons
+      // Helper function to create planets with elliptical orbits, axial tilts, moons, and texture support
       function createPlanetWithOrbit(planetData, scene, planets, orbitLines, THREE) {
         const eccentricity = planetData.eccentricity || 0;
         
@@ -473,12 +527,17 @@ export default function SolarSystemPage() {
         scene.add(orbitLine);
         orbitLines.push({ line: orbitLine, isDwarf: planetData.isDwarf || false });
 
-        // Planet with enhanced material
+        // Load planet texture if available
+        const planetTexturePath = TEXTURE_CONFIG.planets[planetData.name];
+        const planetTexture = planetTexturePath ? loadTexture(planetTexturePath) : null;
+
+        // Planet with enhanced material (supports texture)
         const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
         const planetMaterial = new THREE.MeshStandardMaterial({ 
-          color: planetData.color,
-          emissive: planetData.color,
-          emissiveIntensity: 0.1,
+          color: planetTexture ? 0xffffff : planetData.color,
+          map: planetTexture ,
+          emissive: planetTexture ? 0x000000 : planetData.color,
+          emissiveIntensity: planetTexture ? 0 : 0.1,
           roughness: 0.7,
           metalness: 0.2
         });
@@ -501,15 +560,18 @@ export default function SolarSystemPage() {
           planet.add(glow);
         }
 
-        // Add Saturn's rings (tilted with planet)
+        // Add Saturn's rings (with texture support)
         if (planetData.name === 'Saturn') {
           const ringGeometry = new THREE.RingGeometry(
             planetData.size * 0.8,
             planetData.size * 1.4,
             64
           );
+          const ringTexturePath = TEXTURE_CONFIG.rings.Saturn;
+          const ringTexture = ringTexturePath ? loadTexture(ringTexturePath) : null;
           const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0xC9B58B,
+            color: ringTexture ? 0xffffff : 0xC9B58B,
+            map: ringTexture ,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0.7
@@ -519,15 +581,18 @@ export default function SolarSystemPage() {
           planet.add(ring);
         }
         
-        // Add Uranus rings (faint)
+        // Add Uranus rings (with texture support)
         if (planetData.name === 'Uranus') {
           const ringGeometry = new THREE.RingGeometry(
             planetData.size * 0.7,
             planetData.size * 1.0,
             64
           );
+          const ringTexturePath = TEXTURE_CONFIG.rings.Uranus;
+          const ringTexture = ringTexturePath ? loadTexture(ringTexturePath) : null;
           const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0x4FD0E7,
+            color: ringTexture ? 0xffffff : 0x4FD0E7,
+            map: ringTexture ,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0.3
@@ -537,16 +602,21 @@ export default function SolarSystemPage() {
           planet.add(ring);
         }
 
-        // Create moons for planets that have them
+        // Create moons for planets that have them (with texture support)
         const moons = [];
         if (planetData.moons && planetData.moons.length > 0) {
           planetData.moons.forEach(moonData => {
+            // Load moon texture if available
+            const moonTexturePath = TEXTURE_CONFIG.moons[moonData.name];
+            const moonTexture = moonTexturePath ? loadTexture(moonTexturePath) : null;
+            
             // Moon sphere
             const moonGeometry = new THREE.SphereGeometry(moonData.size * 0.3, 32, 32);
             const moonMaterial = new THREE.MeshStandardMaterial({
-              color: moonData.color,
-              emissive: moonData.color,
-              emissiveIntensity: 0.05,
+              color: moonTexture ? 0xffffff : moonData.color,
+              map: moonTexture ,
+              emissive: moonTexture ? 0x000000 : moonData.color,
+              emissiveIntensity: moonTexture ? 0 : 0.05,
               roughness: 0.8,
               metalness: 0.1
             });
