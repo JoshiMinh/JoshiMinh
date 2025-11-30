@@ -734,7 +734,8 @@ export default function SolarSystemPage() {
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
-      const onMouseClick = (event) => {
+      // Helper to get clicked planet
+      const getClickedPlanet = (event) => {
         const rect = renderer.domElement.getBoundingClientRect();
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -745,15 +746,43 @@ export default function SolarSystemPage() {
         );
 
         if (intersects.length > 0) {
-          const clickedPlanet = planets.find(p => p.mesh === intersects[0].object);
-          if (clickedPlanet) {
-            setSelectedPlanet(clickedPlanet.data);
-            setShowInfo(true);
-          }
+          return planets.find(p => p.mesh === intersects[0].object);
+        }
+        return null;
+      };
+
+      // Single click - show info panel
+      const onMouseClick = (event) => {
+        const clickedPlanet = getClickedPlanet(event);
+        if (clickedPlanet) {
+          setSelectedPlanet(clickedPlanet.data);
+          setShowInfo(true);
+        }
+      };
+
+      // Double click - instant focus/follow on planet
+      const onMouseDblClick = (event) => {
+        const clickedPlanet = getClickedPlanet(event);
+        if (clickedPlanet) {
+          setSelectedPlanet(clickedPlanet.data);
+          setCameraMode('follow');
+          
+          // Instantly move camera near the planet
+          const planetWorldPos = new THREE.Vector3();
+          clickedPlanet.mesh.getWorldPosition(planetWorldPos);
+          const distance = Math.max(clickedPlanet.data.size * 10, 15);
+          camera.position.set(
+            planetWorldPos.x + distance,
+            planetWorldPos.y + distance * 0.5,
+            planetWorldPos.z + distance
+          );
+          controls.target.copy(planetWorldPos);
+          controls.update();
         }
       };
 
       renderer.domElement.addEventListener('click', onMouseClick);
+      renderer.domElement.addEventListener('dblclick', onMouseDblClick);
 
       // Animation loop with improved performance
       const clock = new THREE.Clock();
@@ -912,6 +941,7 @@ export default function SolarSystemPage() {
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.domElement.removeEventListener('click', onMouseClick);
+          renderer.domElement.removeEventListener('dblclick', onMouseDblClick);
           if (animationId) cancelAnimationFrame(animationId);
           
           // Dispose of all geometries and materials
@@ -1002,8 +1032,11 @@ export default function SolarSystemPage() {
     }
   }, [showComets, showOrbits]);
 
-  // Keyboard controls for camera movement (WASD and Arrow keys)
+  // Enhanced keyboard controls for camera movement
   useEffect(() => {
+    // Track which keys are currently pressed for smooth movement
+    const keysPressed = new Set();
+    
     const handleKeyDown = (event) => {
       // Show keyboard help with '?'
       if (event.key === '?' && !showKeyboardHelp) {
@@ -1011,12 +1044,14 @@ export default function SolarSystemPage() {
         return;
       }
 
-      // ESC to close help or info
+      // ESC to close help or info, or exit follow mode
       if (event.key === 'Escape') {
         if (showKeyboardHelp) {
           setShowKeyboardHelp(false);
         } else if (showInfo) {
           setShowInfo(false);
+        } else if (cameraMode === 'follow') {
+          setCameraMode('free');
         }
         return;
       }
@@ -1029,26 +1064,138 @@ export default function SolarSystemPage() {
       }
 
       // 'O' to toggle orbits
-      if (event.key.toLowerCase() === 'o') {
+      if (event.key.toLowerCase() === 'o' && !event.ctrlKey && !event.altKey) {
         setShowOrbits(prev => !prev);
         return;
       }
 
-      // 'S' to toggle stats (if not using for movement)
+      // 'M' to toggle moons
+      if (event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.altKey) {
+        setShowMoons(prev => !prev);
+        return;
+      }
+
+      // 'C' to toggle comets
+      if (event.key.toLowerCase() === 'c' && !event.ctrlKey && !event.altKey) {
+        setShowComets(prev => !prev);
+        return;
+      }
+
+      // 'Ctrl+S' to toggle stats
       if (event.key.toLowerCase() === 's' && event.ctrlKey) {
         event.preventDefault();
         setShowStats(prev => !prev);
         return;
       }
 
+      // 'R' to reset camera view
+      if (event.key.toLowerCase() === 'r' && !event.ctrlKey && !event.altKey) {
+        if (sceneRef.current?.camera && sceneRef.current?.controls) {
+          sceneRef.current.camera.position.set(0, 50, 100);
+          sceneRef.current.controls.target.set(0, 0, 0);
+          sceneRef.current.controls.update();
+          setCameraMode('free');
+          setSelectedPlanet(null);
+        }
+        return;
+      }
+
+      // 'F' to focus on currently selected planet
+      if (event.key.toLowerCase() === 'f' && selectedPlanet && !event.ctrlKey) {
+        setCameraMode('follow');
+        return;
+      }
+
+      // 'Home' or 'H' to focus on Sun
+      if (event.key === 'Home' || (event.key.toLowerCase() === 'h' && !event.ctrlKey)) {
+        if (sceneRef.current?.camera && sceneRef.current?.controls) {
+          sceneRef.current.camera.position.set(0, 30, 50);
+          sceneRef.current.controls.target.set(0, 0, 0);
+          sceneRef.current.controls.update();
+          setCameraMode('free');
+          setSelectedPlanet(null);
+        }
+        return;
+      }
+
+      // Number keys 1-8 for quick planet selection
+      const allBodies = [...PLANETS_DATA, ...DWARF_PLANETS_DATA];
+      if (event.key >= '1' && event.key <= '9' && !event.ctrlKey && !event.altKey) {
+        const planetIndex = parseInt(event.key) - 1;
+        if (planetIndex < allBodies.length) {
+          const planet = allBodies[planetIndex];
+          setSelectedPlanet(planet);
+          setCameraMode('follow');
+        }
+        return;
+      }
+
+      // '0' for Sun
+      if (event.key === '0' && !event.ctrlKey && !event.altKey) {
+        if (sceneRef.current?.camera && sceneRef.current?.controls) {
+          sceneRef.current.camera.position.set(0, 30, 50);
+          sceneRef.current.controls.target.set(0, 0, 0);
+          sceneRef.current.controls.update();
+          setCameraMode('free');
+          setSelectedPlanet(null);
+        }
+        return;
+      }
+
+      // '+' / '=' to increase time speed
+      if ((event.key === '+' || event.key === '=') && !event.ctrlKey) {
+        setTimeSpeed(prev => Math.min(10, prev + 0.5));
+        return;
+      }
+
+      // '-' to decrease time speed
+      if (event.key === '-' && !event.ctrlKey) {
+        setTimeSpeed(prev => Math.max(0.1, prev - 0.5));
+        return;
+      }
+
+      // '[' to go to previous planet
+      if (event.key === '[') {
+        if (selectedPlanet) {
+          const currentIndex = allBodies.findIndex(p => p.name === selectedPlanet.name);
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : allBodies.length - 1;
+          setSelectedPlanet(allBodies[prevIndex]);
+          setCameraMode('follow');
+        } else {
+          setSelectedPlanet(allBodies[allBodies.length - 1]);
+          setCameraMode('follow');
+        }
+        return;
+      }
+
+      // ']' to go to next planet
+      if (event.key === ']') {
+        if (selectedPlanet) {
+          const currentIndex = allBodies.findIndex(p => p.name === selectedPlanet.name);
+          const nextIndex = (currentIndex + 1) % allBodies.length;
+          setSelectedPlanet(allBodies[nextIndex]);
+          setCameraMode('follow');
+        } else {
+          setSelectedPlanet(allBodies[0]);
+          setCameraMode('follow');
+        }
+        return;
+      }
+
       if (!sceneRef.current?.camera || !sceneRef.current?.controls || !sceneRef.current?.THREE) return;
       
       const { camera, controls, THREE } = sceneRef.current;
-      const moveSpeed = 5;
+      
+      // Calculate move speed with modifiers
+      // Shift = faster (3x), Alt = slower (0.3x)
+      let moveSpeed = 5;
+      if (event.shiftKey) moveSpeed *= 3;
+      if (event.altKey) moveSpeed *= 0.3;
       
       // Get camera direction vectors
       const forward = new THREE.Vector3();
       const right = new THREE.Vector3();
+      const up = new THREE.Vector3(0, 1, 0);
       
       camera.getWorldDirection(forward);
       forward.y = 0; // Keep movement on horizontal plane
@@ -1060,41 +1207,81 @@ export default function SolarSystemPage() {
       
       switch(event.key.toLowerCase()) {
         case 'w':
-        case 'arrowup':
           camera.position.addScaledVector(forward, moveSpeed);
           controls.target.addScaledVector(forward, moveSpeed);
           moved = true;
           break;
         case 's':
-        case 'arrowdown':
-          camera.position.addScaledVector(forward, -moveSpeed);
-          controls.target.addScaledVector(forward, -moveSpeed);
-          moved = true;
+          if (!event.ctrlKey) {
+            camera.position.addScaledVector(forward, -moveSpeed);
+            controls.target.addScaledVector(forward, -moveSpeed);
+            moved = true;
+          }
           break;
         case 'a':
-        case 'arrowleft':
           camera.position.addScaledVector(right, -moveSpeed);
           controls.target.addScaledVector(right, -moveSpeed);
           moved = true;
           break;
         case 'd':
+          camera.position.addScaledVector(right, moveSpeed);
+          controls.target.addScaledVector(right, moveSpeed);
+          moved = true;
+          break;
+        case 'arrowup':
+          camera.position.addScaledVector(forward, moveSpeed);
+          controls.target.addScaledVector(forward, moveSpeed);
+          moved = true;
+          break;
+        case 'arrowdown':
+          camera.position.addScaledVector(forward, -moveSpeed);
+          controls.target.addScaledVector(forward, -moveSpeed);
+          moved = true;
+          break;
+        case 'arrowleft':
+          camera.position.addScaledVector(right, -moveSpeed);
+          controls.target.addScaledVector(right, -moveSpeed);
+          moved = true;
+          break;
         case 'arrowright':
           camera.position.addScaledVector(right, moveSpeed);
           controls.target.addScaledVector(right, moveSpeed);
+          moved = true;
+          break;
+        // Q/E for vertical movement
+        case 'q':
+          camera.position.addScaledVector(up, -moveSpeed);
+          controls.target.addScaledVector(up, -moveSpeed);
+          moved = true;
+          break;
+        case 'e':
+          camera.position.addScaledVector(up, moveSpeed);
+          controls.target.addScaledVector(up, moveSpeed);
+          moved = true;
+          break;
+        // Page Up/Down for vertical movement
+        case 'pageup':
+          camera.position.addScaledVector(up, moveSpeed * 2);
+          controls.target.addScaledVector(up, moveSpeed * 2);
+          moved = true;
+          break;
+        case 'pagedown':
+          camera.position.addScaledVector(up, -moveSpeed * 2);
+          controls.target.addScaledVector(up, -moveSpeed * 2);
           moved = true;
           break;
       }
       
       if (moved) {
         controls.update();
-        // Switch to free camera mode when using keyboard
+        // Switch to free camera mode when using keyboard movement
         setCameraMode('free');
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showKeyboardHelp, showInfo]);
+  }, [showKeyboardHelp, showInfo, cameraMode, selectedPlanet]);
 
   const handleCloseInfo = useCallback(() => {
     setShowInfo(false);
@@ -1326,7 +1513,7 @@ export default function SolarSystemPage() {
             color: "white",
             padding: "16px 20px",
             borderRadius: "12px",
-            fontSize: "14px",
+            fontSize: "13px",
             maxWidth: "320px",
             zIndex: 10,
             backdropFilter: "blur(10px)",
@@ -1335,12 +1522,14 @@ export default function SolarSystemPage() {
             <div style={{ fontWeight: "bold", marginBottom: "12px", fontSize: "16px" }}>
               🎮 Controls
             </div>
-            <div style={{ lineHeight: "1.8" }}>
+            <div style={{ lineHeight: "1.7" }}>
               <div>🖱️ Left drag - Rotate view</div>
               <div>🖱️ Right drag - Pan camera</div>
               <div>🔍 Scroll - Zoom in/out</div>
-              <div>⌨️ WASD/Arrows - Move camera</div>
-              <div>👆 Click planet - View details</div>
+              <div>⌨️ WASD/QE - Move camera</div>
+              <div>⚡ Shift/Alt - Speed modifiers</div>
+              <div>👆 Click - Info | Double-click - Focus</div>
+              <div>🔢 1-8 - Quick planet select</div>
             </div>
             
             <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.2)" }}>
@@ -1356,13 +1545,33 @@ export default function SolarSystemPage() {
                 <span style={{ minWidth: "40px", textAlign: "center" }}>{timeSpeed}x</span>
                 <button 
                   className="tool-btn" 
-                  onClick={() => setTimeSpeed(Math.min(5, timeSpeed + 0.5))}
+                  onClick={() => setTimeSpeed(Math.min(10, timeSpeed + 0.5))}
                   style={{ padding: "4px 8px", fontSize: "12px" }}
                 >
                   +
                 </button>
               </div>
             </div>
+            
+            {cameraMode === 'follow' && selectedPlanet && (
+              <div style={{ 
+                marginTop: "12px", 
+                paddingTop: "12px", 
+                borderTop: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(100, 150, 255, 0.1)",
+                padding: "10px",
+                borderRadius: "8px",
+                marginLeft: "-10px",
+                marginRight: "-10px"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                  <span style={{ fontSize: "14px" }}>📹 Following: <strong>{selectedPlanet.name}</strong></span>
+                </div>
+                <div style={{ fontSize: "11px", opacity: 0.7 }}>
+                  Press ESC to exit follow mode
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Enhanced planet selector */}
@@ -1678,14 +1887,16 @@ export default function SolarSystemPage() {
                 className="help-card" 
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  maxWidth: "600px",
+                  maxWidth: "750px",
                   background: "rgba(15, 15, 25, 0.95)",
                   backdropFilter: "blur(20px)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)"
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  maxHeight: "85vh",
+                  overflowY: "auto"
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                  <h3 style={{ margin: 0, fontSize: "24px" }}>⌨️ Keyboard Shortcuts</h3>
+                  <h3 style={{ margin: 0, fontSize: "24px" }}>⌨️ Keyboard Shortcuts & Controls</h3>
                   <button 
                     className="tool-btn"
                     onClick={() => setShowKeyboardHelp(false)}
@@ -1697,31 +1908,70 @@ export default function SolarSystemPage() {
                 
                 <div style={{ 
                   display: "grid", 
-                  gridTemplateColumns: "1fr 1fr",
+                  gridTemplateColumns: "1fr 1fr 1fr",
                   gap: "16px",
-                  fontSize: "14px"
+                  fontSize: "13px"
                 }}>
                   <div>
-                    <h4 style={{ fontSize: "16px", marginBottom: "10px", color: "#4A90E2" }}>Camera Controls</h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <h4 style={{ fontSize: "15px", marginBottom: "10px", color: "#4A90E2" }}>🎮 Camera Movement</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>W</kbd> / <kbd>↑</kbd> - Move forward</div>
                       <div><kbd>S</kbd> / <kbd>↓</kbd> - Move backward</div>
                       <div><kbd>A</kbd> / <kbd>←</kbd> - Move left</div>
                       <div><kbd>D</kbd> / <kbd>→</kbd> - Move right</div>
-                      <div><kbd>Mouse drag</kbd> - Rotate view</div>
-                      <div><kbd>Scroll</kbd> - Zoom in/out</div>
+                      <div><kbd>Q</kbd> - Move down</div>
+                      <div><kbd>E</kbd> - Move up</div>
+                      <div><kbd>PgUp</kbd> / <kbd>PgDn</kbd> - Fast vertical</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>⚡ Speed Modifiers</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div><kbd>Shift</kbd> + move - 3x faster</div>
+                      <div><kbd>Alt</kbd> + move - 3x slower</div>
                     </div>
                   </div>
 
                   <div>
-                    <h4 style={{ fontSize: "16px", marginBottom: "10px", color: "#4A90E2" }}>Controls</h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <h4 style={{ fontSize: "15px", marginBottom: "10px", color: "#4A90E2" }}>🖱️ Mouse Controls</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div>Left drag - Rotate view</div>
+                      <div>Right drag - Pan camera</div>
+                      <div>Scroll - Zoom in/out</div>
+                      <div>Click planet - View info</div>
+                      <div>Double-click - Instant focus</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>🎯 Quick Navigation</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div><kbd>1</kbd>-<kbd>8</kbd> - Jump to planet</div>
+                      <div><kbd>9</kbd>-<kbd>0</kbd> - Dwarf planets</div>
+                      <div><kbd>H</kbd> / <kbd>Home</kbd> - Focus Sun</div>
+                      <div><kbd>[</kbd> / <kbd>]</kbd> - Prev/Next planet</div>
+                      <div><kbd>F</kbd> - Follow selected</div>
+                      <div><kbd>R</kbd> - Reset camera</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 style={{ fontSize: "15px", marginBottom: "10px", color: "#4A90E2" }}>⏱️ Simulation</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>Space</kbd> - Pause/Play</div>
+                      <div><kbd>+</kbd> / <kbd>=</kbd> - Speed up time</div>
+                      <div><kbd>-</kbd> - Slow down time</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>👁️ Display Toggle</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>O</kbd> - Toggle orbits</div>
-                      <div><kbd>Ctrl</kbd>+<kbd>S</kbd> - Toggle stats</div>
+                      <div><kbd>M</kbd> - Toggle moons</div>
+                      <div><kbd>C</kbd> - Toggle comets</div>
+                      <div><kbd>Ctrl</kbd>+<kbd>S</kbd> - Stats panel</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>📋 Other</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>?</kbd> - Show this help</div>
-                      <div><kbd>ESC</kbd> - Close panels</div>
-                      <div><kbd>Click planet</kbd> - View info</div>
+                      <div><kbd>ESC</kbd> - Close/Exit follow</div>
                     </div>
                   </div>
                 </div>
@@ -1730,16 +1980,17 @@ export default function SolarSystemPage() {
                   marginTop: "20px", 
                   paddingTop: "16px", 
                   borderTop: "1px solid rgba(255,255,255,0.15)",
-                  fontSize: "13px",
+                  fontSize: "12px",
                   opacity: 0.8
                 }}>
                   <h4 style={{ fontSize: "14px", marginBottom: "8px" }}>💡 Tips</h4>
-                  <ul style={{ margin: 0, paddingLeft: "20px", lineHeight: "1.8" }}>
-                    <li>Use the planet list to quickly focus on any celestial body</li>
-                    <li>Click the compare button (⚖️) to compare up to 3 planets</li>
-                    <li>Adjust time speed to see orbital motion more clearly</li>
-                    <li>Toggle dwarf planets to see Pluto and Ceres</li>
-                    <li>Take screenshots to save your favorite views</li>
+                  <ul style={{ margin: 0, paddingLeft: "20px", lineHeight: "1.7" }}>
+                    <li>Double-click any planet for instant camera focus</li>
+                    <li>Use <kbd>[</kbd> and <kbd>]</kbd> to cycle through planets while exploring</li>
+                    <li>Hold <kbd>Shift</kbd> while moving for faster camera speed</li>
+                    <li>Press <kbd>ESC</kbd> to exit follow mode and return to free camera</li>
+                    <li>Use number keys <kbd>1</kbd>-<kbd>8</kbd> for quick planet access</li>
+                    <li>Click the compare button (⚖️) to compare up to 3 planets side by side</li>
                   </ul>
                 </div>
 
