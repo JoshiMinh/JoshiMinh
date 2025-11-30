@@ -1034,9 +1034,6 @@ export default function SolarSystemPage() {
 
   // Enhanced keyboard controls for camera movement
   useEffect(() => {
-    // Track which keys are currently pressed for smooth movement
-    const keysPressed = new Set();
-    
     const handleKeyDown = (event) => {
       // Show keyboard help with '?'
       if (event.key === '?' && !showKeyboardHelp) {
@@ -1118,7 +1115,7 @@ export default function SolarSystemPage() {
         return;
       }
 
-      // Number keys 1-8 for quick planet selection
+      // Number keys 1-9 for quick planet selection (1-8 for planets, 9 for Pluto)
       const allBodies = [...PLANETS_DATA, ...DWARF_PLANETS_DATA];
       if (event.key >= '1' && event.key <= '9' && !event.ctrlKey && !event.altKey) {
         const planetIndex = parseInt(event.key) - 1;
@@ -1943,8 +1940,8 @@ export default function SolarSystemPage() {
                     
                     <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>🎯 Quick Navigation</h4>
                     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      <div><kbd>1</kbd>-<kbd>8</kbd> - Jump to planet</div>
-                      <div><kbd>9</kbd>-<kbd>0</kbd> - Dwarf planets</div>
+                      <div><kbd>1</kbd>-<kbd>9</kbd> - Jump to planet/dwarf</div>
+                      <div><kbd>0</kbd> - Focus on Sun</div>
                       <div><kbd>H</kbd> / <kbd>Home</kbd> - Focus Sun</div>
                       <div><kbd>[</kbd> / <kbd>]</kbd> - Prev/Next planet</div>
                       <div><kbd>F</kbd> - Follow selected</div>
