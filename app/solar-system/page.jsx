@@ -861,25 +861,27 @@ export default function SolarSystemPage() {
           });
         }
 
-        // Camera follow mode with smoother transitions
+        // Camera follow mode - track planet while allowing free camera control
         if (cameraMode === 'follow' && selectedPlanet) {
           const planet = planets.find(p => p.data.name === selectedPlanet.name);
           if (planet) {
             const planetWorldPos = new THREE.Vector3();
             planet.mesh.getWorldPosition(planetWorldPos);
-            const offset = new THREE.Vector3(0, 10, 20);
-            const targetPos = planetWorldPos.clone().add(offset);
-            camera.position.lerp(targetPos, 0.02); // Smoother transition
             
-            // Smooth camera rotation
-            const targetLookAt = planetWorldPos.clone();
-            const currentLookAt = new THREE.Vector3();
-            controls.target.lerp(targetLookAt, 0.02);
-            camera.lookAt(controls.target);
+            // Calculate the offset between current camera and current target
+            const cameraOffset = camera.position.clone().sub(controls.target);
+            
+            // Smoothly move the controls target to the planet position
+            controls.target.lerp(planetWorldPos, 0.05);
+            
+            // Move camera by the same amount to maintain relative position
+            // This allows free orbiting around the planet
+            camera.position.copy(controls.target).add(cameraOffset);
           }
-        } else {
-          controls.update();
         }
+        
+        // Always update controls to allow free camera movement
+        controls.update();
 
         renderer.render(scene, camera);
       };
