@@ -119,6 +119,23 @@ export default function Home() {
           <p className="section__note">Links open in a new tab.</p>
         </section>
 
+        <section className="section section--games" id="games" aria-labelledby="games-heading">
+          <div className="section__intro">
+            <span className="pill pill--games">Games</span>
+            <h2 id="games-heading">Interactive playgrounds</h2>
+            <p>
+              Fun experiments and games built to explore creative coding, physics simulations, and interactive experiences.
+            </p>
+          </div>
+          <div className="card-grid card-grid--games" id="games-grid"></div>
+          <div className="section__actions">
+            <a className="button button--outline" href="/games">
+              <span>Show all games</span>
+              <i data-lucide="arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </section>
+
         <section className="section section--about" aria-labelledby="about-heading">
           <div className="about">
             <div className="about__text">

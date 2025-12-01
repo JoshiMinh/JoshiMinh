@@ -1,0 +1,38 @@
+[
+  {
+    "url": "/solar-system",
+    "title": "Solar System Simulator",
+    "description": "Interactive 3D solar system with realistic planet orbits, moons, comets, and more.",
+    "icon": "🪐"
+  },
+  {
+    "url": "/ipong-x",
+    "title": "iPong X",
+    "description": "A parody smartphone landing page with ridiculously overbuilt specs.",
+    "icon": "📱"
+  },
+  {
+    "url": "/ball-game",
+    "title": "Ball Game",
+    "description": "Create shapes and launch balls with elastic collisions in this physics sandbox.",
+    "icon": "🎱"
+  },
+  {
+    "url": "/conway",
+    "title": "Conway's Game of Life",
+    "description": "Classic cellular automaton simulation with interactive controls.",
+    "icon": "🧬"
+  },
+  {
+    "url": "/donut",
+    "title": "Donut",
+    "description": "Interactive donut experience - coming soon.",
+    "icon": "🍩"
+  },
+  {
+    "url": "/living-rps",
+    "title": "Living Rock Paper Scissors",
+    "description": "Rock Paper Scissors simulation - coming soon.",
+    "icon": "✊"
+  }
+]
