@@ -487,6 +487,24 @@ export default function ConwayGameOfLife() {
             🗑️
           </button>
           <div className="divider" />
+          <div className="speed-control">
+            <button 
+              className="speed-btn" 
+              onClick={() => setSpeed(s => Math.max(10, s - 20))}
+              title="Speed Up (decrease delay)"
+            >
+              −
+            </button>
+            <span className="speed-display">{speed}ms</span>
+            <button 
+              className="speed-btn" 
+              onClick={() => setSpeed(s => Math.min(500, s + 20))}
+              title="Slow Down (increase delay)"
+            >
+              +
+            </button>
+          </div>
+          <div className="divider" />
           <button className="icon-btn" onClick={() => setShowPatterns(true)} title="Patterns (P)">
             🧬
           </button>
@@ -506,46 +524,6 @@ export default function ConwayGameOfLife() {
           </button>
         </div>
       </div>
-
-      {/* Floating Speed Control */}
-      <div className="floating-speed">
-        <button 
-          className="speed-btn" 
-          onClick={() => setSpeed(s => Math.max(10, s - 20))}
-        >
-          −
-        </button>
-        <span className="speed-display">{speed}ms</span>
-        <button 
-          className="speed-btn" 
-          onClick={() => setSpeed(s => Math.min(500, s + 20))}
-        >
-          +
-        </button>
-      </div>
-
-      {/* Floating Controls Panel - Collapsible */}
-      <button 
-        className="floating-controls-toggle"
-        onClick={() => setShowControls(!showControls)}
-      >
-        {showControls ? '◀' : '▶'} Controls
-      </button>
-      
-      {showControls && (
-        <div className="floating-controls">
-          <h3>🎮 Quick Keys</h3>
-          <div className="control-list">
-            <div><kbd>Space</kbd> Play/Pause</div>
-            <div><kbd>S</kbd> Step</div>
-            <div><kbd>R</kbd> Random</div>
-            <div><kbd>C</kbd> Clear</div>
-            <div><kbd>P</kbd> Patterns</div>
-            <div><kbd>F</kbd> Fullscreen</div>
-            <div><kbd>H</kbd> Help</div>
-          </div>
-        </div>
-      )}
 
       {/* Settings Modal */}
       {showSettings && (
