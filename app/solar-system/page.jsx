@@ -4,227 +4,35 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import "./styles.css";
 
-// Utility function to convert hex color number to CSS hex string
-const colorToHex = (color) => {
-  if (typeof color !== 'number') return '#000000';
-  return `#${color.toString(16).padStart(6, '0')}`;
-};
+// Import data from separate module
+import { 
+  PLANETS_DATA, 
+  DWARF_PLANETS_DATA, 
+  COMETS_DATA, 
+  SCALE_MODES, 
+  TEXTURE_CONFIG,
+  PHYSICS_CONFIG
+} from './data';
 
-// Enhanced planet data with more realistic properties including axial tilt and orbital eccentricity
-const PLANETS_DATA = [
-  { 
-    name: "Mercury", 
-    color: 0xB8B8B8, 
-    size: 0.38, 
-    distance: 5.8, 
-    speed: 4.74,
-    rotationSpeed: 0.004,
-    axialTilt: 0.034, // 0.034 degrees - almost no tilt
-    eccentricity: 0.2056, // Most eccentric planet
-    info: "Smallest planet, closest to the Sun. Has extreme temperature variations.",
-    realDistance: "57.9 million km",
-    realSize: "4,879 km diameter"
-  },
-  { 
-    name: "Venus", 
-    color: 0xFFC649, 
-    size: 0.95, 
-    distance: 10.8, 
-    speed: 3.5,
-    rotationSpeed: -0.002,
-    axialTilt: 177.4, // 177.4 degrees - retrograde rotation
-    eccentricity: 0.0067, // Nearly circular
-    info: "Hottest planet with thick atmosphere. Rotates backwards at 177.4° tilt!",
-    realDistance: "108.2 million km",
-    realSize: "12,104 km diameter"
-  },
-  { 
-    name: "Earth", 
-    color: 0x4A90E2, 
-    size: 1, 
-    distance: 15, 
-    speed: 2.98,
-    rotationSpeed: 0.02,
-    axialTilt: 23.44, // 23.44 degrees - causes seasons
-    eccentricity: 0.0167,
-    info: "Our home planet with liquid water and abundant life. 23.5° tilt causes seasons.",
-    realDistance: "149.6 million km",
-    realSize: "12,742 km diameter",
-    moons: [
-      { name: "Moon", color: 0xAAAAAA, size: 0.27, distance: 1.5, speed: 12, info: "Earth's only natural satellite" }
-    ]
-  },
-  { 
-    name: "Mars", 
-    color: 0xCD5C5C, 
-    size: 0.53, 
-    distance: 22.8, 
-    speed: 2.41,
-    rotationSpeed: 0.018,
-    axialTilt: 25.19, // 25.19 degrees - similar to Earth
-    eccentricity: 0.0934,
-    info: "The Red Planet with polar ice caps and ancient river beds. Has 2 small moons.",
-    realDistance: "227.9 million km",
-    realSize: "6,779 km diameter",
-    moons: [
-      { name: "Phobos", color: 0x8B7355, size: 0.08, distance: 0.8, speed: 25, info: "Larger moon, will crash into Mars" },
-      { name: "Deimos", color: 0x9C8B6E, size: 0.05, distance: 1.2, speed: 18, info: "Smaller outer moon" }
-    ]
-  },
-  { 
-    name: "Jupiter", 
-    color: 0xDAA520, 
-    size: 2.8, 
-    distance: 77.8, 
-    speed: 1.31,
-    rotationSpeed: 0.04,
-    axialTilt: 3.13, // 3.13 degrees - minimal tilt
-    eccentricity: 0.0489,
-    info: "Largest planet with the Great Red Spot. Has 95 known moons including 4 Galilean moons.",
-    realDistance: "778.5 million km",
-    realSize: "139,820 km diameter",
-    moons: [
-      { name: "Io", color: 0xFFFF00, size: 0.29, distance: 3.5, speed: 15, info: "Most volcanically active body in solar system" },
-      { name: "Europa", color: 0xE8E8E8, size: 0.25, distance: 4.5, speed: 12, info: "Ice-covered ocean moon, potential for life" },
-      { name: "Ganymede", color: 0xA0A0A0, size: 0.41, distance: 5.5, speed: 9, info: "Largest moon in the solar system" },
-      { name: "Callisto", color: 0x888888, size: 0.38, distance: 6.5, speed: 7, info: "Most heavily cratered object in solar system" }
-    ]
-  },
-  { 
-    name: "Saturn", 
-    color: 0xF4E7C6, 
-    size: 2.3, 
-    distance: 143.4, 
-    speed: 0.97,
-    rotationSpeed: 0.038,
-    axialTilt: 26.73, // 26.73 degrees
-    eccentricity: 0.0565,
-    info: "Famous for its spectacular ring system. Has 146 known moons including Titan.",
-    realDistance: "1.434 billion km",
-    realSize: "116,460 km diameter",
-    moons: [
-      { name: "Titan", color: 0xD4A574, size: 0.40, distance: 4.5, speed: 8, info: "Only moon with a dense atmosphere" },
-      { name: "Enceladus", color: 0xFFFFFF, size: 0.12, distance: 3.0, speed: 14, info: "Active ice geysers, subsurface ocean" }
-    ]
-  },
-  { 
-    name: "Uranus", 
-    color: 0x4FD0E7, 
-    size: 1.6, 
-    distance: 287.1, 
-    speed: 0.68,
-    rotationSpeed: -0.03,
-    axialTilt: 97.77, // 97.77 degrees - rolls on its side!
-    eccentricity: 0.0457,
-    info: "Ice giant tilted on its side at 98°. Rotates nearly perpendicular to its orbit.",
-    realDistance: "2.871 billion km",
-    realSize: "50,724 km diameter"
-  },
-  { 
-    name: "Neptune", 
-    color: 0x4166F5, 
-    size: 1.5, 
-    distance: 450.4, 
-    speed: 0.54,
-    rotationSpeed: 0.032,
-    axialTilt: 28.32, // 28.32 degrees
-    eccentricity: 0.0113,
-    info: "Windiest planet with supersonic winds up to 2,100 km/h.",
-    realDistance: "4.495 billion km",
-    realSize: "49,244 km diameter"
-  }
-];
+// Import utility functions
+import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath } from './utils';
 
-// Dwarf planets and other celestial bodies
-const DWARF_PLANETS_DATA = [
-  {
-    name: "Pluto",
-    color: 0xC4A582,
-    size: 0.18,
-    distance: 590.6,
-    speed: 0.47,
-    rotationSpeed: -0.008,
-    axialTilt: 122.53, // 122.53 degrees
-    eccentricity: 0.2488, // Very eccentric orbit
-    info: "Former 9th planet, now classified as a dwarf planet. Has 5 known moons.",
-    realDistance: "5.906 billion km",
-    realSize: "2,377 km diameter",
-    isDwarf: true
-  },
-  {
-    name: "Ceres",
-    color: 0x8B8680,
-    size: 0.07,
-    distance: 41.4,
-    speed: 1.78,
-    rotationSpeed: 0.035,
-    axialTilt: 4.0, // ~4 degrees
-    eccentricity: 0.0758,
-    info: "Largest object in the asteroid belt, classified as a dwarf planet.",
-    realDistance: "413.7 million km",
-    realSize: "940 km diameter",
-    isDwarf: true
-  }
-];
+// Import UI components
+import { 
+  ControlsPanel, 
+  ScaleModePanel, 
+  DateDisplay, 
+  StatsPanel,
+  CelestialBodiesPanel,
+  ComparePanel,
+  PlanetInfoModal,
+  KeyboardHelpModal,
+  TopBar,
+  PhysicsPanel
+} from './components';
 
-// Comet data for procedural comet trails
-const COMETS_DATA = [
-  {
-    name: "Halley",
-    color: 0xCCFFFF,
-    size: 0.08,
-    perihelion: 8.8,     // Closest to sun (scaled)
-    aphelion: 350.6,     // Farthest from sun (scaled)
-    speed: 2.5,
-    inclination: 0.3,    // Orbital tilt
-    tailLength: 15,
-    info: "Most famous comet, visible every 75-79 years"
-  },
-  {
-    name: "Hale-Bopp",
-    color: 0xFFFFCC,
-    size: 0.12,
-    perihelion: 13.6,
-    aphelion: 520.0,
-    speed: 1.8,
-    inclination: 0.5,
-    tailLength: 20,
-    info: "Great Comet of 1997, visible for 18 months"
-  },
-  {
-    name: "Encke",
-    color: 0xE8E8FF,
-    size: 0.05,
-    perihelion: 5.1,
-    aphelion: 62.0,
-    speed: 4.2,
-    inclination: 0.2,
-    tailLength: 8,
-    info: "Shortest orbital period of any known comet (3.3 years)"
-  }
-];
-
-// Scale mode configurations
-const SCALE_MODES = {
-  balanced: {
-    name: "Balanced",
-    description: "Optimized for visibility",
-    sizeMultiplier: 1,
-    distanceMultiplier: 1
-  },
-  trueDistance: {
-    name: "True Distance",
-    description: "Accurate relative distances (planets appear tiny)",
-    sizeMultiplier: 0.3,
-    distanceMultiplier: 2.5
-  },
-  trueSize: {
-    name: "True Size", 
-    description: "Accurate relative sizes",
-    sizeMultiplier: 2.5,
-    distanceMultiplier: 0.8
-  }
-};
+// Import custom hooks
+import { useKeyboardControls } from './hooks';
 
 // Main component
 export default function SolarSystemPage() {
@@ -246,9 +54,14 @@ export default function SolarSystemPage() {
   const [showComets, setShowComets] = useState(true);
   const [simulationDate, setSimulationDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  // Physics state
+  const [simulationMode, setSimulationMode] = useState('kepler'); // 'kepler' or 'nbody'
+  const [gravityMultiplier, setGravityMultiplier] = useState(1.0);
   const sceneRef = useRef(null);
   const timeSpeedRef = useRef(timeSpeed);
   const isPausedRef = useRef(isPaused);
+  const simulationModeRef = useRef(simulationMode);
+  const gravityMultiplierRef = useRef(gravityMultiplier);
   const fpsCounterRef = useRef({ frames: 0, lastTime: Date.now() });
   
   // Keep refs in sync with state
@@ -259,6 +72,14 @@ export default function SolarSystemPage() {
   useEffect(() => {
     isPausedRef.current = isPaused;
   }, [isPaused]);
+
+  useEffect(() => {
+    simulationModeRef.current = simulationMode;
+  }, [simulationMode]);
+
+  useEffect(() => {
+    gravityMultiplierRef.current = gravityMultiplier;
+  }, [gravityMultiplier]);
 
   // Update simulation date based on time speed
   useEffect(() => {
@@ -364,14 +185,35 @@ export default function SolarSystemPage() {
       controls.rotateSpeed = 0.6;
       controls.zoomSpeed = 1.2;
 
+      // Texture loader for loading planet textures
+      const textureLoader = new THREE.TextureLoader();
+      
+      // Helper function to load texture or return null
+      const loadTexture = (path) => {
+        if (!TEXTURE_CONFIG.enabled) return null;
+        try {
+          return textureLoader.load(
+            TEXTURE_CONFIG.basePath + path,
+            undefined,
+            undefined,
+            (error) => console.warn(`Could not load texture: ${path}`, error.message || error)
+          );
+        } catch (e) {
+          console.warn(`Error loading texture: ${path}`, e.message || e);
+          return null;
+        }
+      };
+
       // Lighting - ambient light for overall visibility
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
       scene.add(ambientLight);
 
-      // Create an enhanced Sun with proper material
+      // Create an enhanced Sun with proper material (supports texture)
       const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
+      const sunTexture = loadTexture(TEXTURE_CONFIG.sun);
       const sunMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0xFDB813
+        color: 0xFDB813,
+        map: sunTexture
       });
       sun = new THREE.Mesh(sunGeometry, sunMaterial);
       sun.castShadow = false;
@@ -456,7 +298,7 @@ export default function SolarSystemPage() {
         };
       }
 
-      // Helper function to create planets with elliptical orbits, axial tilts, and moons
+      // Helper function to create planets with elliptical orbits, axial tilts, moons, and texture support
       function createPlanetWithOrbit(planetData, scene, planets, orbitLines, THREE) {
         const eccentricity = planetData.eccentricity || 0;
         
@@ -473,12 +315,17 @@ export default function SolarSystemPage() {
         scene.add(orbitLine);
         orbitLines.push({ line: orbitLine, isDwarf: planetData.isDwarf || false });
 
-        // Planet with enhanced material
+        // Load planet texture if available
+        const planetTexturePath = TEXTURE_CONFIG.planets[planetData.name];
+        const planetTexture = planetTexturePath ? loadTexture(planetTexturePath) : null;
+
+        // Planet with enhanced material (supports texture)
         const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
         const planetMaterial = new THREE.MeshStandardMaterial({ 
-          color: planetData.color,
-          emissive: planetData.color,
-          emissiveIntensity: 0.1,
+          color: planetTexture ? 0xffffff : planetData.color,
+          map: planetTexture ,
+          emissive: planetTexture ? 0x000000 : planetData.color,
+          emissiveIntensity: planetTexture ? 0 : 0.1,
           roughness: 0.7,
           metalness: 0.2
         });
@@ -501,15 +348,18 @@ export default function SolarSystemPage() {
           planet.add(glow);
         }
 
-        // Add Saturn's rings (tilted with planet)
+        // Add Saturn's rings (with texture support)
         if (planetData.name === 'Saturn') {
           const ringGeometry = new THREE.RingGeometry(
             planetData.size * 0.8,
             planetData.size * 1.4,
             64
           );
+          const ringTexturePath = TEXTURE_CONFIG.rings.Saturn;
+          const ringTexture = ringTexturePath ? loadTexture(ringTexturePath) : null;
           const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0xC9B58B,
+            color: ringTexture ? 0xffffff : 0xC9B58B,
+            map: ringTexture ,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0.7
@@ -519,15 +369,18 @@ export default function SolarSystemPage() {
           planet.add(ring);
         }
         
-        // Add Uranus rings (faint)
+        // Add Uranus rings (with texture support)
         if (planetData.name === 'Uranus') {
           const ringGeometry = new THREE.RingGeometry(
             planetData.size * 0.7,
             planetData.size * 1.0,
             64
           );
+          const ringTexturePath = TEXTURE_CONFIG.rings.Uranus;
+          const ringTexture = ringTexturePath ? loadTexture(ringTexturePath) : null;
           const ringMaterial = new THREE.MeshBasicMaterial({
-            color: 0x4FD0E7,
+            color: ringTexture ? 0xffffff : 0x4FD0E7,
+            map: ringTexture ,
             side: THREE.DoubleSide,
             transparent: true,
             opacity: 0.3
@@ -537,16 +390,21 @@ export default function SolarSystemPage() {
           planet.add(ring);
         }
 
-        // Create moons for planets that have them
+        // Create moons for planets that have them (with texture support)
         const moons = [];
         if (planetData.moons && planetData.moons.length > 0) {
           planetData.moons.forEach(moonData => {
+            // Load moon texture if available
+            const moonTexturePath = TEXTURE_CONFIG.moons[moonData.name];
+            const moonTexture = moonTexturePath ? loadTexture(moonTexturePath) : null;
+            
             // Moon sphere
             const moonGeometry = new THREE.SphereGeometry(moonData.size * 0.3, 32, 32);
             const moonMaterial = new THREE.MeshStandardMaterial({
-              color: moonData.color,
-              emissive: moonData.color,
-              emissiveIntensity: 0.05,
+              color: moonTexture ? 0xffffff : moonData.color,
+              map: moonTexture ,
+              emissive: moonTexture ? 0x000000 : moonData.color,
+              emissiveIntensity: moonTexture ? 0 : 0.05,
               roughness: 0.8,
               metalness: 0.1
             });
@@ -734,7 +592,8 @@ export default function SolarSystemPage() {
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
-      const onMouseClick = (event) => {
+      // Helper to get clicked planet
+      const getClickedPlanet = (event) => {
         const rect = renderer.domElement.getBoundingClientRect();
         mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -745,15 +604,43 @@ export default function SolarSystemPage() {
         );
 
         if (intersects.length > 0) {
-          const clickedPlanet = planets.find(p => p.mesh === intersects[0].object);
-          if (clickedPlanet) {
-            setSelectedPlanet(clickedPlanet.data);
-            setShowInfo(true);
-          }
+          return planets.find(p => p.mesh === intersects[0].object);
+        }
+        return null;
+      };
+
+      // Single click - show info panel
+      const onMouseClick = (event) => {
+        const clickedPlanet = getClickedPlanet(event);
+        if (clickedPlanet) {
+          setSelectedPlanet(clickedPlanet.data);
+          setShowInfo(true);
+        }
+      };
+
+      // Double click - instant focus/follow on planet
+      const onMouseDblClick = (event) => {
+        const clickedPlanet = getClickedPlanet(event);
+        if (clickedPlanet) {
+          setSelectedPlanet(clickedPlanet.data);
+          setCameraMode('follow');
+          
+          // Instantly move camera near the planet
+          const planetWorldPos = new THREE.Vector3();
+          clickedPlanet.mesh.getWorldPosition(planetWorldPos);
+          const distance = Math.max(clickedPlanet.data.size * 10, 15);
+          camera.position.set(
+            planetWorldPos.x + distance,
+            planetWorldPos.y + distance * 0.5,
+            planetWorldPos.z + distance
+          );
+          controls.target.copy(planetWorldPos);
+          controls.update();
         }
       };
 
       renderer.domElement.addEventListener('click', onMouseClick);
+      renderer.domElement.addEventListener('dblclick', onMouseDblClick);
 
       // Animation loop with improved performance
       const clock = new THREE.Clock();
@@ -779,41 +666,135 @@ export default function SolarSystemPage() {
           sun.rotation.y += 0.001;
         }
 
-        // Update planets with elliptical orbits and time speed
+        // Update planets based on simulation mode
         if (!isPausedRef.current) {
-          planets.forEach(planet => {
-            // Calculate orbital velocity based on Kepler's second law
-            // Faster near perihelion, slower near aphelion
-            const r = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity).r;
-            const velocityFactor = (planet.baseDistance / r); // Kepler's equal area law
+          const G = PHYSICS_CONFIG.G_SCALED * gravityMultiplierRef.current;
+          const sunMass = PHYSICS_CONFIG.SUN_MASS;
+          const dt = 0.016 * timeSpeedRef.current; // Time step
+
+          if (simulationModeRef.current === 'nbody') {
+            // N-Body simulation: Calculate gravitational forces between all bodies
             
-            // Update orbital angle
-            planet.angle += planet.data.speed * 0.00005 * timeSpeedRef.current * velocityFactor;
-            
-            // Calculate new position on elliptical orbit
-            const pos = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity);
-            planet.mesh.position.x = pos.x;
-            planet.mesh.position.z = pos.z;
-            
-            // Planetary rotation on tilted axis
-            planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
-            
-            // Update moons
-            if (planet.moons && planet.moons.length > 0) {
-              planet.moons.forEach(moon => {
-                moon.angle += moon.data.speed * 0.0005 * timeSpeedRef.current;
-                moon.mesh.position.x = Math.cos(moon.angle) * moon.data.distance;
-                moon.mesh.position.z = Math.sin(moon.angle) * moon.data.distance;
-                moon.mesh.rotation.y += 0.01 * timeSpeedRef.current;
+            // Reset accelerations
+            planets.forEach(planet => {
+              planet.ax = 0;
+              planet.ay = 0;
+              planet.az = 0;
+            });
+
+            // Calculate gravitational acceleration from the Sun for each planet
+            planets.forEach(planet => {
+              const px = planet.mesh.position.x;
+              const py = planet.mesh.position.y;
+              const pz = planet.mesh.position.z;
+              
+              // Distance to Sun (at origin)
+              const r = Math.sqrt(px * px + py * py + pz * pz);
+              if (r > 0.1) {
+                // Gravitational acceleration from Sun: a = G * M / r^2 (direction toward Sun)
+                const aTotal = G * sunMass / (r * r);
+                planet.ax -= (px / r) * aTotal;
+                planet.ay -= (py / r) * aTotal;
+                planet.az -= (pz / r) * aTotal;
+              }
+
+              // Calculate gravitational effects from other planets
+              planets.forEach(other => {
+                if (other !== planet) {
+                  const dx = other.mesh.position.x - px;
+                  const dy = other.mesh.position.y - py;
+                  const dz = other.mesh.position.z - pz;
+                  const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                  
+                  if (dist > 0.5) {
+                    const otherMass = other.data.mass || 1;
+                    // Apply planet-to-planet gravity scaling from config
+                    const aTotal = G * otherMass / (dist * dist) * PHYSICS_CONFIG.PLANET_GRAVITY_SCALE;
+                    planet.ax += (dx / dist) * aTotal;
+                    planet.ay += (dy / dist) * aTotal;
+                    planet.az += (dz / dist) * aTotal;
+                  }
+                }
               });
-            }
-          });
+            });
+
+            // Update velocities and positions using Velocity Verlet integration
+            planets.forEach(planet => {
+              // Initialize velocity if not set
+              if (planet.vx === undefined) {
+                // Calculate initial orbital velocity (perpendicular to radius)
+                const r = Math.sqrt(
+                  planet.mesh.position.x ** 2 + 
+                  planet.mesh.position.y ** 2 + 
+                  planet.mesh.position.z ** 2
+                );
+                // Apply initial velocity scaling from config for stable orbits
+                const orbitalSpeed = Math.sqrt(G * sunMass / r) * PHYSICS_CONFIG.INITIAL_VELOCITY_SCALE;
+                // Velocity perpendicular to position vector (in XZ plane)
+                planet.vx = -planet.mesh.position.z / r * orbitalSpeed;
+                planet.vy = 0;
+                planet.vz = planet.mesh.position.x / r * orbitalSpeed;
+              }
+
+              // Update velocity
+              planet.vx += planet.ax * dt;
+              planet.vy += planet.ay * dt;
+              planet.vz += planet.az * dt;
+
+              // Update position
+              planet.mesh.position.x += planet.vx * dt;
+              planet.mesh.position.y += planet.vy * dt;
+              planet.mesh.position.z += planet.vz * dt;
+
+              // Planetary rotation
+              planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
+
+              // Update moons (simple circular orbits relative to planet)
+              if (planet.moons && planet.moons.length > 0) {
+                planet.moons.forEach(moon => {
+                  moon.angle += moon.data.speed * 0.0005 * timeSpeedRef.current * gravityMultiplierRef.current;
+                  moon.mesh.position.x = Math.cos(moon.angle) * moon.data.distance;
+                  moon.mesh.position.z = Math.sin(moon.angle) * moon.data.distance;
+                  moon.mesh.rotation.y += 0.01 * timeSpeedRef.current;
+                });
+              }
+            });
+          } else {
+            // Kepler mode: Fixed elliptical orbits
+            planets.forEach(planet => {
+              // Calculate orbital velocity based on Kepler's second law
+              // Faster near perihelion, slower near aphelion
+              const r = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity).r;
+              const velocityFactor = (planet.baseDistance / r) * gravityMultiplierRef.current;
+              
+              // Update orbital angle
+              planet.angle += planet.data.speed * 0.00005 * timeSpeedRef.current * velocityFactor;
+              
+              // Calculate new position on elliptical orbit
+              const pos = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity);
+              planet.mesh.position.x = pos.x;
+              planet.mesh.position.z = pos.z;
+              
+              // Planetary rotation on tilted axis
+              planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
+              
+              // Update moons
+              if (planet.moons && planet.moons.length > 0) {
+                planet.moons.forEach(moon => {
+                  moon.angle += moon.data.speed * 0.0005 * timeSpeedRef.current * gravityMultiplierRef.current;
+                  moon.mesh.position.x = Math.cos(moon.angle) * moon.data.distance;
+                  moon.mesh.position.z = Math.sin(moon.angle) * moon.data.distance;
+                  moon.mesh.rotation.y += 0.01 * timeSpeedRef.current;
+                });
+              }
+            });
+          }
           
-          // Update comets with procedural tails
+          // Update comets with procedural tails (always use Kepler for comets)
           comets.forEach(comet => {
             // Calculate comet velocity (faster near perihelion)
             const cometPos = getEllipticalPosition(comet.angle, comet.semiMajorAxis, comet.eccentricity);
-            const velocityFactor = (comet.semiMajorAxis / cometPos.r);
+            const velocityFactor = (comet.semiMajorAxis / cometPos.r) * gravityMultiplierRef.current;
             
             // Update orbital angle
             comet.angle += comet.data.speed * 0.00008 * timeSpeedRef.current * velocityFactor;
@@ -861,25 +842,27 @@ export default function SolarSystemPage() {
           });
         }
 
-        // Camera follow mode with smoother transitions
+        // Camera follow mode - track planet while allowing free camera control
         if (cameraMode === 'follow' && selectedPlanet) {
           const planet = planets.find(p => p.data.name === selectedPlanet.name);
           if (planet) {
             const planetWorldPos = new THREE.Vector3();
             planet.mesh.getWorldPosition(planetWorldPos);
-            const offset = new THREE.Vector3(0, 10, 20);
-            const targetPos = planetWorldPos.clone().add(offset);
-            camera.position.lerp(targetPos, 0.02); // Smoother transition
             
-            // Smooth camera rotation
-            const targetLookAt = planetWorldPos.clone();
-            const currentLookAt = new THREE.Vector3();
-            controls.target.lerp(targetLookAt, 0.02);
-            camera.lookAt(controls.target);
+            // Calculate the offset between current camera and current target
+            const cameraOffset = camera.position.clone().sub(controls.target);
+            
+            // Smoothly move the controls target to the planet position
+            controls.target.lerp(planetWorldPos, 0.05);
+            
+            // Move camera by the same amount to maintain relative position
+            // This allows free orbiting around the planet
+            camera.position.copy(controls.target).add(cameraOffset);
           }
-        } else {
-          controls.update();
         }
+        
+        // Always update controls to allow free camera movement
+        controls.update();
 
         renderer.render(scene, camera);
       };
@@ -910,6 +893,7 @@ export default function SolarSystemPage() {
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.domElement.removeEventListener('click', onMouseClick);
+          renderer.domElement.removeEventListener('dblclick', onMouseDblClick);
           if (animationId) cancelAnimationFrame(animationId);
           
           // Dispose of all geometries and materials
@@ -1000,7 +984,7 @@ export default function SolarSystemPage() {
     }
   }, [showComets, showOrbits]);
 
-  // Keyboard controls for camera movement (WASD and Arrow keys)
+  // Enhanced keyboard controls for camera movement
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Show keyboard help with '?'
@@ -1009,12 +993,14 @@ export default function SolarSystemPage() {
         return;
       }
 
-      // ESC to close help or info
+      // ESC to close help or info, or exit follow mode
       if (event.key === 'Escape') {
         if (showKeyboardHelp) {
           setShowKeyboardHelp(false);
         } else if (showInfo) {
           setShowInfo(false);
+        } else if (cameraMode === 'follow') {
+          setCameraMode('free');
         }
         return;
       }
@@ -1027,26 +1013,138 @@ export default function SolarSystemPage() {
       }
 
       // 'O' to toggle orbits
-      if (event.key.toLowerCase() === 'o') {
+      if (event.key.toLowerCase() === 'o' && !event.ctrlKey && !event.altKey) {
         setShowOrbits(prev => !prev);
         return;
       }
 
-      // 'S' to toggle stats (if not using for movement)
+      // 'M' to toggle moons
+      if (event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.altKey) {
+        setShowMoons(prev => !prev);
+        return;
+      }
+
+      // 'C' to toggle comets
+      if (event.key.toLowerCase() === 'c' && !event.ctrlKey && !event.altKey) {
+        setShowComets(prev => !prev);
+        return;
+      }
+
+      // 'Ctrl+S' to toggle stats
       if (event.key.toLowerCase() === 's' && event.ctrlKey) {
         event.preventDefault();
         setShowStats(prev => !prev);
         return;
       }
 
+      // 'R' to reset camera view
+      if (event.key.toLowerCase() === 'r' && !event.ctrlKey && !event.altKey) {
+        if (sceneRef.current?.camera && sceneRef.current?.controls) {
+          sceneRef.current.camera.position.set(0, 50, 100);
+          sceneRef.current.controls.target.set(0, 0, 0);
+          sceneRef.current.controls.update();
+          setCameraMode('free');
+          setSelectedPlanet(null);
+        }
+        return;
+      }
+
+      // 'F' to focus on currently selected planet
+      if (event.key.toLowerCase() === 'f' && selectedPlanet && !event.ctrlKey) {
+        setCameraMode('follow');
+        return;
+      }
+
+      // 'Home' or 'H' to focus on Sun
+      if (event.key === 'Home' || (event.key.toLowerCase() === 'h' && !event.ctrlKey)) {
+        if (sceneRef.current?.camera && sceneRef.current?.controls) {
+          sceneRef.current.camera.position.set(0, 30, 50);
+          sceneRef.current.controls.target.set(0, 0, 0);
+          sceneRef.current.controls.update();
+          setCameraMode('free');
+          setSelectedPlanet(null);
+        }
+        return;
+      }
+
+      // Number keys 1-9 for quick planet selection (1-8 for planets, 9 for Pluto)
+      const allBodies = [...PLANETS_DATA, ...DWARF_PLANETS_DATA];
+      if (event.key >= '1' && event.key <= '9' && !event.ctrlKey && !event.altKey) {
+        const planetIndex = parseInt(event.key) - 1;
+        if (planetIndex < allBodies.length) {
+          const planet = allBodies[planetIndex];
+          setSelectedPlanet(planet);
+          setCameraMode('follow');
+        }
+        return;
+      }
+
+      // '0' for Sun
+      if (event.key === '0' && !event.ctrlKey && !event.altKey) {
+        if (sceneRef.current?.camera && sceneRef.current?.controls) {
+          sceneRef.current.camera.position.set(0, 30, 50);
+          sceneRef.current.controls.target.set(0, 0, 0);
+          sceneRef.current.controls.update();
+          setCameraMode('free');
+          setSelectedPlanet(null);
+        }
+        return;
+      }
+
+      // '+' / '=' to increase time speed
+      if ((event.key === '+' || event.key === '=') && !event.ctrlKey) {
+        setTimeSpeed(prev => Math.min(10, prev + 0.5));
+        return;
+      }
+
+      // '-' to decrease time speed
+      if (event.key === '-' && !event.ctrlKey) {
+        setTimeSpeed(prev => Math.max(0.1, prev - 0.5));
+        return;
+      }
+
+      // '[' to go to previous planet
+      if (event.key === '[') {
+        if (selectedPlanet) {
+          const currentIndex = allBodies.findIndex(p => p.name === selectedPlanet.name);
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : allBodies.length - 1;
+          setSelectedPlanet(allBodies[prevIndex]);
+          setCameraMode('follow');
+        } else {
+          setSelectedPlanet(allBodies[allBodies.length - 1]);
+          setCameraMode('follow');
+        }
+        return;
+      }
+
+      // ']' to go to next planet
+      if (event.key === ']') {
+        if (selectedPlanet) {
+          const currentIndex = allBodies.findIndex(p => p.name === selectedPlanet.name);
+          const nextIndex = (currentIndex + 1) % allBodies.length;
+          setSelectedPlanet(allBodies[nextIndex]);
+          setCameraMode('follow');
+        } else {
+          setSelectedPlanet(allBodies[0]);
+          setCameraMode('follow');
+        }
+        return;
+      }
+
       if (!sceneRef.current?.camera || !sceneRef.current?.controls || !sceneRef.current?.THREE) return;
       
       const { camera, controls, THREE } = sceneRef.current;
-      const moveSpeed = 5;
+      
+      // Calculate move speed with modifiers
+      // Shift = faster (3x), Alt = slower (0.3x)
+      let moveSpeed = 5;
+      if (event.shiftKey) moveSpeed *= 3;
+      if (event.altKey) moveSpeed *= 0.3;
       
       // Get camera direction vectors
       const forward = new THREE.Vector3();
       const right = new THREE.Vector3();
+      const up = new THREE.Vector3(0, 1, 0);
       
       camera.getWorldDirection(forward);
       forward.y = 0; // Keep movement on horizontal plane
@@ -1058,41 +1156,81 @@ export default function SolarSystemPage() {
       
       switch(event.key.toLowerCase()) {
         case 'w':
-        case 'arrowup':
           camera.position.addScaledVector(forward, moveSpeed);
           controls.target.addScaledVector(forward, moveSpeed);
           moved = true;
           break;
         case 's':
-        case 'arrowdown':
-          camera.position.addScaledVector(forward, -moveSpeed);
-          controls.target.addScaledVector(forward, -moveSpeed);
-          moved = true;
+          if (!event.ctrlKey) {
+            camera.position.addScaledVector(forward, -moveSpeed);
+            controls.target.addScaledVector(forward, -moveSpeed);
+            moved = true;
+          }
           break;
         case 'a':
-        case 'arrowleft':
           camera.position.addScaledVector(right, -moveSpeed);
           controls.target.addScaledVector(right, -moveSpeed);
           moved = true;
           break;
         case 'd':
+          camera.position.addScaledVector(right, moveSpeed);
+          controls.target.addScaledVector(right, moveSpeed);
+          moved = true;
+          break;
+        case 'arrowup':
+          camera.position.addScaledVector(forward, moveSpeed);
+          controls.target.addScaledVector(forward, moveSpeed);
+          moved = true;
+          break;
+        case 'arrowdown':
+          camera.position.addScaledVector(forward, -moveSpeed);
+          controls.target.addScaledVector(forward, -moveSpeed);
+          moved = true;
+          break;
+        case 'arrowleft':
+          camera.position.addScaledVector(right, -moveSpeed);
+          controls.target.addScaledVector(right, -moveSpeed);
+          moved = true;
+          break;
         case 'arrowright':
           camera.position.addScaledVector(right, moveSpeed);
           controls.target.addScaledVector(right, moveSpeed);
+          moved = true;
+          break;
+        // Q/E for vertical movement
+        case 'q':
+          camera.position.addScaledVector(up, -moveSpeed);
+          controls.target.addScaledVector(up, -moveSpeed);
+          moved = true;
+          break;
+        case 'e':
+          camera.position.addScaledVector(up, moveSpeed);
+          controls.target.addScaledVector(up, moveSpeed);
+          moved = true;
+          break;
+        // Page Up/Down for vertical movement
+        case 'pageup':
+          camera.position.addScaledVector(up, moveSpeed * 2);
+          controls.target.addScaledVector(up, moveSpeed * 2);
+          moved = true;
+          break;
+        case 'pagedown':
+          camera.position.addScaledVector(up, -moveSpeed * 2);
+          controls.target.addScaledVector(up, -moveSpeed * 2);
           moved = true;
           break;
       }
       
       if (moved) {
         controls.update();
-        // Switch to free camera mode when using keyboard
+        // Switch to free camera mode when using keyboard movement
         setCameraMode('free');
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showKeyboardHelp, showInfo]);
+  }, [showKeyboardHelp, showInfo, cameraMode, selectedPlanet]);
 
   const handleCloseInfo = useCallback(() => {
     setShowInfo(false);
@@ -1315,6 +1453,14 @@ export default function SolarSystemPage() {
             </div>
           </div>
 
+          {/* Physics Panel */}
+          <PhysicsPanel 
+            simulationMode={simulationMode}
+            setSimulationMode={setSimulationMode}
+            gravityMultiplier={gravityMultiplier}
+            setGravityMultiplier={setGravityMultiplier}
+          />
+
           {/* Enhanced control instructions */}
           <div style={{
             position: "absolute",
@@ -1324,7 +1470,7 @@ export default function SolarSystemPage() {
             color: "white",
             padding: "16px 20px",
             borderRadius: "12px",
-            fontSize: "14px",
+            fontSize: "13px",
             maxWidth: "320px",
             zIndex: 10,
             backdropFilter: "blur(10px)",
@@ -1333,12 +1479,14 @@ export default function SolarSystemPage() {
             <div style={{ fontWeight: "bold", marginBottom: "12px", fontSize: "16px" }}>
               🎮 Controls
             </div>
-            <div style={{ lineHeight: "1.8" }}>
+            <div style={{ lineHeight: "1.7" }}>
               <div>🖱️ Left drag - Rotate view</div>
               <div>🖱️ Right drag - Pan camera</div>
               <div>🔍 Scroll - Zoom in/out</div>
-              <div>⌨️ WASD/Arrows - Move camera</div>
-              <div>👆 Click planet - View details</div>
+              <div>⌨️ WASD/QE - Move camera</div>
+              <div>⚡ Shift/Alt - Speed modifiers</div>
+              <div>👆 Click - Info | Double-click - Focus</div>
+              <div>🔢 1-8 - Quick planet select</div>
             </div>
             
             <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.2)" }}>
@@ -1354,13 +1502,33 @@ export default function SolarSystemPage() {
                 <span style={{ minWidth: "40px", textAlign: "center" }}>{timeSpeed}x</span>
                 <button 
                   className="tool-btn" 
-                  onClick={() => setTimeSpeed(Math.min(5, timeSpeed + 0.5))}
+                  onClick={() => setTimeSpeed(Math.min(10, timeSpeed + 0.5))}
                   style={{ padding: "4px 8px", fontSize: "12px" }}
                 >
                   +
                 </button>
               </div>
             </div>
+            
+            {cameraMode === 'follow' && selectedPlanet && (
+              <div style={{ 
+                marginTop: "12px", 
+                paddingTop: "12px", 
+                borderTop: "1px solid rgba(255,255,255,0.2)",
+                background: "rgba(100, 150, 255, 0.1)",
+                padding: "10px",
+                borderRadius: "8px",
+                marginLeft: "-10px",
+                marginRight: "-10px"
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+                  <span style={{ fontSize: "14px" }}>📹 Following: <strong>{selectedPlanet.name}</strong></span>
+                </div>
+                <div style={{ fontSize: "11px", opacity: 0.7 }}>
+                  Press ESC to exit follow mode
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Enhanced planet selector */}
@@ -1676,14 +1844,16 @@ export default function SolarSystemPage() {
                 className="help-card" 
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                  maxWidth: "600px",
+                  maxWidth: "750px",
                   background: "rgba(15, 15, 25, 0.95)",
                   backdropFilter: "blur(20px)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)"
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  maxHeight: "85vh",
+                  overflowY: "auto"
                 }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                  <h3 style={{ margin: 0, fontSize: "24px" }}>⌨️ Keyboard Shortcuts</h3>
+                  <h3 style={{ margin: 0, fontSize: "24px" }}>⌨️ Keyboard Shortcuts & Controls</h3>
                   <button 
                     className="tool-btn"
                     onClick={() => setShowKeyboardHelp(false)}
@@ -1695,31 +1865,70 @@ export default function SolarSystemPage() {
                 
                 <div style={{ 
                   display: "grid", 
-                  gridTemplateColumns: "1fr 1fr",
+                  gridTemplateColumns: "1fr 1fr 1fr",
                   gap: "16px",
-                  fontSize: "14px"
+                  fontSize: "13px"
                 }}>
                   <div>
-                    <h4 style={{ fontSize: "16px", marginBottom: "10px", color: "#4A90E2" }}>Camera Controls</h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <h4 style={{ fontSize: "15px", marginBottom: "10px", color: "#4A90E2" }}>🎮 Camera Movement</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>W</kbd> / <kbd>↑</kbd> - Move forward</div>
                       <div><kbd>S</kbd> / <kbd>↓</kbd> - Move backward</div>
                       <div><kbd>A</kbd> / <kbd>←</kbd> - Move left</div>
                       <div><kbd>D</kbd> / <kbd>→</kbd> - Move right</div>
-                      <div><kbd>Mouse drag</kbd> - Rotate view</div>
-                      <div><kbd>Scroll</kbd> - Zoom in/out</div>
+                      <div><kbd>Q</kbd> - Move down</div>
+                      <div><kbd>E</kbd> - Move up</div>
+                      <div><kbd>PgUp</kbd> / <kbd>PgDn</kbd> - Fast vertical</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>⚡ Speed Modifiers</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div><kbd>Shift</kbd> + move - 3x faster</div>
+                      <div><kbd>Alt</kbd> + move - 3x slower</div>
                     </div>
                   </div>
 
                   <div>
-                    <h4 style={{ fontSize: "16px", marginBottom: "10px", color: "#4A90E2" }}>Controls</h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <h4 style={{ fontSize: "15px", marginBottom: "10px", color: "#4A90E2" }}>🖱️ Mouse Controls</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div>Left drag - Rotate view</div>
+                      <div>Right drag - Pan camera</div>
+                      <div>Scroll - Zoom in/out</div>
+                      <div>Click planet - View info</div>
+                      <div>Double-click - Instant focus</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>🎯 Quick Navigation</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div><kbd>1</kbd>-<kbd>9</kbd> - Jump to planet/dwarf</div>
+                      <div><kbd>0</kbd> - Focus on Sun</div>
+                      <div><kbd>H</kbd> / <kbd>Home</kbd> - Focus Sun</div>
+                      <div><kbd>[</kbd> / <kbd>]</kbd> - Prev/Next planet</div>
+                      <div><kbd>F</kbd> - Follow selected</div>
+                      <div><kbd>R</kbd> - Reset camera</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 style={{ fontSize: "15px", marginBottom: "10px", color: "#4A90E2" }}>⏱️ Simulation</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>Space</kbd> - Pause/Play</div>
+                      <div><kbd>+</kbd> / <kbd>=</kbd> - Speed up time</div>
+                      <div><kbd>-</kbd> - Slow down time</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>👁️ Display Toggle</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>O</kbd> - Toggle orbits</div>
-                      <div><kbd>Ctrl</kbd>+<kbd>S</kbd> - Toggle stats</div>
+                      <div><kbd>M</kbd> - Toggle moons</div>
+                      <div><kbd>C</kbd> - Toggle comets</div>
+                      <div><kbd>Ctrl</kbd>+<kbd>S</kbd> - Stats panel</div>
+                    </div>
+                    
+                    <h4 style={{ fontSize: "15px", marginTop: "16px", marginBottom: "10px", color: "#4A90E2" }}>📋 Other</h4>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                       <div><kbd>?</kbd> - Show this help</div>
-                      <div><kbd>ESC</kbd> - Close panels</div>
-                      <div><kbd>Click planet</kbd> - View info</div>
+                      <div><kbd>ESC</kbd> - Close/Exit follow</div>
                     </div>
                   </div>
                 </div>
@@ -1728,16 +1937,17 @@ export default function SolarSystemPage() {
                   marginTop: "20px", 
                   paddingTop: "16px", 
                   borderTop: "1px solid rgba(255,255,255,0.15)",
-                  fontSize: "13px",
+                  fontSize: "12px",
                   opacity: 0.8
                 }}>
                   <h4 style={{ fontSize: "14px", marginBottom: "8px" }}>💡 Tips</h4>
-                  <ul style={{ margin: 0, paddingLeft: "20px", lineHeight: "1.8" }}>
-                    <li>Use the planet list to quickly focus on any celestial body</li>
-                    <li>Click the compare button (⚖️) to compare up to 3 planets</li>
-                    <li>Adjust time speed to see orbital motion more clearly</li>
-                    <li>Toggle dwarf planets to see Pluto and Ceres</li>
-                    <li>Take screenshots to save your favorite views</li>
+                  <ul style={{ margin: 0, paddingLeft: "20px", lineHeight: "1.7" }}>
+                    <li>Double-click any planet for instant camera focus</li>
+                    <li>Use <kbd>[</kbd> and <kbd>]</kbd> to cycle through planets while exploring</li>
+                    <li>Hold <kbd>Shift</kbd> while moving for faster camera speed</li>
+                    <li>Press <kbd>ESC</kbd> to exit follow mode and return to free camera</li>
+                    <li>Use number keys <kbd>1</kbd>-<kbd>8</kbd> for quick planet access</li>
+                    <li>Click the compare button (⚖️) to compare up to 3 planets side by side</li>
                   </ul>
                 </div>
 

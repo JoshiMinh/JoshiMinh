@@ -12,7 +12,7 @@ All projects are individual routes under the root path:
 - `/ipong-x` - iPong X parody smartphone landing page (fully functional)
 - `/ball-game` - Ball Game (fully functional)
 - `/solar-system` - Solar System Simulator 3D (fully functional)
-- `/donut` - Donut interactive experience (placeholder, coming soon)
+- `/conway` - Conway's Game of Life (fully functional)
 - `/living-rps` - Living Rock Paper Scissors (placeholder, coming soon)
 - `/conway` - Conway's Game of Life (fully functional)
 
@@ -32,7 +32,7 @@ app/
 │   └── page.jsx
 ├── solar-system/
 │   └── page.jsx
-├── donut/
+├── conway/
 │   └── page.jsx
 ├── ipong-x/
 │   ├── page.jsx
@@ -66,7 +66,7 @@ Project assets are stored in the `public/archives` folder and can be referenced 
 - iPong X: `http://localhost:3000/ipong-x`
 - Ball Game: `http://localhost:3000/ball-game`
 - Solar System: `http://localhost:3000/solar-system`
-- Donut: `http://localhost:3000/donut`
+- Conway's Game of Life: `http://localhost:3000/conway`
 - Living RPS: `http://localhost:3000/living-rps`
 
 ## Converting Archives to Web Projects
