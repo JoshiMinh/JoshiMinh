@@ -550,6 +550,71 @@ function renderIdentitySnapshot(identityPoints, identityTags) {
   })
 }
 
+function createGameCard(game) {
+  if (!game || !game.url) {
+    console.warn("Skipped rendering game due to missing URL", game)
+    return null
+  }
+
+  const card = createElement("a", {
+    className: "game-card",
+    attrs: {
+      href: game.url,
+    },
+  })
+
+  const iconWrapper = createElement("span", {
+    className: "game-card__icon",
+    attrs: { "aria-hidden": "true" },
+  })
+  iconWrapper.textContent = game.icon || "🎮"
+
+  const textContainer = createElement("div", {
+    className: "game-card__text",
+  })
+
+  const title = createElement("h3", { text: game.title || "Untitled Game" })
+  const description = createElement("p", {
+    className: "game-card__description",
+    text: game.description || "An interactive experience.",
+  })
+  textContainer.append(title, description)
+
+  const cta = createElement("span", { className: "game-card__cta" })
+  cta.append("Play ")
+  cta.appendChild(
+    createElement("i", {
+      attrs: { "data-lucide": "arrow-right" },
+    })
+  )
+
+  card.append(iconWrapper, textContainer, cta)
+
+  return card
+}
+
+async function renderGames(gameSources) {
+  const grid = document.getElementById("games-grid")
+  if (!grid) {
+    return
+  }
+  grid.innerHTML = ""
+
+  const fragment = document.createDocumentFragment()
+
+  gameSources.forEach((game, index) => {
+    const card = createGameCard(game)
+    if (!card) {
+      return
+    }
+
+    applyEntrance(card, 0.2 + index * 0.1)
+    fragment.appendChild(card)
+  })
+
+  grid.appendChild(fragment)
+}
+
 async function fetchData() {
   const [
     heroHighlights,
@@ -557,6 +622,7 @@ async function fetchData() {
     identityTags,
     expertiseAreas,
     projectSources,
+    gameSources,
     coreValues,
     socialLinks,
     donationLinks,
@@ -566,6 +632,7 @@ async function fetchData() {
     fetch("./data/identity-tags.json").then((res) => res.json()),
     fetch("./data/expertise-areas.json").then((res) => res.json()),
     fetch("./data/project-sources.json").then((res) => res.json()),
+    fetch("./data/game-sources.json").then((res) => res.json()),
     fetch("./data/core-values.json").then((res) => res.json()),
     fetch("./data/social-links.json").then((res) => res.json()),
     fetch("./data/donation-links.json").then((res) => res.json()),
@@ -577,6 +644,7 @@ async function fetchData() {
     identityTags,
     expertiseAreas,
     projectSources,
+    gameSources,
     coreValues,
     socialLinks,
     donationLinks,
@@ -590,6 +658,7 @@ async function initPage() {
   renderIdentitySnapshot(data.identityPoints, data.identityTags)
   renderExpertise(data.expertiseAreas)
   await renderProjects(data.projectSources)
+  await renderGames(data.gameSources)
   renderSocialButtons(data.socialLinks)
   renderDonations(data.donationLinks)
   renderCoreValues(data.coreValues)

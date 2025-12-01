@@ -3,6 +3,9 @@
 ## Main Route
 - `/` - Main landing page with portfolio information
 
+## Games Route
+- `/games` - Games index page listing all interactive games and experiments
+
 ## Project Routes
 All projects are individual routes under the root path:
 
@@ -11,6 +14,7 @@ All projects are individual routes under the root path:
 - `/solar-system` - Solar System Simulator 3D (fully functional)
 - `/donut` - Donut interactive experience (placeholder, coming soon)
 - `/living-rps` - Living Rock Paper Scissors (placeholder, coming soon)
+- `/conway` - Conway's Game of Life (fully functional)
 
 ## Project Structure
 
@@ -21,6 +25,9 @@ app/
 ├── styles/
 │   ├── globals.css    # Global styles
 │   └── game-page.css  # Shared project page styles
+├── games/
+│   ├── page.jsx       # Games index page
+│   └── styles.css     # Games page styles
 ├── ball-game/
 │   └── page.jsx
 ├── solar-system/
@@ -31,7 +38,9 @@ app/
 │   ├── page.jsx
 │   ├── styles.css
 │   └── BootstrapClient.jsx
-└── living-rps/
+├── living-rps/
+│   └── page.jsx
+└── conway/
     └── page.jsx
 ```
 
