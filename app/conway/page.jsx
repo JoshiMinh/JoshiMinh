@@ -492,7 +492,7 @@ export default function ConwayGameOfLife() {
             <button 
               className="speed-btn" 
               onClick={() => setSpeed(s => Math.max(10, s - 20))}
-              title="Faster"
+              title="Speed Up (decrease delay)"
             >
               −
             </button>
@@ -500,7 +500,7 @@ export default function ConwayGameOfLife() {
             <button 
               className="speed-btn" 
               onClick={() => setSpeed(s => Math.min(500, s + 20))}
-              title="Slower"
+              title="Slow Down (increase delay)"
             >
               +
             </button>
