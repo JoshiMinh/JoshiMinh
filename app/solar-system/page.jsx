@@ -10,7 +10,8 @@ import {
   DWARF_PLANETS_DATA, 
   COMETS_DATA, 
   SCALE_MODES, 
-  TEXTURE_CONFIG 
+  TEXTURE_CONFIG,
+  PHYSICS_CONFIG
 } from './data';
 
 // Import utility functions
@@ -26,7 +27,8 @@ import {
   ComparePanel,
   PlanetInfoModal,
   KeyboardHelpModal,
-  TopBar
+  TopBar,
+  PhysicsPanel
 } from './components';
 
 // Import custom hooks
@@ -52,9 +54,14 @@ export default function SolarSystemPage() {
   const [showComets, setShowComets] = useState(true);
   const [simulationDate, setSimulationDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  // Physics state
+  const [simulationMode, setSimulationMode] = useState('kepler'); // 'kepler' or 'nbody'
+  const [gravityMultiplier, setGravityMultiplier] = useState(1.0);
   const sceneRef = useRef(null);
   const timeSpeedRef = useRef(timeSpeed);
   const isPausedRef = useRef(isPaused);
+  const simulationModeRef = useRef(simulationMode);
+  const gravityMultiplierRef = useRef(gravityMultiplier);
   const fpsCounterRef = useRef({ frames: 0, lastTime: Date.now() });
   
   // Keep refs in sync with state
@@ -65,6 +72,14 @@ export default function SolarSystemPage() {
   useEffect(() => {
     isPausedRef.current = isPaused;
   }, [isPaused]);
+
+  useEffect(() => {
+    simulationModeRef.current = simulationMode;
+  }, [simulationMode]);
+
+  useEffect(() => {
+    gravityMultiplierRef.current = gravityMultiplier;
+  }, [gravityMultiplier]);
 
   // Update simulation date based on time speed
   useEffect(() => {
@@ -651,41 +666,135 @@ export default function SolarSystemPage() {
           sun.rotation.y += 0.001;
         }
 
-        // Update planets with elliptical orbits and time speed
+        // Update planets based on simulation mode
         if (!isPausedRef.current) {
-          planets.forEach(planet => {
-            // Calculate orbital velocity based on Kepler's second law
-            // Faster near perihelion, slower near aphelion
-            const r = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity).r;
-            const velocityFactor = (planet.baseDistance / r); // Kepler's equal area law
+          const G = PHYSICS_CONFIG.G_SCALED * gravityMultiplierRef.current;
+          const sunMass = PHYSICS_CONFIG.SUN_MASS;
+          const dt = 0.016 * timeSpeedRef.current; // Time step
+
+          if (simulationModeRef.current === 'nbody') {
+            // N-Body simulation: Calculate gravitational forces between all bodies
             
-            // Update orbital angle
-            planet.angle += planet.data.speed * 0.00005 * timeSpeedRef.current * velocityFactor;
-            
-            // Calculate new position on elliptical orbit
-            const pos = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity);
-            planet.mesh.position.x = pos.x;
-            planet.mesh.position.z = pos.z;
-            
-            // Planetary rotation on tilted axis
-            planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
-            
-            // Update moons
-            if (planet.moons && planet.moons.length > 0) {
-              planet.moons.forEach(moon => {
-                moon.angle += moon.data.speed * 0.0005 * timeSpeedRef.current;
-                moon.mesh.position.x = Math.cos(moon.angle) * moon.data.distance;
-                moon.mesh.position.z = Math.sin(moon.angle) * moon.data.distance;
-                moon.mesh.rotation.y += 0.01 * timeSpeedRef.current;
+            // Reset accelerations
+            planets.forEach(planet => {
+              planet.ax = 0;
+              planet.ay = 0;
+              planet.az = 0;
+            });
+
+            // Calculate gravitational acceleration from the Sun for each planet
+            planets.forEach(planet => {
+              const px = planet.mesh.position.x;
+              const py = planet.mesh.position.y;
+              const pz = planet.mesh.position.z;
+              
+              // Distance to Sun (at origin)
+              const r = Math.sqrt(px * px + py * py + pz * pz);
+              if (r > 0.1) {
+                // Gravitational acceleration from Sun: a = G * M / r^2 (direction toward Sun)
+                const aTotal = G * sunMass / (r * r);
+                planet.ax -= (px / r) * aTotal;
+                planet.ay -= (py / r) * aTotal;
+                planet.az -= (pz / r) * aTotal;
+              }
+
+              // Calculate gravitational effects from other planets
+              planets.forEach(other => {
+                if (other !== planet) {
+                  const dx = other.mesh.position.x - px;
+                  const dy = other.mesh.position.y - py;
+                  const dz = other.mesh.position.z - pz;
+                  const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                  
+                  if (dist > 0.5) {
+                    const otherMass = other.data.mass || 1;
+                    // Apply planet-to-planet gravity scaling from config
+                    const aTotal = G * otherMass / (dist * dist) * PHYSICS_CONFIG.PLANET_GRAVITY_SCALE;
+                    planet.ax += (dx / dist) * aTotal;
+                    planet.ay += (dy / dist) * aTotal;
+                    planet.az += (dz / dist) * aTotal;
+                  }
+                }
               });
-            }
-          });
+            });
+
+            // Update velocities and positions using Velocity Verlet integration
+            planets.forEach(planet => {
+              // Initialize velocity if not set
+              if (planet.vx === undefined) {
+                // Calculate initial orbital velocity (perpendicular to radius)
+                const r = Math.sqrt(
+                  planet.mesh.position.x ** 2 + 
+                  planet.mesh.position.y ** 2 + 
+                  planet.mesh.position.z ** 2
+                );
+                // Apply initial velocity scaling from config for stable orbits
+                const orbitalSpeed = Math.sqrt(G * sunMass / r) * PHYSICS_CONFIG.INITIAL_VELOCITY_SCALE;
+                // Velocity perpendicular to position vector (in XZ plane)
+                planet.vx = -planet.mesh.position.z / r * orbitalSpeed;
+                planet.vy = 0;
+                planet.vz = planet.mesh.position.x / r * orbitalSpeed;
+              }
+
+              // Update velocity
+              planet.vx += planet.ax * dt;
+              planet.vy += planet.ay * dt;
+              planet.vz += planet.az * dt;
+
+              // Update position
+              planet.mesh.position.x += planet.vx * dt;
+              planet.mesh.position.y += planet.vy * dt;
+              planet.mesh.position.z += planet.vz * dt;
+
+              // Planetary rotation
+              planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
+
+              // Update moons (simple circular orbits relative to planet)
+              if (planet.moons && planet.moons.length > 0) {
+                planet.moons.forEach(moon => {
+                  moon.angle += moon.data.speed * 0.0005 * timeSpeedRef.current * gravityMultiplierRef.current;
+                  moon.mesh.position.x = Math.cos(moon.angle) * moon.data.distance;
+                  moon.mesh.position.z = Math.sin(moon.angle) * moon.data.distance;
+                  moon.mesh.rotation.y += 0.01 * timeSpeedRef.current;
+                });
+              }
+            });
+          } else {
+            // Kepler mode: Fixed elliptical orbits
+            planets.forEach(planet => {
+              // Calculate orbital velocity based on Kepler's second law
+              // Faster near perihelion, slower near aphelion
+              const r = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity).r;
+              const velocityFactor = (planet.baseDistance / r) * gravityMultiplierRef.current;
+              
+              // Update orbital angle
+              planet.angle += planet.data.speed * 0.00005 * timeSpeedRef.current * velocityFactor;
+              
+              // Calculate new position on elliptical orbit
+              const pos = getEllipticalPosition(planet.angle, planet.baseDistance, planet.eccentricity);
+              planet.mesh.position.x = pos.x;
+              planet.mesh.position.z = pos.z;
+              
+              // Planetary rotation on tilted axis
+              planet.mesh.rotation.y += planet.data.rotationSpeed * timeSpeedRef.current;
+              
+              // Update moons
+              if (planet.moons && planet.moons.length > 0) {
+                planet.moons.forEach(moon => {
+                  moon.angle += moon.data.speed * 0.0005 * timeSpeedRef.current * gravityMultiplierRef.current;
+                  moon.mesh.position.x = Math.cos(moon.angle) * moon.data.distance;
+                  moon.mesh.position.z = Math.sin(moon.angle) * moon.data.distance;
+                  moon.mesh.rotation.y += 0.01 * timeSpeedRef.current;
+                });
+              }
+            });
+          }
           
-          // Update comets with procedural tails
+          // Update comets with procedural tails (always use Kepler for comets)
           comets.forEach(comet => {
             // Calculate comet velocity (faster near perihelion)
             const cometPos = getEllipticalPosition(comet.angle, comet.semiMajorAxis, comet.eccentricity);
-            const velocityFactor = (comet.semiMajorAxis / cometPos.r);
+            const velocityFactor = (comet.semiMajorAxis / cometPos.r) * gravityMultiplierRef.current;
             
             // Update orbital angle
             comet.angle += comet.data.speed * 0.00008 * timeSpeedRef.current * velocityFactor;
@@ -1343,6 +1452,14 @@ export default function SolarSystemPage() {
               ))}
             </div>
           </div>
+
+          {/* Physics Panel */}
+          <PhysicsPanel 
+            simulationMode={simulationMode}
+            setSimulationMode={setSimulationMode}
+            gravityMultiplier={gravityMultiplier}
+            setGravityMultiplier={setGravityMultiplier}
+          />
 
           {/* Enhanced control instructions */}
           <div style={{
