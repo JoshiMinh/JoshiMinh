@@ -569,8 +569,9 @@ function createGameCard(game) {
   })
   iconWrapper.textContent = game.icon || "🎮"
 
-  const textContainer = document.createElement("div")
-  textContainer.className = "game-card__text"
+  const textContainer = createElement("div", {
+    className: "game-card__text",
+  })
 
   const title = createElement("h3", { text: game.title || "Untitled Game" })
   const description = createElement("p", {
