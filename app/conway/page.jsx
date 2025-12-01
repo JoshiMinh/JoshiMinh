@@ -187,7 +187,6 @@ export default function ConwayGameOfLife() {
   const [showSettings, setShowSettings] = useState(false);
   const [showPatterns, setShowPatterns] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [showControls, setShowControls] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [drawMode, setDrawMode] = useState(1); // 1 = draw, 0 = erase
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -272,7 +271,6 @@ export default function ConwayGameOfLife() {
           setShowSettings(false);
           setShowPatterns(false);
           setShowHelp(false);
-          setShowControls(false);
           break;
         case '?':
         case 'h':
