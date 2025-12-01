@@ -4,10 +4,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import './styles.css';
 
-// Configuration
-const DEFAULT_ROWS = 40;
-const DEFAULT_COLS = 60;
-const DEFAULT_CELL_SIZE = 12;
+// Configuration - Auto-calculate grid to fill screen
+const DEFAULT_CELL_SIZE = 14;
 const DEFAULT_SPEED = 100;
 
 // Neighbor offsets for Moore neighborhood
@@ -121,7 +119,9 @@ const THEMES = {
   ocean: { name: "Ocean", alive: "#00d4ff", dead: "#0a1628", grid: "#1a2a3a", bg: "#051015" },
   fire: { name: "Fire", alive: "#ff6b35", dead: "#1a0a0a", grid: "#2a1a1a", bg: "#100505" },
   matrix: { name: "Matrix", alive: "#00ff00", dead: "#000a00", grid: "#002a00", bg: "#000500" },
-  sunset: { name: "Sunset", alive: "#ff9a56", dead: "#1a1020", grid: "#2a1a30", bg: "#0a0510" }
+  sunset: { name: "Sunset", alive: "#ff9a56", dead: "#1a1020", grid: "#2a1a30", bg: "#0a0510" },
+  cyber: { name: "Cyber", alive: "#00ffff", dead: "#0a0a20", grid: "#1a1a40", bg: "#050515" },
+  plasma: { name: "Plasma", alive: "#ff6ec7", dead: "#150a15", grid: "#251a25", bg: "#0a050a" }
 };
 
 // Utility functions
@@ -149,14 +149,30 @@ const countNeighbors = (grid, row, col, rows, cols, wrapEdges) => {
 const countLiveCells = (grid) => 
   grid.reduce((sum, row) => sum + row.reduce((s, cell) => s + cell, 0), 0);
 
+// Calculate initial grid size based on window
+const calculateGridSize = (cellSize) => {
+  if (typeof window === 'undefined') return { rows: 50, cols: 80 };
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  // Leave space for minimal UI
+  const gridHeight = height - 60; // Just top bar
+  const gridWidth = width;
+  const cols = Math.floor(gridWidth / cellSize);
+  const rows = Math.floor(gridHeight / cellSize);
+  return { rows: Math.max(20, rows), cols: Math.max(30, cols) };
+};
+
 export default function ConwayGameOfLife() {
-  // Grid configuration
-  const [rows, setRows] = useState(DEFAULT_ROWS);
-  const [cols, setCols] = useState(DEFAULT_COLS);
+  // Calculate initial grid size
+  const [dimensions, setDimensions] = useState({ rows: 50, cols: 80 });
   const [cellSize, setCellSize] = useState(DEFAULT_CELL_SIZE);
   
+  // Grid configuration
+  const rows = dimensions.rows;
+  const cols = dimensions.cols;
+  
   // Game state
-  const [grid, setGrid] = useState(() => createEmptyGrid(DEFAULT_ROWS, DEFAULT_COLS));
+  const [grid, setGrid] = useState(() => createEmptyGrid(50, 80));
   const [running, setRunning] = useState(false);
   const [speed, setSpeed] = useState(DEFAULT_SPEED);
   const [generation, setGeneration] = useState(0);
@@ -171,15 +187,17 @@ export default function ConwayGameOfLife() {
   const [showSettings, setShowSettings] = useState(false);
   const [showPatterns, setShowPatterns] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [showStats, setShowStats] = useState(true);
+  const [showControls, setShowControls] = useState(false);
   const [drawing, setDrawing] = useState(false);
   const [drawMode, setDrawMode] = useState(1); // 1 = draw, 0 = erase
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Refs
   const runningRef = useRef(running);
   const speedRef = useRef(speed);
   const gridRef = useRef(grid);
   const wrapEdgesRef = useRef(wrapEdges);
+  const containerRef = useRef(null);
   
   // Keep refs in sync
   useEffect(() => { runningRef.current = running; }, [running]);
@@ -187,10 +205,103 @@ export default function ConwayGameOfLife() {
   useEffect(() => { gridRef.current = grid; }, [grid]);
   useEffect(() => { wrapEdgesRef.current = wrapEdges; }, [wrapEdges]);
   
+  // Initialize grid to fill screen (debounced resize handler)
+  useEffect(() => {
+    let resizeTimeout;
+    
+    const updateGridSize = () => {
+      const { rows: newRows, cols: newCols } = calculateGridSize(cellSize);
+      setDimensions({ rows: newRows, cols: newCols });
+      setGrid(createEmptyGrid(newRows, newCols));
+    };
+    
+    const debouncedResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateGridSize, 150);
+    };
+    
+    updateGridSize();
+    window.addEventListener('resize', debouncedResize);
+    return () => {
+      window.removeEventListener('resize', debouncedResize);
+      clearTimeout(resizeTimeout);
+    };
+  }, [cellSize]);
+
+  // Track fullscreen state
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      
+      switch(e.key.toLowerCase()) {
+        case ' ':
+          e.preventDefault();
+          setRunning(r => !r);
+          break;
+        case 'r':
+          if (!e.ctrlKey && !e.metaKey) {
+            randomize();
+          }
+          break;
+        case 'c':
+          if (!e.ctrlKey && !e.metaKey) {
+            clear();
+          }
+          break;
+        case 's':
+          if (!e.ctrlKey && !e.metaKey) {
+            step();
+          }
+          break;
+        case 'f':
+          toggleFullscreen();
+          break;
+        case 'p':
+          setShowPatterns(p => !p);
+          break;
+        case 'escape':
+          setShowSettings(false);
+          setShowPatterns(false);
+          setShowHelp(false);
+          setShowControls(false);
+          break;
+        case '?':
+        case 'h':
+          setShowHelp(h => !h);
+          break;
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  
   // Update live cell count
   useEffect(() => {
     setLiveCells(countLiveCells(grid));
   }, [grid]);
+
+  // Toggle fullscreen with error handling
+  const toggleFullscreen = () => {
+    try {
+      if (!document.fullscreenElement) {
+        containerRef.current?.requestFullscreen?.();
+      } else {
+        document.exitFullscreen?.();
+      }
+    } catch {
+      // Fullscreen not supported or blocked
+    }
+  };
 
   // Simulation loop
   const runSimulation = useCallback(() => {
@@ -293,20 +404,9 @@ export default function ConwayGameOfLife() {
     setShowPatterns(false);
   };
 
-  const resizeGrid = (newRows, newCols) => {
-    const newGrid = createEmptyGrid(newRows, newCols);
-    const copyRows = Math.min(rows, newRows);
-    const copyCols = Math.min(cols, newCols);
-    
-    for (let i = 0; i < copyRows; i++) {
-      for (let j = 0; j < copyCols; j++) {
-        newGrid[i][j] = grid[i][j];
-      }
-    }
-    
-    setRows(newRows);
-    setCols(newCols);
-    setGrid(newGrid);
+  const resizeGrid = (newCellSize) => {
+    setCellSize(newCellSize);
+    // Grid will auto-resize via the useEffect
   };
 
   const currentTheme = THEMES[theme];
@@ -320,117 +420,134 @@ export default function ConwayGameOfLife() {
 
   return (
     <div 
-      className="conway-container" 
+      ref={containerRef}
+      className="conway-container fullscreen-mode" 
       style={{ '--alive-color': currentTheme.alive, '--dead-color': currentTheme.dead, '--grid-color': currentTheme.grid, '--bg-color': currentTheme.bg }}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      {/* Top Bar */}
-      <div className="topbar">
+      {/* Fullscreen Grid - Takes up entire background */}
+      <div className="fullscreen-grid-container">
+        <div 
+          className={`grid fullscreen-grid ${showGrid ? 'with-grid' : ''}`}
+          style={{
+            gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
+            gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
+          }}
+        >
+          {grid.map((row, i) =>
+            row.map((cell, j) => (
+              <div
+                key={`${i}-${j}`}
+                className={`cell ${cell ? 'alive' : ''}`}
+                style={{ width: cellSize, height: cellSize }}
+                onMouseDown={(e) => handleMouseDown(i, j, e)}
+                onMouseEnter={() => handleMouseEnter(i, j)}
+              />
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Floating Top Bar */}
+      <div className="floating-topbar">
         <div className="topbar-left">
           <Link href="/" className="back-link" title="Back to Home">←</Link>
           <h1>Conway's Game of Life</h1>
         </div>
-        <div className="topbar-actions">
+        
+        <div className="topbar-center">
+          <div className="stat-pill">
+            <span className="stat-icon">🧬</span>
+            <span className="stat-value">{generation.toLocaleString()}</span>
+          </div>
+          <div className="stat-pill">
+            <span className="stat-icon">👥</span>
+            <span className="stat-value">{liveCells.toLocaleString()}</span>
+          </div>
+          <div className="stat-pill">
+            <span className="stat-icon">📐</span>
+            <span className="stat-value">{rows}×{cols}</span>
+          </div>
+        </div>
+
+        <div className="topbar-right">
           <button 
-            className={`tool-btn ${running ? 'active' : ''}`}
+            className={`icon-btn ${running ? 'active pulse' : ''}`}
             onClick={() => setRunning(!running)}
+            title={running ? 'Pause (Space)' : 'Play (Space)'}
           >
-            {running ? '⏸ Pause' : '▶️ Play'}
+            {running ? '⏸' : '▶️'}
           </button>
-          <button className="tool-btn" onClick={step} disabled={running}>
-            ⏭️ Step
+          <button className="icon-btn" onClick={step} disabled={running} title="Step (S)">
+            ⏭️
           </button>
-          <button className="tool-btn" onClick={() => randomize()}>
-            🎲 Random
+          <button className="icon-btn" onClick={() => randomize()} title="Random (R)">
+            🎲
           </button>
-          <button className="tool-btn" onClick={clear}>
-            🗑️ Clear
+          <button className="icon-btn" onClick={clear} title="Clear (C)">
+            🗑️
           </button>
-          <button className="tool-btn" onClick={() => setShowPatterns(true)}>
-            🧬 Patterns
+          <div className="divider" />
+          <button className="icon-btn" onClick={() => setShowPatterns(true)} title="Patterns (P)">
+            🧬
+          </button>
+          <button className="icon-btn" onClick={() => setShowSettings(true)} title="Settings">
+            ⚙️
           </button>
           <button 
-            className={`tool-btn ${showStats ? 'active' : ''}`}
-            onClick={() => setShowStats(!showStats)}
+            className="icon-btn" 
+            onClick={toggleFullscreen} 
+            title={isFullscreen ? "Exit Fullscreen (F)" : "Fullscreen (F)"}
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
-            📊 Stats
+            {isFullscreen ? '🗗' : '⛶'}
           </button>
-          <button className="tool-btn" onClick={() => setShowSettings(true)}>
-            ⚙️ Settings
-          </button>
-          <button className="tool-btn" onClick={() => setShowHelp(true)}>
-            ❓ Help
+          <button className="icon-btn" onClick={() => setShowHelp(true)} title="Help (H)">
+            ❓
           </button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="conway-main">
-        {/* Stats Panel */}
-        {showStats && (
-          <div className="stats-panel">
-            <div className="stat-item">
-              <span className="stat-label">Generation</span>
-              <span className="stat-value">{generation.toLocaleString()}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Population</span>
-              <span className="stat-value">{liveCells.toLocaleString()}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Grid</span>
-              <span className="stat-value">{rows}×{cols}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">Speed</span>
-              <span className="stat-value">{speed}ms</span>
-            </div>
-          </div>
-        )}
+      {/* Floating Speed Control */}
+      <div className="floating-speed">
+        <button 
+          className="speed-btn" 
+          onClick={() => setSpeed(s => Math.max(10, s - 20))}
+        >
+          −
+        </button>
+        <span className="speed-display">{speed}ms</span>
+        <button 
+          className="speed-btn" 
+          onClick={() => setSpeed(s => Math.min(500, s + 20))}
+        >
+          +
+        </button>
+      </div>
 
-        {/* Grid */}
-        <div className="grid-wrapper">
-          <div 
-            className={`grid ${showGrid ? 'with-grid' : ''}`}
-            style={{
-              gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
-              gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
-            }}
-          >
-            {grid.map((row, i) =>
-              row.map((cell, j) => (
-                <div
-                  key={`${i}-${j}`}
-                  className={`cell ${cell ? 'alive' : ''}`}
-                  style={{ width: cellSize, height: cellSize }}
-                  onMouseDown={(e) => handleMouseDown(i, j, e)}
-                  onMouseEnter={() => handleMouseEnter(i, j)}
-                />
-              ))
-            )}
+      {/* Floating Controls Panel - Collapsible */}
+      <button 
+        className="floating-controls-toggle"
+        onClick={() => setShowControls(!showControls)}
+      >
+        {showControls ? '◀' : '▶'} Controls
+      </button>
+      
+      {showControls && (
+        <div className="floating-controls">
+          <h3>🎮 Quick Keys</h3>
+          <div className="control-list">
+            <div><kbd>Space</kbd> Play/Pause</div>
+            <div><kbd>S</kbd> Step</div>
+            <div><kbd>R</kbd> Random</div>
+            <div><kbd>C</kbd> Clear</div>
+            <div><kbd>P</kbd> Patterns</div>
+            <div><kbd>F</kbd> Fullscreen</div>
+            <div><kbd>H</kbd> Help</div>
           </div>
         </div>
-
-        {/* Speed Control */}
-        <div className="speed-control">
-          <label>Speed: {speed}ms</label>
-          <input
-            type="range"
-            min="10"
-            max="500"
-            step="10"
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-            className="speed-slider"
-          />
-          <div className="speed-presets">
-            <button onClick={() => setSpeed(10)}>Fast</button>
-            <button onClick={() => setSpeed(100)}>Normal</button>
-            <button onClick={() => setSpeed(300)}>Slow</button>
-          </div>
-        </div>
-      </main>
+      )}
 
       {/* Settings Modal */}
       {showSettings && (
@@ -439,35 +556,15 @@ export default function ConwayGameOfLife() {
             <h2>⚙️ Settings</h2>
             
             <div className="setting-group">
-              <h3>Grid Size</h3>
+              <h3>Cell Size</h3>
               <div className="setting-row">
-                <label>Rows: {rows}</label>
+                <label>Cell Size: {cellSize}px (Grid auto-fills screen)</label>
                 <input
                   type="range"
-                  min="10"
-                  max="80"
-                  value={rows}
-                  onChange={(e) => resizeGrid(Number(e.target.value), cols)}
-                />
-              </div>
-              <div className="setting-row">
-                <label>Columns: {cols}</label>
-                <input
-                  type="range"
-                  min="10"
-                  max="100"
-                  value={cols}
-                  onChange={(e) => resizeGrid(rows, Number(e.target.value))}
-                />
-              </div>
-              <div className="setting-row">
-                <label>Cell Size: {cellSize}px</label>
-                <input
-                  type="range"
-                  min="4"
-                  max="20"
+                  min="6"
+                  max="24"
                   value={cellSize}
-                  onChange={(e) => setCellSize(Number(e.target.value))}
+                  onChange={(e) => resizeGrid(Number(e.target.value))}
                 />
               </div>
             </div>
