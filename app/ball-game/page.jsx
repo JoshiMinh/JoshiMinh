@@ -469,83 +469,109 @@ export default function BallGamePage() {
   }, []);
 
   const toolbarButtons = useMemo(() => ([
-    { id: "ball", label: "Ball", tip: "Ball: drag to set launch direction" },
-    { id: "line", label: "Line", tip: "Line: click-drag to draw wall" },
-    { id: "rect", label: "Square", tip: "Square: drag to draw axis-aligned square/rect" },
-    { id: "circle", label: "Circle", tip: "Circle: drag to set radius" },
-    { id: "triangle", label: "Triangle", tip: "Triangle: click 3 points" },
-    { id: "move", label: "Move", tip: "Move: drag to reposition shapes/balls" },
-    { id: "delete", label: "Delete", tip: "Delete: click to remove" },
+    { id: "ball", label: "🏀", tip: "Ball: drag to set launch direction" },
+    { id: "line", label: "📏", tip: "Line: click-drag to draw wall" },
+    { id: "rect", label: "⬜", tip: "Square: drag to draw axis-aligned square/rect" },
+    { id: "circle", label: "⭕", tip: "Circle: drag to set center and radius" },
+    { id: "triangle", label: "🔺", tip: "Triangle: click 3 points" },
+    { id: "move", label: "✋", tip: "Move: drag to reposition shapes/balls" },
+    { id: "delete", label: "🗑️", tip: "Delete: click to remove" },
   ]), []);
+
   return (
-    <div className="game-container">
-      <div className="topbar">
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/" className="back-link">← Home</Link>
-          <h1 style={{ fontSize: 24, margin: 0 }}>Ball Game</h1>
+    <div className="ball-game-container" ref={containerRef}>
+      {/* Fullscreen Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="game-canvas"
+        onMouseDown={onPointerDown}
+        onMouseMove={onPointerMove}
+        onMouseUp={onPointerUp}
+      />
+
+      {/* Floating Top Bar */}
+      <div className="floating-topbar">
+        <div className="topbar-left">
+          <Link href="/" className="back-link" title="Back to Home">←</Link>
+          <h1>Ball Game</h1>
         </div>
-        <div className="topbar-actions">
-          <button className="tool-btn" onClick={() => setHelpOpen(true)}>Game Options</button>
-          <button className="tool-btn" onClick={() => setHelpOpen(true)}>Game Menu</button>
-          <button className="tool-btn" onClick={() => setHelpOpen(true)}>Items</button>
-          <span className="spacer" />
-          <button className="tool-btn" onClick={() => setIsPlaying((v) => !v)}>{isPlaying ? "Pause" : "Play"}</button>
-          <button className="tool-btn" onClick={clearAll}>Clear</button>
-          <button className="tool-btn" onClick={() => setHelpOpen((v) => !v)}>Help</button>
+        
+        <div className="topbar-center">
+          <div className="stat-pill">
+            <span className="stat-icon">🏀</span>
+            <span className="stat-value">{balls.length}</span>
+          </div>
+          <div className="stat-pill">
+            <span className="stat-icon">🔷</span>
+            <span className="stat-value">{shapes.length}</span>
+          </div>
+        </div>
+
+        <div className="topbar-right">
+          {toolbarButtons.map((btn) => (
+            <button
+              key={btn.id}
+              title={btn.tip}
+              className={`icon-btn ${tool === btn.id ? "active" : ""}`}
+              onClick={() => setTool(btn.id)}
+            >
+              {btn.label}
+            </button>
+          ))}
+          <div className="divider" />
+          <button 
+            className={`icon-btn ${isPlaying ? 'active pulse' : ''}`}
+            onClick={() => setIsPlaying((v) => !v)}
+            title={isPlaying ? 'Pause' : 'Play'}
+          >
+            {isPlaying ? '⏸' : '▶️'}
+          </button>
+          <button className="icon-btn" onClick={clearAll} title="Clear All">
+            🧹
+          </button>
+          <button className="icon-btn" onClick={() => setHelpOpen(true)} title="Help">
+            ❓
+          </button>
         </div>
       </div>
 
-      <main className="game-content">
-        <div className="stage">
-          <div className="canvas-wrapper" ref={containerRef}>
-            <div className="toolbar">
-              <div className="tool-group">
-                {toolbarButtons.map((btn) => (
-                  <button
-                    key={btn.id}
-                    title={btn.tip}
-                    className={`tool-btn ${tool === btn.id ? "active" : ""}`}
-                    onClick={() => setTool(btn.id)}
-                  >{btn.label}</button>
-                ))}
-              </div>
+      {/* Hover Badge */}
+      {hoverInfo && (
+        <div className="hover-badge" style={{ left: (hoverInfo.entity?.x || hoverInfo.entity?.x1 || 0) + 12, top: (hoverInfo.entity?.y || hoverInfo.entity?.y1 || 0) - 12 }}>
+          {hoverInfo.kind === "ball" ? "Ball" : hoverInfo.entity.type}
+        </div>
+      )}
+
+      {/* Help Modal */}
+      {helpOpen && (
+        <div className="modal-overlay" onClick={() => setHelpOpen(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>❓ How to Play</h2>
+            
+            <div className="help-section">
+              <h3>🎮 Tools</h3>
+              <ul>
+                <li><strong>🏀 Ball</strong> - Click-drag to set launch direction and speed</li>
+                <li><strong>📏 Line</strong> - Click-drag to draw a wall segment</li>
+                <li><strong>⬜ Square</strong> - Click-drag to draw a rectangle</li>
+                <li><strong>⭕ Circle</strong> - Click-drag to set center and radius</li>
+                <li><strong>🔺 Triangle</strong> - Click three points to create a triangle</li>
+                <li><strong>✋ Move</strong> - Drag any item to reposition it</li>
+                <li><strong>🗑️ Delete</strong> - Click any item to remove it</li>
+              </ul>
             </div>
 
-            <canvas
-              ref={canvasRef}
-              className="game-canvas"
-              onMouseDown={onPointerDown}
-              onMouseMove={onPointerMove}
-              onMouseUp={onPointerUp}
-            />
+            <div className="help-section">
+              <h3>⚡ Physics</h3>
+              <p>Balls bounce off shapes and canvas edges with elastic collisions. Pause the simulation if things are moving too fast!</p>
+            </div>
 
-            {hoverInfo && (
-              <div className="hover-badge" style={{ left: (hoverInfo.entity?.x || hoverInfo.entity?.x1 || 0) + 12, top: (hoverInfo.entity?.y || hoverInfo.entity?.y1 || 0) - 12 }}>
-                {hoverInfo.kind === "ball" ? "Ball" : hoverInfo.entity.type}
-              </div>
-            )}
-
-            {helpOpen && (
-              <div className="help-overlay" onClick={() => setHelpOpen(false)}>
-                <div className="help-card" onClick={(e) => e.stopPropagation()}>
-                  <h3>How to play</h3>
-                  <ul>
-                    <li>Ball: click-drag to set launch direction and speed; release to spawn.</li>
-                    <li>Line: click-drag to draw a wall segment.</li>
-                    <li>Square: click-drag to draw an axis-aligned rectangle.</li>
-                    <li>Circle: click-drag to set center and radius.</li>
-                    <li>Triangle: click three points to create a triangle.</li>
-                    <li>Move: drag any item to reposition it. Pause if things are moving too fast.</li>
-                    <li>Delete: click any item to remove it.</li>
-                    <li>Balls bounce off shapes and canvas edges with elastic collisions.</li>
-                  </ul>
-                  <button className="tool-btn" onClick={() => setHelpOpen(false)}>Close</button>
-                </div>
-              </div>
-            )}
+            <button className="btn-primary" onClick={() => setHelpOpen(false)}>
+              Got it!
+            </button>
           </div>
         </div>
-      </main>
+      )}
     </div>
   );
 }

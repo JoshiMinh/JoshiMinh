@@ -12,7 +12,10 @@ export const metadata = {
     title: 'iPong X',
     description: 'Meet the suspiciously confident iPong X—overbuilt specs, loud colors, and just enough attitude to irritate actual flagships.',
   },
-  themeColor: '#3ddc84',
+};
+
+export const viewport = {
+  themeColor: '#ffffff',
   colorScheme: 'light',
 };
 
