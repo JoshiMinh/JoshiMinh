@@ -2,6 +2,11 @@
 
 An interactive 3D solar system visualization built with Three.js and React.
 
+## 🌌 Future Enhancements
+
+**Want to make this more like Universe Sandbox 2?** Check out our comprehensive enhancement ideas document:
+- 📄 **[Universe Sandbox 2 Enhancement Ideas](./UNIVERSE_SANDBOX_IDEAS.md)** - Over 15 categories of features including collision physics, interactive object manipulation, advanced visuals, and more!
+
 ## Features
 
 - 🌍 All 8 planets with realistic orbital mechanics

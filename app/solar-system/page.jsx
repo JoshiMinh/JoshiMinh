@@ -15,7 +15,7 @@ import {
 } from './data';
 
 // Import utility functions
-import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath } from './utils';
+import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath, CollisionSystem, GravityVisualization } from './utils';
 
 // Import UI components
 import { 
@@ -28,7 +28,10 @@ import {
   PlanetInfoModal,
   KeyboardHelpModal,
   TopBar,
-  PhysicsPanel
+  PhysicsPanel,
+  ObjectCreatorPanel,
+  ObjectEditorPanel,
+  GravityVisualizationPanel
 } from './components';
 
 // Import custom hooks
@@ -57,6 +60,19 @@ export default function SolarSystemPage() {
   // Physics state
   const [simulationMode, setSimulationMode] = useState('kepler'); // 'kepler' or 'nbody'
   const [gravityMultiplier, setGravityMultiplier] = useState(1.0);
+  // Object creation state
+  const [showObjectCreator, setShowObjectCreator] = useState(false);
+  const [showObjectEditor, setShowObjectEditor] = useState(false);
+  const [customObjects, setCustomObjects] = useState([]);
+  const [objectToCreate, setObjectToCreate] = useState(null);
+  const [creationMode, setCreationMode] = useState('click'); // 'click' or 'drag'
+  const [dragStartPos, setDragStartPos] = useState(null);
+  const [dragCurrentPos, setDragCurrentPos] = useState(null);
+  // Gravity visualization state
+  const [showGravityWell, setShowGravityWell] = useState(false);
+  const [showLagrangePoints, setShowLagrangePoints] = useState(false);
+  const [showRocheLimit, setShowRocheLimit] = useState(false);
+  const [showBarycenter, setShowBarycenter] = useState(false);
   const sceneRef = useRef(null);
   const timeSpeedRef = useRef(timeSpeed);
   const isPausedRef = useRef(isPaused);
@@ -116,6 +132,31 @@ export default function SolarSystemPage() {
       });
     }
   }, [scaleMode]);
+
+  // Handle gravity visualization toggles
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleGravityWell(showGravityWell);
+    }
+  }, [showGravityWell]);
+
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleLagrangePoints(showLagrangePoints);
+    }
+  }, [showLagrangePoints]);
+
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleRocheLimit(showRocheLimit);
+    }
+  }, [showRocheLimit]);
+
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleBarycenter(showBarycenter);
+    }
+  }, [showBarycenter]);
 
   // Helper function for scale mode (static version for useEffect)
   function getEllipticalPositionStatic(angle, distance, eccentricity) {
@@ -208,6 +249,13 @@ export default function SolarSystemPage() {
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
       scene.add(ambientLight);
 
+      // Initialize collision detection system
+      const collisionSystem = new CollisionSystem(scene, THREE);
+      
+      // Initialize gravity visualization system
+      const gravityVis = new GravityVisualization(scene, THREE);
+      gravityVis.createGravityWell();
+
       // Create an enhanced Sun with proper material (supports texture)
       const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
       const sunTexture = loadTexture(TEXTURE_CONFIG.sun);
@@ -296,6 +344,153 @@ export default function SolarSystemPage() {
           z: Math.sin(angle) * r,
           r: r
         };
+      }
+
+      // Helper function to create custom planet at a specific position
+      function createCustomPlanetAtPosition(planetData, x, z, scene, planets, orbitLines, THREE) {
+        // Calculate distance from sun
+        const distance = Math.sqrt(x * x + z * z);
+        planetData.distance = distance;
+        
+        // Create the planet geometry
+        const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
+        const planetMaterial = new THREE.MeshStandardMaterial({ 
+          color: planetData.color,
+          emissive: planetData.type === 'star' ? planetData.color : 0x000000,
+          emissiveIntensity: planetData.type === 'star' ? 0.5 : 0.1,
+          roughness: 0.7,
+          metalness: 0.2
+        });
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        
+        // Add glow for stars
+        if (planetData.type === 'star') {
+          const glowGeometry = new THREE.SphereGeometry(planetData.size * 0.7, 32, 32);
+          const glowMaterial = new THREE.MeshBasicMaterial({
+            color: planetData.color,
+            transparent: true,
+            opacity: 0.3
+          });
+          const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+          planet.add(glow);
+          
+          // Add light for stars
+          const starLight = new THREE.PointLight(planetData.color, 1, 200);
+          planet.add(starLight);
+        }
+        
+        // Create planet group
+        const planetGroup = new THREE.Group();
+        planet.position.set(x, 0, z);
+        planetGroup.add(planet);
+        scene.add(planetGroup);
+        
+        // Calculate orbital parameters based on current position
+        const angle = Math.atan2(z, x);
+        const eccentricity = 0;
+        
+        // Create orbit line (circular for custom objects)
+        if (distance > 1) {
+          const orbitGeometry = new THREE.BufferGeometry();
+          const orbitPoints = createEllipticalOrbitPath(distance, 0);
+          orbitGeometry.setAttribute('position', new THREE.Float32BufferAttribute(orbitPoints, 3));
+          const orbitMaterial = new THREE.LineBasicMaterial({ 
+            color: planetData.color, 
+            opacity: 0.3, 
+            transparent: true 
+          });
+          const orbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
+          scene.add(orbitLine);
+          orbitLines.push({ line: orbitLine, isCustom: true });
+        }
+        
+        // Store planet data with velocity for n-body simulation
+        planets.push({
+          group: planetGroup,
+          mesh: planet,
+          data: planetData,
+          geometry: planetGeometry,
+          material: planetMaterial,
+          moons: [],
+          angle: angle,
+          eccentricity: eccentricity,
+          baseDistance: distance,
+          axialTilt: 0,
+          // Initialize velocity (perpendicular to position for circular orbit)
+          vx: -z * planetData.speed * PHYSICS_CONFIG.INITIAL_VELOCITY_SCALE * 0.01,
+          vy: 0,
+          vz: x * planetData.speed * PHYSICS_CONFIG.INITIAL_VELOCITY_SCALE * 0.01,
+          ax: 0,
+          ay: 0,
+          az: 0
+        });
+      }
+
+      // Helper function to create custom planet with initial velocity
+      function createCustomPlanetWithVelocity(planetData, x, z, vx, vz, scene, planets, orbitLines, THREE) {
+        // Calculate distance from sun
+        const distance = Math.sqrt(x * x + z * z);
+        planetData.distance = distance;
+        
+        // Create the planet geometry
+        const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
+        const planetMaterial = new THREE.MeshStandardMaterial({ 
+          color: planetData.color,
+          emissive: planetData.type === 'star' ? planetData.color : 0x000000,
+          emissiveIntensity: planetData.type === 'star' ? 0.5 : 0.1,
+          roughness: 0.7,
+          metalness: 0.2
+        });
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        
+        // Add glow for stars
+        if (planetData.type === 'star') {
+          const glowGeometry = new THREE.SphereGeometry(planetData.size * 0.7, 32, 32);
+          const glowMaterial = new THREE.MeshBasicMaterial({
+            color: planetData.color,
+            transparent: true,
+            opacity: 0.3
+          });
+          const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+          planet.add(glow);
+          
+          // Add light for stars
+          const starLight = new THREE.PointLight(planetData.color, 1, 200);
+          planet.add(starLight);
+        }
+        
+        // Create planet group
+        const planetGroup = new THREE.Group();
+        planet.position.set(x, 0, z);
+        planetGroup.add(planet);
+        scene.add(planetGroup);
+        
+        // Calculate orbital parameters based on current position
+        const angle = Math.atan2(z, x);
+        const eccentricity = 0;
+        
+        // Don't create orbit line for launched objects (they have custom velocities)
+        
+        // Store planet data with custom velocity for n-body simulation
+        planets.push({
+          group: planetGroup,
+          mesh: planet,
+          data: planetData,
+          geometry: planetGeometry,
+          material: planetMaterial,
+          moons: [],
+          angle: angle,
+          eccentricity: eccentricity,
+          baseDistance: distance,
+          axialTilt: 0,
+          // Use custom velocity
+          vx: vx,
+          vy: 0,
+          vz: vz,
+          ax: 0,
+          ay: 0,
+          az: 0
+        });
       }
 
       // Helper function to create planets with elliptical orbits, axial tilts, moons, and texture support
@@ -609,12 +804,44 @@ export default function SolarSystemPage() {
         return null;
       };
 
-      // Single click - show info panel
+      // Single click - show info panel or place object
       const onMouseClick = (event) => {
+        // Check if we're in object creation mode
+        if (objectToCreate) {
+          // Get intersection with a plane at y=0
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          // Create a large plane for intersection
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            const point = intersects[0].point;
+            
+            // Create the new object at this position
+            createCustomPlanetAtPosition(objectToCreate, point.x, point.z, scene, planets, orbitLines, THREE);
+            
+            setObjectToCreate(null);
+          }
+          return;
+        }
+        
         const clickedPlanet = getClickedPlanet(event);
         if (clickedPlanet) {
           setSelectedPlanet(clickedPlanet.data);
           setShowInfo(true);
+          // If it's a custom object, allow editing
+          if (clickedPlanet.data.isCustom) {
+            setShowObjectEditor(true);
+          }
         }
       };
 
@@ -641,6 +868,146 @@ export default function SolarSystemPage() {
 
       renderer.domElement.addEventListener('click', onMouseClick);
       renderer.domElement.addEventListener('dblclick', onMouseDblClick);
+
+      // Drag-and-launch functionality
+      let dragStartPoint = null;
+      let dragPreviewLine = null;
+      let dragArrow = null;
+      let isDragging = false;
+
+      const onMouseDown = (event) => {
+        if (objectToCreate && creationMode === 'drag') {
+          // Start dragging for launch
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          // Create a large plane for intersection
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            dragStartPoint = intersects[0].point.clone();
+            isDragging = true;
+            
+            // Create trajectory preview line
+            const lineGeometry = new THREE.BufferGeometry();
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+              color: objectToCreate.color,
+              linewidth: 2 
+            });
+            dragPreviewLine = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(dragPreviewLine);
+            
+            // Create velocity arrow
+            dragArrow = new THREE.ArrowHelper(
+              new THREE.Vector3(0, 1, 0),
+              dragStartPoint,
+              10,
+              objectToCreate.color,
+              2,
+              1
+            );
+            scene.add(dragArrow);
+          }
+        }
+      };
+
+      const onMouseMove = (event) => {
+        if (isDragging && dragStartPoint && objectToCreate && creationMode === 'drag') {
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            const currentPoint = intersects[0].point;
+            const dragVector = new THREE.Vector3().subVectors(dragStartPoint, currentPoint);
+            
+            // Update preview line
+            if (dragPreviewLine) {
+              const points = [dragStartPoint, currentPoint];
+              dragPreviewLine.geometry.setFromPoints(points);
+            }
+            
+            // Update arrow to show velocity direction and magnitude
+            if (dragArrow) {
+              const direction = dragVector.clone().normalize();
+              const length = Math.min(dragVector.length() * 0.5, 50);
+              dragArrow.setDirection(direction);
+              dragArrow.setLength(length, length * 0.2, length * 0.15);
+            }
+          }
+        }
+      };
+
+      const onMouseUp = (event) => {
+        if (isDragging && dragStartPoint && objectToCreate && creationMode === 'drag') {
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            const endPoint = intersects[0].point;
+            const velocityVector = new THREE.Vector3().subVectors(dragStartPoint, endPoint);
+            
+            // Create object with initial velocity
+            createCustomPlanetWithVelocity(
+              objectToCreate, 
+              dragStartPoint.x, 
+              dragStartPoint.z,
+              velocityVector.x * 0.1,
+              velocityVector.z * 0.1,
+              scene, 
+              planets, 
+              orbitLines, 
+              THREE
+            );
+            
+            setObjectToCreate(null);
+          }
+          
+          // Clean up preview
+          if (dragPreviewLine) {
+            scene.remove(dragPreviewLine);
+            dragPreviewLine = null;
+          }
+          if (dragArrow) {
+            scene.remove(dragArrow);
+            dragArrow = null;
+          }
+          
+          isDragging = false;
+          dragStartPoint = null;
+        }
+      };
+
+      renderer.domElement.addEventListener('mousedown', onMouseDown);
+      renderer.domElement.addEventListener('mousemove', onMouseMove);
+      renderer.domElement.addEventListener('mouseup', onMouseUp);
 
       // Animation loop with improved performance
       const clock = new THREE.Clock();
@@ -842,6 +1209,31 @@ export default function SolarSystemPage() {
           });
         }
 
+        // Collision detection (only in N-Body mode for realistic physics)
+        if (simulationModeRef.current === 'nbody') {
+          const collisions = collisionSystem.checkCollisions(planets, PHYSICS_CONFIG);
+          
+          // Process collisions (handle in reverse order to maintain array indices)
+          const indicesToRemove = [];
+          collisions.forEach(collision => {
+            const indexToRemove = collisionSystem.handleCollision(collision, planets, orbitLines);
+            if (indexToRemove !== null && indexToRemove !== undefined) {
+              indicesToRemove.push(indexToRemove);
+            }
+          });
+          
+          // Remove absorbed planets from array (sort in descending order to maintain indices)
+          indicesToRemove.sort((a, b) => b - a).forEach(index => {
+            planets.splice(index, 1);
+          });
+        }
+        
+        // Update collision effects
+        collisionSystem.updateEffects(delta);
+        
+        // Update gravity visualizations
+        gravityVis.update(planets, sun);
+
         // Camera follow mode - track planet while allowing free camera control
         if (cameraMode === 'follow' && selectedPlanet) {
           const planet = planets.find(p => p.data.name === selectedPlanet.name);
@@ -890,10 +1282,14 @@ export default function SolarSystemPage() {
         orbitLines,
         comets,
         THREE,
+        gravityVis,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.domElement.removeEventListener('click', onMouseClick);
           renderer.domElement.removeEventListener('dblclick', onMouseDblClick);
+          renderer.domElement.removeEventListener('mousedown', onMouseDown);
+          renderer.domElement.removeEventListener('mousemove', onMouseMove);
+          renderer.domElement.removeEventListener('mouseup', onMouseUp);
           if (animationId) cancelAnimationFrame(animationId);
           
           // Dispose of all geometries and materials
@@ -910,6 +1306,12 @@ export default function SolarSystemPage() {
           comets.forEach(comet => {
             if (comet.tailGeometry) comet.tailGeometry.dispose();
           });
+          
+          // Clean up collision system
+          collisionSystem.cleanup();
+          
+          // Clean up gravity visualization system
+          gravityVis.cleanup();
           
           if (renderer) {
             renderer.dispose();
@@ -1345,6 +1747,17 @@ export default function SolarSystemPage() {
           </button>
           <button 
             className="tool-btn" 
+            onClick={() => setShowObjectCreator(!showObjectCreator)}
+            style={{ 
+              background: showObjectCreator ? 'rgba(74, 144, 226, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+              border: showObjectCreator ? '1px solid rgba(74, 144, 226, 0.8)' : '1px solid rgba(255, 255, 255, 0.2)'
+            }}
+            title="Create custom objects"
+          >
+            🪐 Create
+          </button>
+          <button 
+            className="tool-btn" 
             onClick={takeScreenshot}
             title="Save screenshot"
           >
@@ -1459,6 +1872,18 @@ export default function SolarSystemPage() {
             setSimulationMode={setSimulationMode}
             gravityMultiplier={gravityMultiplier}
             setGravityMultiplier={setGravityMultiplier}
+          />
+
+          {/* Gravity Visualization Controls */}
+          <GravityVisualizationPanel
+            showGravityWell={showGravityWell}
+            showLagrangePoints={showLagrangePoints}
+            showRocheLimit={showRocheLimit}
+            showBarycenter={showBarycenter}
+            onToggleGravityWell={setShowGravityWell}
+            onToggleLagrangePoints={setShowLagrangePoints}
+            onToggleRocheLimit={setShowRocheLimit}
+            onToggleBarycenter={setShowBarycenter}
           />
 
           {/* Enhanced control instructions */}
@@ -1960,6 +2385,58 @@ export default function SolarSystemPage() {
                 </button>
               </div>
             </div>
+          )}
+
+          {/* Object Creator Panel */}
+          {showObjectCreator && (
+            <ObjectCreatorPanel
+              onCreateObject={(newObject) => {
+                setObjectToCreate(newObject);
+                setShowObjectCreator(false);
+              }}
+              onClose={() => setShowObjectCreator(false)}
+              creationMode={creationMode}
+              onToggleCreationMode={(mode) => setCreationMode(mode)}
+            />
+          )}
+
+          {/* Object Editor Panel */}
+          {showObjectEditor && selectedPlanet && selectedPlanet.isCustom && (
+            <ObjectEditorPanel
+              selectedObject={selectedPlanet}
+              onUpdateObject={(updatedObject) => {
+                // Update the custom object in the scene
+                if (sceneRef.current?.planets) {
+                  const planetIndex = sceneRef.current.planets.findIndex(
+                    p => p.data.name === updatedObject.name
+                  );
+                  if (planetIndex !== -1) {
+                    const planet = sceneRef.current.planets[planetIndex];
+                    planet.data = updatedObject;
+                    // Update visual properties
+                    planet.mesh.material.color.setHex(updatedObject.color);
+                    planet.mesh.scale.setScalar(updatedObject.size * 0.6);
+                  }
+                }
+                setSelectedPlanet(updatedObject);
+              }}
+              onDeleteObject={(objectToDelete) => {
+                // Remove object from scene
+                if (sceneRef.current?.planets) {
+                  const planetIndex = sceneRef.current.planets.findIndex(
+                    p => p.data.name === objectToDelete.name
+                  );
+                  if (planetIndex !== -1) {
+                    const planet = sceneRef.current.planets[planetIndex];
+                    sceneRef.current.scene.remove(planet.group);
+                    sceneRef.current.planets.splice(planetIndex, 1);
+                  }
+                }
+                setShowObjectEditor(false);
+                setSelectedPlanet(null);
+              }}
+              onClose={() => setShowObjectEditor(false)}
+            />
           )}
         </div>
       </main>
