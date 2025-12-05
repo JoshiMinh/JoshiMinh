@@ -15,7 +15,7 @@ import {
 } from './data';
 
 // Import utility functions
-import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath } from './utils';
+import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath, CollisionSystem } from './utils';
 
 // Import UI components
 import { 
@@ -217,6 +217,9 @@ export default function SolarSystemPage() {
       // Lighting - ambient light for overall visibility
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
       scene.add(ambientLight);
+
+      // Initialize collision detection system
+      const collisionSystem = new CollisionSystem(scene, THREE);
 
       // Create an enhanced Sun with proper material (supports texture)
       const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
@@ -1171,6 +1174,28 @@ export default function SolarSystemPage() {
           });
         }
 
+        // Collision detection (only in N-Body mode for realistic physics)
+        if (simulationModeRef.current === 'nbody') {
+          const collisions = collisionSystem.checkCollisions(planets, PHYSICS_CONFIG);
+          
+          // Process collisions (handle in reverse order to maintain array indices)
+          const indicesToRemove = [];
+          collisions.forEach(collision => {
+            const indexToRemove = collisionSystem.handleCollision(collision, planets, orbitLines);
+            if (indexToRemove !== null && indexToRemove !== undefined) {
+              indicesToRemove.push(indexToRemove);
+            }
+          });
+          
+          // Remove absorbed planets from array (sort in descending order to maintain indices)
+          indicesToRemove.sort((a, b) => b - a).forEach(index => {
+            planets.splice(index, 1);
+          });
+        }
+        
+        // Update collision effects
+        collisionSystem.updateEffects(delta);
+
         // Camera follow mode - track planet while allowing free camera control
         if (cameraMode === 'follow' && selectedPlanet) {
           const planet = planets.find(p => p.data.name === selectedPlanet.name);
@@ -1242,6 +1267,9 @@ export default function SolarSystemPage() {
           comets.forEach(comet => {
             if (comet.tailGeometry) comet.tailGeometry.dispose();
           });
+          
+          // Clean up collision system
+          collisionSystem.cleanup();
           
           if (renderer) {
             renderer.dispose();
