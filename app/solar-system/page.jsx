@@ -388,6 +388,73 @@ export default function SolarSystemPage() {
         });
       }
 
+      // Helper function to create custom planet with initial velocity
+      function createCustomPlanetWithVelocity(planetData, x, z, vx, vz, scene, planets, orbitLines, THREE) {
+        // Calculate distance from sun
+        const distance = Math.sqrt(x * x + z * z);
+        planetData.distance = distance;
+        
+        // Create the planet geometry
+        const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
+        const planetMaterial = new THREE.MeshStandardMaterial({ 
+          color: planetData.color,
+          emissive: planetData.type === 'star' ? planetData.color : 0x000000,
+          emissiveIntensity: planetData.type === 'star' ? 0.5 : 0.1,
+          roughness: 0.7,
+          metalness: 0.2
+        });
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        
+        // Add glow for stars
+        if (planetData.type === 'star') {
+          const glowGeometry = new THREE.SphereGeometry(planetData.size * 0.7, 32, 32);
+          const glowMaterial = new THREE.MeshBasicMaterial({
+            color: planetData.color,
+            transparent: true,
+            opacity: 0.3
+          });
+          const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+          planet.add(glow);
+          
+          // Add light for stars
+          const starLight = new THREE.PointLight(planetData.color, 1, 200);
+          planet.add(starLight);
+        }
+        
+        // Create planet group
+        const planetGroup = new THREE.Group();
+        planet.position.set(x, 0, z);
+        planetGroup.add(planet);
+        scene.add(planetGroup);
+        
+        // Calculate orbital parameters based on current position
+        const angle = Math.atan2(z, x);
+        const eccentricity = 0;
+        
+        // Don't create orbit line for launched objects (they have custom velocities)
+        
+        // Store planet data with custom velocity for n-body simulation
+        planets.push({
+          group: planetGroup,
+          mesh: planet,
+          data: planetData,
+          geometry: planetGeometry,
+          material: planetMaterial,
+          moons: [],
+          angle: angle,
+          eccentricity: eccentricity,
+          baseDistance: distance,
+          axialTilt: 0,
+          // Use custom velocity
+          vx: vx,
+          vy: 0,
+          vz: vz,
+          ax: 0,
+          ay: 0,
+          az: 0
+        });
+      }
+
       // Helper function to create planets with elliptical orbits, axial tilts, moons, and texture support
       function createPlanetWithOrbit(planetData, scene, planets, orbitLines, THREE) {
         const eccentricity = planetData.eccentricity || 0;
@@ -764,6 +831,146 @@ export default function SolarSystemPage() {
       renderer.domElement.addEventListener('click', onMouseClick);
       renderer.domElement.addEventListener('dblclick', onMouseDblClick);
 
+      // Drag-and-launch functionality
+      let dragStartPoint = null;
+      let dragPreviewLine = null;
+      let dragArrow = null;
+      let isDragging = false;
+
+      const onMouseDown = (event) => {
+        if (objectToCreate && creationMode === 'drag') {
+          // Start dragging for launch
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          // Create a large plane for intersection
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            dragStartPoint = intersects[0].point.clone();
+            isDragging = true;
+            
+            // Create trajectory preview line
+            const lineGeometry = new THREE.BufferGeometry();
+            const lineMaterial = new THREE.LineBasicMaterial({ 
+              color: objectToCreate.color,
+              linewidth: 2 
+            });
+            dragPreviewLine = new THREE.Line(lineGeometry, lineMaterial);
+            scene.add(dragPreviewLine);
+            
+            // Create velocity arrow
+            dragArrow = new THREE.ArrowHelper(
+              new THREE.Vector3(0, 1, 0),
+              dragStartPoint,
+              10,
+              objectToCreate.color,
+              2,
+              1
+            );
+            scene.add(dragArrow);
+          }
+        }
+      };
+
+      const onMouseMove = (event) => {
+        if (isDragging && dragStartPoint && objectToCreate && creationMode === 'drag') {
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            const currentPoint = intersects[0].point;
+            const dragVector = new THREE.Vector3().subVectors(dragStartPoint, currentPoint);
+            
+            // Update preview line
+            if (dragPreviewLine) {
+              const points = [dragStartPoint, currentPoint];
+              dragPreviewLine.geometry.setFromPoints(points);
+            }
+            
+            // Update arrow to show velocity direction and magnitude
+            if (dragArrow) {
+              const direction = dragVector.clone().normalize();
+              const length = Math.min(dragVector.length() * 0.5, 50);
+              dragArrow.setDirection(direction);
+              dragArrow.setLength(length, length * 0.2, length * 0.15);
+            }
+          }
+        }
+      };
+
+      const onMouseUp = (event) => {
+        if (isDragging && dragStartPoint && objectToCreate && creationMode === 'drag') {
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            const endPoint = intersects[0].point;
+            const velocityVector = new THREE.Vector3().subVectors(dragStartPoint, endPoint);
+            
+            // Create object with initial velocity
+            createCustomPlanetWithVelocity(
+              objectToCreate, 
+              dragStartPoint.x, 
+              dragStartPoint.z,
+              velocityVector.x * 0.1,
+              velocityVector.z * 0.1,
+              scene, 
+              planets, 
+              orbitLines, 
+              THREE
+            );
+            
+            setObjectToCreate(null);
+          }
+          
+          // Clean up preview
+          if (dragPreviewLine) {
+            scene.remove(dragPreviewLine);
+            dragPreviewLine = null;
+          }
+          if (dragArrow) {
+            scene.remove(dragArrow);
+            dragArrow = null;
+          }
+          
+          isDragging = false;
+          dragStartPoint = null;
+        }
+      };
+
+      renderer.domElement.addEventListener('mousedown', onMouseDown);
+      renderer.domElement.addEventListener('mousemove', onMouseMove);
+      renderer.domElement.addEventListener('mouseup', onMouseUp);
+
       // Animation loop with improved performance
       const clock = new THREE.Clock();
       const animate = () => {
@@ -1016,6 +1223,9 @@ export default function SolarSystemPage() {
           window.removeEventListener('resize', handleResize);
           renderer.domElement.removeEventListener('click', onMouseClick);
           renderer.domElement.removeEventListener('dblclick', onMouseDblClick);
+          renderer.domElement.removeEventListener('mousedown', onMouseDown);
+          renderer.domElement.removeEventListener('mousemove', onMouseMove);
+          renderer.domElement.removeEventListener('mouseup', onMouseUp);
           if (animationId) cancelAnimationFrame(animationId);
           
           // Dispose of all geometries and materials
