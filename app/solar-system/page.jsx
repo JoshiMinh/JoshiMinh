@@ -28,7 +28,9 @@ import {
   PlanetInfoModal,
   KeyboardHelpModal,
   TopBar,
-  PhysicsPanel
+  PhysicsPanel,
+  ObjectCreatorPanel,
+  ObjectEditorPanel
 } from './components';
 
 // Import custom hooks
@@ -57,6 +59,14 @@ export default function SolarSystemPage() {
   // Physics state
   const [simulationMode, setSimulationMode] = useState('kepler'); // 'kepler' or 'nbody'
   const [gravityMultiplier, setGravityMultiplier] = useState(1.0);
+  // Object creation state
+  const [showObjectCreator, setShowObjectCreator] = useState(false);
+  const [showObjectEditor, setShowObjectEditor] = useState(false);
+  const [customObjects, setCustomObjects] = useState([]);
+  const [objectToCreate, setObjectToCreate] = useState(null);
+  const [creationMode, setCreationMode] = useState('click'); // 'click' or 'drag'
+  const [dragStartPos, setDragStartPos] = useState(null);
+  const [dragCurrentPos, setDragCurrentPos] = useState(null);
   const sceneRef = useRef(null);
   const timeSpeedRef = useRef(timeSpeed);
   const isPausedRef = useRef(isPaused);
@@ -296,6 +306,86 @@ export default function SolarSystemPage() {
           z: Math.sin(angle) * r,
           r: r
         };
+      }
+
+      // Helper function to create custom planet at a specific position
+      function createCustomPlanetAtPosition(planetData, x, z, scene, planets, orbitLines, THREE) {
+        // Calculate distance from sun
+        const distance = Math.sqrt(x * x + z * z);
+        planetData.distance = distance;
+        
+        // Create the planet geometry
+        const planetGeometry = new THREE.SphereGeometry(planetData.size * 0.6, 64, 64);
+        const planetMaterial = new THREE.MeshStandardMaterial({ 
+          color: planetData.color,
+          emissive: planetData.type === 'star' ? planetData.color : 0x000000,
+          emissiveIntensity: planetData.type === 'star' ? 0.5 : 0.1,
+          roughness: 0.7,
+          metalness: 0.2
+        });
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        
+        // Add glow for stars
+        if (planetData.type === 'star') {
+          const glowGeometry = new THREE.SphereGeometry(planetData.size * 0.7, 32, 32);
+          const glowMaterial = new THREE.MeshBasicMaterial({
+            color: planetData.color,
+            transparent: true,
+            opacity: 0.3
+          });
+          const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+          planet.add(glow);
+          
+          // Add light for stars
+          const starLight = new THREE.PointLight(planetData.color, 1, 200);
+          planet.add(starLight);
+        }
+        
+        // Create planet group
+        const planetGroup = new THREE.Group();
+        planet.position.set(x, 0, z);
+        planetGroup.add(planet);
+        scene.add(planetGroup);
+        
+        // Calculate orbital parameters based on current position
+        const angle = Math.atan2(z, x);
+        const eccentricity = 0;
+        
+        // Create orbit line (circular for custom objects)
+        if (distance > 1) {
+          const orbitGeometry = new THREE.BufferGeometry();
+          const orbitPoints = createEllipticalOrbitPath(distance, 0);
+          orbitGeometry.setAttribute('position', new THREE.Float32BufferAttribute(orbitPoints, 3));
+          const orbitMaterial = new THREE.LineBasicMaterial({ 
+            color: planetData.color, 
+            opacity: 0.3, 
+            transparent: true 
+          });
+          const orbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
+          scene.add(orbitLine);
+          orbitLines.push({ line: orbitLine, isCustom: true });
+        }
+        
+        // Store planet data with velocity for n-body simulation
+        planets.push({
+          group: planetGroup,
+          mesh: planet,
+          data: planetData,
+          geometry: planetGeometry,
+          material: planetMaterial,
+          moons: [],
+          angle: angle,
+          eccentricity: eccentricity,
+          baseDistance: distance,
+          axialTilt: 0,
+          // Initialize velocity (perpendicular to position for circular orbit)
+          vx: -z * planetData.speed * PHYSICS_CONFIG.INITIAL_VELOCITY_SCALE * 0.01,
+          vy: 0,
+          vz: x * planetData.speed * PHYSICS_CONFIG.INITIAL_VELOCITY_SCALE * 0.01,
+          ax: 0,
+          ay: 0,
+          az: 0
+        });
       }
 
       // Helper function to create planets with elliptical orbits, axial tilts, moons, and texture support
@@ -609,12 +699,44 @@ export default function SolarSystemPage() {
         return null;
       };
 
-      // Single click - show info panel
+      // Single click - show info panel or place object
       const onMouseClick = (event) => {
+        // Check if we're in object creation mode
+        if (objectToCreate) {
+          // Get intersection with a plane at y=0
+          const raycaster = new THREE.Raycaster();
+          const mouse = new THREE.Vector2();
+          mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+          
+          raycaster.setFromCamera(mouse, camera);
+          
+          // Create a large plane for intersection
+          const planeGeometry = new THREE.PlaneGeometry(10000, 10000);
+          planeGeometry.rotateX(-Math.PI / 2);
+          const plane = new THREE.Mesh(planeGeometry);
+          
+          const intersects = raycaster.intersectObject(plane);
+          
+          if (intersects.length > 0) {
+            const point = intersects[0].point;
+            
+            // Create the new object at this position
+            createCustomPlanetAtPosition(objectToCreate, point.x, point.z, scene, planets, orbitLines, THREE);
+            
+            setObjectToCreate(null);
+          }
+          return;
+        }
+        
         const clickedPlanet = getClickedPlanet(event);
         if (clickedPlanet) {
           setSelectedPlanet(clickedPlanet.data);
           setShowInfo(true);
+          // If it's a custom object, allow editing
+          if (clickedPlanet.data.isCustom) {
+            setShowObjectEditor(true);
+          }
         }
       };
 
@@ -1345,6 +1467,17 @@ export default function SolarSystemPage() {
           </button>
           <button 
             className="tool-btn" 
+            onClick={() => setShowObjectCreator(!showObjectCreator)}
+            style={{ 
+              background: showObjectCreator ? 'rgba(74, 144, 226, 0.3)' : 'rgba(255, 255, 255, 0.1)',
+              border: showObjectCreator ? '1px solid rgba(74, 144, 226, 0.8)' : '1px solid rgba(255, 255, 255, 0.2)'
+            }}
+            title="Create custom objects"
+          >
+            🪐 Create
+          </button>
+          <button 
+            className="tool-btn" 
             onClick={takeScreenshot}
             title="Save screenshot"
           >
@@ -1960,6 +2093,58 @@ export default function SolarSystemPage() {
                 </button>
               </div>
             </div>
+          )}
+
+          {/* Object Creator Panel */}
+          {showObjectCreator && (
+            <ObjectCreatorPanel
+              onCreateObject={(newObject) => {
+                setObjectToCreate(newObject);
+                setShowObjectCreator(false);
+              }}
+              onClose={() => setShowObjectCreator(false)}
+              creationMode={creationMode}
+              onToggleCreationMode={(mode) => setCreationMode(mode)}
+            />
+          )}
+
+          {/* Object Editor Panel */}
+          {showObjectEditor && selectedPlanet && selectedPlanet.isCustom && (
+            <ObjectEditorPanel
+              selectedObject={selectedPlanet}
+              onUpdateObject={(updatedObject) => {
+                // Update the custom object in the scene
+                if (sceneRef.current?.planets) {
+                  const planetIndex = sceneRef.current.planets.findIndex(
+                    p => p.data.name === updatedObject.name
+                  );
+                  if (planetIndex !== -1) {
+                    const planet = sceneRef.current.planets[planetIndex];
+                    planet.data = updatedObject;
+                    // Update visual properties
+                    planet.mesh.material.color.setHex(updatedObject.color);
+                    planet.mesh.scale.setScalar(updatedObject.size * 0.6);
+                  }
+                }
+                setSelectedPlanet(updatedObject);
+              }}
+              onDeleteObject={(objectToDelete) => {
+                // Remove object from scene
+                if (sceneRef.current?.planets) {
+                  const planetIndex = sceneRef.current.planets.findIndex(
+                    p => p.data.name === objectToDelete.name
+                  );
+                  if (planetIndex !== -1) {
+                    const planet = sceneRef.current.planets[planetIndex];
+                    sceneRef.current.scene.remove(planet.group);
+                    sceneRef.current.planets.splice(planetIndex, 1);
+                  }
+                }
+                setShowObjectEditor(false);
+                setSelectedPlanet(null);
+              }}
+              onClose={() => setShowObjectEditor(false)}
+            />
           )}
         </div>
       </main>
