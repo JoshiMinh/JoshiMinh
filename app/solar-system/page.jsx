@@ -15,7 +15,7 @@ import {
 } from './data';
 
 // Import utility functions
-import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath, CollisionSystem } from './utils';
+import { colorToHex, getEllipticalPosition, createEllipticalOrbitPath, CollisionSystem, GravityVisualization } from './utils';
 
 // Import UI components
 import { 
@@ -30,7 +30,8 @@ import {
   TopBar,
   PhysicsPanel,
   ObjectCreatorPanel,
-  ObjectEditorPanel
+  ObjectEditorPanel,
+  GravityVisualizationPanel
 } from './components';
 
 // Import custom hooks
@@ -67,6 +68,11 @@ export default function SolarSystemPage() {
   const [creationMode, setCreationMode] = useState('click'); // 'click' or 'drag'
   const [dragStartPos, setDragStartPos] = useState(null);
   const [dragCurrentPos, setDragCurrentPos] = useState(null);
+  // Gravity visualization state
+  const [showGravityWell, setShowGravityWell] = useState(false);
+  const [showLagrangePoints, setShowLagrangePoints] = useState(false);
+  const [showRocheLimit, setShowRocheLimit] = useState(false);
+  const [showBarycenter, setShowBarycenter] = useState(false);
   const sceneRef = useRef(null);
   const timeSpeedRef = useRef(timeSpeed);
   const isPausedRef = useRef(isPaused);
@@ -126,6 +132,31 @@ export default function SolarSystemPage() {
       });
     }
   }, [scaleMode]);
+
+  // Handle gravity visualization toggles
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleGravityWell(showGravityWell);
+    }
+  }, [showGravityWell]);
+
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleLagrangePoints(showLagrangePoints);
+    }
+  }, [showLagrangePoints]);
+
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleRocheLimit(showRocheLimit);
+    }
+  }, [showRocheLimit]);
+
+  useEffect(() => {
+    if (sceneRef.current?.gravityVis) {
+      sceneRef.current.gravityVis.toggleBarycenter(showBarycenter);
+    }
+  }, [showBarycenter]);
 
   // Helper function for scale mode (static version for useEffect)
   function getEllipticalPositionStatic(angle, distance, eccentricity) {
@@ -220,6 +251,10 @@ export default function SolarSystemPage() {
 
       // Initialize collision detection system
       const collisionSystem = new CollisionSystem(scene, THREE);
+      
+      // Initialize gravity visualization system
+      const gravityVis = new GravityVisualization(scene, THREE);
+      gravityVis.createGravityWell();
 
       // Create an enhanced Sun with proper material (supports texture)
       const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
@@ -1195,6 +1230,9 @@ export default function SolarSystemPage() {
         
         // Update collision effects
         collisionSystem.updateEffects(delta);
+        
+        // Update gravity visualizations
+        gravityVis.update(planets, sun);
 
         // Camera follow mode - track planet while allowing free camera control
         if (cameraMode === 'follow' && selectedPlanet) {
@@ -1244,6 +1282,7 @@ export default function SolarSystemPage() {
         orbitLines,
         comets,
         THREE,
+        gravityVis,
         cleanup: () => {
           window.removeEventListener('resize', handleResize);
           renderer.domElement.removeEventListener('click', onMouseClick);
@@ -1270,6 +1309,9 @@ export default function SolarSystemPage() {
           
           // Clean up collision system
           collisionSystem.cleanup();
+          
+          // Clean up gravity visualization system
+          gravityVis.cleanup();
           
           if (renderer) {
             renderer.dispose();
@@ -1830,6 +1872,18 @@ export default function SolarSystemPage() {
             setSimulationMode={setSimulationMode}
             gravityMultiplier={gravityMultiplier}
             setGravityMultiplier={setGravityMultiplier}
+          />
+
+          {/* Gravity Visualization Controls */}
+          <GravityVisualizationPanel
+            showGravityWell={showGravityWell}
+            showLagrangePoints={showLagrangePoints}
+            showRocheLimit={showRocheLimit}
+            showBarycenter={showBarycenter}
+            onToggleGravityWell={setShowGravityWell}
+            onToggleLagrangePoints={setShowLagrangePoints}
+            onToggleRocheLimit={setShowRocheLimit}
+            onToggleBarycenter={setShowBarycenter}
           />
 
           {/* Enhanced control instructions */}
