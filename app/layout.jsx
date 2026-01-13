@@ -2,7 +2,10 @@ import '../styles/globals.css'
 
 export const metadata = {
   title: 'JoshiMinh',
-  description: 'Next.js app installed with pnpm'
+  description: 'Next.js app installed with pnpm',
+  icons: {
+    icon: '/icon.png',
+  },
 }
 
 export default function RootLayout({ children }) {
