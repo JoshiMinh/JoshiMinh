@@ -2,7 +2,7 @@ export const metadata = {
   title: 'Living Rock Paper Scissors',
   description: 'Rock Paper Scissors simulation - coming soon.',
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✊</text></svg>",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✂️</text></svg>",
   },
   openGraph: {
     title: 'Living Rock Paper Scissors',
