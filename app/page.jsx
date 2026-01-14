@@ -109,20 +109,7 @@ export default function Home() {
         <section className="section section--projects" id="projects" aria-labelledby="projects-heading">
           <div className="section__intro">
             <span className="pill">Projects</span>
-            <h2 id="projects-heading">Featured builds &amp; explorations</h2>
-            <p>
-              Each project is a playground for new ideas—ranging from indie SaaS products to delightful experiments that push my
-              understanding of what's possible.
-            </p>
-          </div>
-          <div className="card-grid card-grid--projects" id="project-grid"></div>
-          <p className="section__note">Links open in a new tab.</p>
-        </section>
-
-        <section className="section section--games" id="games" aria-labelledby="games-heading">
-          <div className="section__intro">
-            <span className="pill pill--games">Games</span>
-            <h2 id="games-heading">Interactive playgrounds</h2>
+            <h2 id="projects-heading">Interactive playgrounds</h2>
             <p>
               Fun experiments and games built to explore creative coding, physics simulations, and interactive experiences.
             </p>
