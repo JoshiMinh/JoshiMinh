@@ -168,7 +168,7 @@ img {
   height: 0.4rem;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 6px rgba(139, 92, 246, 0.12);
+  box-shadow: 0 0 0 6px rgba(167, 139, 250, 0.12);
   animation: pulse 2.4s infinite;
 }
 
@@ -290,7 +290,7 @@ img {
 .support-button:focus-visible,
 .project-card:focus-visible,
 .site-footer__return:focus-visible {
-  outline: 2px solid rgba(56, 189, 248, 0.85);
+  outline: 2px solid rgba(167, 139, 250, 0.85);
   outline-offset: 3px;
 }
 
