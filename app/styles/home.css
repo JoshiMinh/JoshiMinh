@@ -523,16 +523,16 @@ img {
 .identity-point {
   position: relative;
   border-radius: 1.6rem;
-  border: 1px solid rgba(120, 120, 180, 0.35);
-  background: rgba(12, 12, 18, 0.72);
+  border: 1px solid rgba(140, 140, 200, 0.3);
+  background: rgba(15, 15, 25, 0.65);
   padding: 1rem 1.2rem;
   display: grid;
   gap: 0.4rem;
-  transition: border 0.25s ease, transform 0.25s ease;
+  transition: border 0.3s ease, transform 0.3s ease;
 }
 
 .identity-point:hover {
-  border-color: rgba(168, 85, 247, 0.6);
+  border-color: rgba(167, 139, 250, 0.55);
   transform: translateY(-2px);
 }
 
@@ -808,8 +808,8 @@ img {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  border: 1px solid rgba(120, 120, 180, 0.35);
-  background: rgba(12, 12, 18, 0.65);
+  border: 1px solid rgba(140, 140, 200, 0.3);
+  background: rgba(15, 15, 25, 0.6);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -848,8 +848,8 @@ img {
 .project-card__tag {
   border-radius: 0.75rem;
   padding: 0.4rem 0.9rem;
-  border: 1px solid rgba(120, 120, 180, 0.35);
-  background: rgba(12, 12, 18, 0.55);
+  border: 1px solid rgba(140, 140, 200, 0.3);
+  background: rgba(15, 15, 25, 0.5);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1028,10 +1028,10 @@ img {
   position: relative;
   padding: 1rem 1.2rem 1rem 2.75rem;
   border-radius: 1.4rem;
-  border: 1px solid rgba(120, 120, 180, 0.35);
-  background: rgba(12, 12, 18, 0.65);
+  border: 1px solid rgba(140, 140, 200, 0.3);
+  background: rgba(15, 15, 25, 0.6);
   color: var(--muted);
-  transition: border 0.25s ease, transform 0.25s ease;
+  transition: border 0.3s ease, transform 0.3s ease;
 }
 
 .about__values li::before {
@@ -1044,11 +1044,11 @@ img {
   background: var(--accent);
   border-radius: 50%;
   transform: translateY(-50%);
-  box-shadow: 0 0 0 6px rgba(139, 92, 246, 0.12);
+  box-shadow: 0 0 0 6px rgba(167, 139, 250, 0.12);
 }
 
 .about__values li:hover {
-  border-color: rgba(168, 85, 247, 0.55);
+  border-color: rgba(167, 139, 250, 0.55);
   transform: translateY(-2px);
 }
 
