@@ -1,6 +1,9 @@
 export const metadata = {
   title: 'iPong X',
   description: 'Meet the suspiciously confident iPong X—overbuilt specs, loud colors, and just enough attitude to irritate actual flagships.',
+  icons: {
+    icon: '/ipong-x/pear-logo.png',
+  },
   openGraph: {
     title: 'iPong X',
     description: 'Meet the suspiciously confident iPong X—overbuilt specs, loud colors, and just enough attitude to irritate actual flagships.',
