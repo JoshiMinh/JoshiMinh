@@ -24,15 +24,9 @@
     "icon": "🧬"
   },
   {
-    "url": "/donut",
-    "title": "Donut",
-    "description": "Interactive donut experience - coming soon.",
-    "icon": "🍩"
-  },
-  {
     "url": "/living-rps",
     "title": "Living Rock Paper Scissors",
     "description": "Rock Paper Scissors simulation - coming soon.",
-    "icon": "✊"
+    "icon": "✂️"
   }
 ]
