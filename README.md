@@ -8,7 +8,8 @@ This repository contains static versions of interactive web games and simulation
 
 ### Available Projects
 
-- **[Ball Game](Archives/ball-game/)** - 🎱 Physics sandbox with elastic collisions. Create shapes and launch balls to see realistic bouncing behavior.
+- **[Physics Sandbox](Archives/physics-sandbox/)** - 🎱 Interactive physics playground with elastic collisions. Create shapes (lines, rectangles, circles, triangles) and launch balls to see realistic bouncing behavior.
+- **[Conway's Game of Life](Archives/conways-game-of-life/)** - 🧬 Cellular automaton simulation with multiple patterns, themes, and customizable settings. Watch fascinating emergent behaviors unfold!
 - **[iPong-X](Archives/iPong-X/)** - 📱 Parody product page showcasing a fictional smartphone with humorous specifications.
 - **[Solar System Simulator](Archives/Solar%20System%20Simulator/)** - 🪐 3D interactive solar system visualization (work in progress).
 

@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conway's Game of Life</title>
+  <meta name="description" content="Conway's Game of Life - A cellular automaton simulation with multiple patterns and themes.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="conway-container" id="container">
+    <!-- Fullscreen Grid Container -->
+    <div class="fullscreen-grid-container">
+      <div class="fullscreen-grid" id="grid"></div>
+    </div>
+
+    <!-- Floating Top Bar -->
+    <div class="floating-topbar">
+      <div class="topbar-left">
+        <a href="../" class="back-link" title="Back to Home">←</a>
+        <h1>Conway's Game of Life</h1>
+      </div>
+      
+      <div class="topbar-center">
+        <div class="stat-pill">
+          <span class="stat-icon">🧬</span>
+          <span class="stat-value" id="generation">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-icon">📊</span>
+          <span class="stat-value" id="liveCells">0</span>
+        </div>
+      </div>
+
+      <div class="topbar-right" id="toolbar"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal" style="display: none;">
+      <div class="modal">
+        <h2>⚙️ Settings</h2>
+        
+        <div class="setting-group">
+          <label>
+            <span>Speed (ms)</span>
+            <input type="range" id="speedSlider" min="10" max="500" value="100" step="10">
+            <span id="speedValue">100</span>
+          </label>
+        </div>
+
+        <div class="setting-group">
+          <label>
+            <span>Cell Size (px)</span>
+            <input type="range" id="cellSizeSlider" min="8" max="24" value="14" step="2">
+            <span id="cellSizeValue">14</span>
+          </label>
+        </div>
+
+        <div class="setting-group">
+          <label>
+            <input type="checkbox" id="wrapEdges" checked>
+            <span>Wrap Edges (Toroidal Grid)</span>
+          </label>
+        </div>
+
+        <div class="setting-group">
+          <label>
+            <input type="checkbox" id="showGridLines" checked>
+            <span>Show Grid Lines</span>
+          </label>
+        </div>
+
+        <div class="setting-group">
+          <label>
+            <span>Theme</span>
+            <select id="themeSelect">
+              <option value="classic">Classic</option>
+              <option value="neon">Neon</option>
+              <option value="ocean">Ocean</option>
+              <option value="fire">Fire</option>
+              <option value="matrix">Matrix</option>
+              <option value="sunset">Sunset</option>
+              <option value="cyber">Cyber</option>
+              <option value="plasma">Plasma</option>
+            </select>
+          </label>
+        </div>
+
+        <button class="btn-primary" id="closeSettings">Close</button>
+      </div>
+    </div>
+
+    <!-- Patterns Modal -->
+    <div class="modal-overlay" id="patternsModal" style="display: none;">
+      <div class="modal patterns-modal">
+        <h2>🧬 Pattern Library</h2>
+        <div id="patternCategories"></div>
+        <button class="btn-primary" id="closePatterns">Close</button>
+      </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal" style="display: none;">
+      <div class="modal help-modal">
+        <h2>❓ How to Play</h2>
+        
+        <div class="help-section">
+          <h3>🎮 Controls</h3>
+          <ul>
+            <li><strong>Click/Drag</strong> - Draw or erase cells</li>
+            <li><strong>Space</strong> - Play/Pause simulation</li>
+            <li><strong>R</strong> - Randomize grid</li>
+            <li><strong>C</strong> - Clear all cells</li>
+            <li><strong>S</strong> - Step one generation</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>📜 Rules</h3>
+          <p>Each cell follows simple rules based on its 8 neighbors:</p>
+          <ul>
+            <li><strong>Underpopulation:</strong> A live cell with &lt;2 neighbors dies</li>
+            <li><strong>Survival:</strong> A live cell with 2-3 neighbors lives</li>
+            <li><strong>Overpopulation:</strong> A live cell with &gt;3 neighbors dies</li>
+            <li><strong>Reproduction:</strong> A dead cell with exactly 3 neighbors becomes alive</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>🧬 Pattern Types</h3>
+          <ul>
+            <li><strong>Still Lifes:</strong> Stable patterns that don't change</li>
+            <li><strong>Oscillators:</strong> Patterns that repeat in a cycle</li>
+            <li><strong>Spaceships:</strong> Patterns that move across the grid</li>
+            <li><strong>Guns:</strong> Patterns that emit spaceships</li>
+            <li><strong>Methuselahs:</strong> Small patterns with long evolution</li>
+          </ul>
+        </div>
+
+        <button class="btn-primary" id="closeHelp">Got it!</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const DEFAULT_CELL_SIZE = 14;
+    const DEFAULT_SPEED = 100;
+
+    // Neighbor offsets
+    const NEIGHBOR_OFFSETS = [
+      [-1, -1], [-1, 0], [-1, 1],
+      [0, -1],           [0, 1],
+      [1, -1],  [1, 0],  [1, 1]
+    ];
+
+    // Patterns
+    const PATTERNS = {
+      glider: {
+        name: "Glider",
+        category: "Spaceships",
+        cells: [[0,1], [1,2], [2,0], [2,1], [2,2]]
+      },
+      lwss: {
+        name: "Lightweight Spaceship",
+        category: "Spaceships",
+        cells: [[0,1], [0,4], [1,0], [2,0], [2,4], [3,0], [3,1], [3,2], [3,3]]
+      },
+      gliderGun: {
+        name: "Gosper Glider Gun",
+        category: "Guns",
+        cells: [
+          [0,24], [1,22], [1,24], [2,12], [2,13], [2,20], [2,21], [2,34], [2,35],
+          [3,11], [3,15], [3,20], [3,21], [3,34], [3,35], [4,0], [4,1], [4,10],
+          [4,16], [4,20], [4,21], [5,0], [5,1], [5,10], [5,14], [5,16], [5,17],
+          [5,22], [5,24], [6,10], [6,16], [6,24], [7,11], [7,15], [8,12], [8,13]
+        ]
+      },
+      blinker: {
+        name: "Blinker",
+        category: "Oscillators",
+        cells: [[0,0], [0,1], [0,2]]
+      },
+      toad: {
+        name: "Toad",
+        category: "Oscillators",
+        cells: [[0,1], [0,2], [0,3], [1,0], [1,1], [1,2]]
+      },
+      beacon: {
+        name: "Beacon",
+        category: "Oscillators",
+        cells: [[0,0], [0,1], [1,0], [1,1], [2,2], [2,3], [3,2], [3,3]]
+      },
+      pulsar: {
+        name: "Pulsar",
+        category: "Oscillators",
+        cells: [
+          [0,2], [0,3], [0,4], [0,8], [0,9], [0,10],
+          [2,0], [2,5], [2,7], [2,12],
+          [3,0], [3,5], [3,7], [3,12],
+          [4,0], [4,5], [4,7], [4,12],
+          [5,2], [5,3], [5,4], [5,8], [5,9], [5,10],
+          [7,2], [7,3], [7,4], [7,8], [7,9], [7,10],
+          [8,0], [8,5], [8,7], [8,12],
+          [9,0], [9,5], [9,7], [9,12],
+          [10,0], [10,5], [10,7], [10,12],
+          [12,2], [12,3], [12,4], [12,8], [12,9], [12,10]
+        ]
+      },
+      block: {
+        name: "Block",
+        category: "Still Lifes",
+        cells: [[0,0], [0,1], [1,0], [1,1]]
+      },
+      beehive: {
+        name: "Beehive",
+        category: "Still Lifes",
+        cells: [[0,1], [0,2], [1,0], [1,3], [2,1], [2,2]]
+      },
+      rPentomino: {
+        name: "R-Pentomino",
+        category: "Methuselahs",
+        cells: [[0,1], [0,2], [1,0], [1,1], [2,1]]
+      },
+      acorn: {
+        name: "Acorn",
+        category: "Methuselahs",
+        cells: [[0,1], [1,3], [2,0], [2,1], [2,4], [2,5], [2,6]]
+      }
+    };
+
+    // Themes
+    const THEMES = {
+      classic: { name: "Classic", alive: "#2ecc71", dead: "#1a1a2e", grid: "#2a2a4a", bg: "#0f0f23" },
+      neon: { name: "Neon", alive: "#ff00ff", dead: "#0a0a1a", grid: "#1a1a3a", bg: "#050510" },
+      ocean: { name: "Ocean", alive: "#00d4ff", dead: "#0a1628", grid: "#1a2a3a", bg: "#051015" },
+      fire: { name: "Fire", alive: "#ff6b35", dead: "#1a0a0a", grid: "#2a1a1a", bg: "#100505" },
+      matrix: { name: "Matrix", alive: "#00ff00", dead: "#000a00", grid: "#002a00", bg: "#000500" },
+      sunset: { name: "Sunset", alive: "#ff9a56", dead: "#1a1020", grid: "#2a1a30", bg: "#0a0510" },
+      cyber: { name: "Cyber", alive: "#00ffff", dead: "#0a0a20", grid: "#1a1a40", bg: "#050515" },
+      plasma: { name: "Plasma", alive: "#ff6ec7", dead: "#150a15", grid: "#251a25", bg: "#0a050a" }
+    };
+
+    // Game state
+    let grid = [];
+    let rows = 50;
+    let cols = 80;
+    let cellSize = DEFAULT_CELL_SIZE;
+    let running = false;
+    let speed = DEFAULT_SPEED;
+    let generation = 0;
+    let wrapEdges = true;
+    let showGrid = true;
+    let theme = 'classic';
+    let drawing = false;
+    let drawMode = 1;
+    let intervalId = null;
+
+    // Elements
+    let gridElement, container;
+
+    // Utility functions
+    function createEmptyGrid(r, c) {
+      return Array.from({ length: r }, () => Array(c).fill(0));
+    }
+
+    function countNeighbors(r, c) {
+      let count = 0;
+      for (const [dr, dc] of NEIGHBOR_OFFSETS) {
+        let newRow = r + dr;
+        let newCol = c + dc;
+        
+        if (wrapEdges) {
+          newRow = (newRow + rows) % rows;
+          newCol = (newCol + cols) % cols;
+        }
+        
+        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+          count += grid[newRow][newCol];
+        }
+      }
+      return count;
+    }
+
+    function countLiveCells() {
+      return grid.reduce((sum, row) => sum + row.reduce((s, cell) => s + cell, 0), 0);
+    }
+
+    function calculateGridSize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight - 60;
+      const c = Math.floor(width / cellSize);
+      const r = Math.floor(height / cellSize);
+      return { rows: Math.max(20, r), cols: Math.max(30, c) };
+    }
+
+    // Initialize
+    function init() {
+      container = document.getElementById('container');
+      gridElement = document.getElementById('grid');
+      
+      // Calculate grid size
+      const size = calculateGridSize();
+      rows = size.rows;
+      cols = size.cols;
+      grid = createEmptyGrid(rows, cols);
+      
+      // Create toolbar
+      createToolbar();
+      
+      // Create grid cells
+      createGridCells();
+      
+      // Apply theme
+      applyTheme(theme);
+      
+      // Setup event listeners
+      setupEventListeners();
+      
+      // Update UI
+      updateUI();
+    }
+
+    function createToolbar() {
+      const toolbar = document.getElementById('toolbar');
+      
+      const buttons = [
+        { id: 'playBtn', label: '▶️', title: 'Play/Pause (Space)', active: false },
+        { id: 'stepBtn', label: '⏭', title: 'Step (S)' },
+        { id: 'randomBtn', label: '🎲', title: 'Random (R)' },
+        { id: 'clearBtn', label: '🧹', title: 'Clear (C)' },
+        { id: 'patternsBtn', label: '🧬', title: 'Patterns' },
+        { id: 'settingsBtn', label: '⚙️', title: 'Settings' },
+        { id: 'helpBtn', label: '❓', title: 'Help' }
+      ];
+      
+      buttons.forEach(btn => {
+        const button = document.createElement('button');
+        button.id = btn.id;
+        button.className = 'icon-btn' + (btn.active ? ' active pulse' : '');
+        button.textContent = btn.label;
+        button.title = btn.title;
+        toolbar.appendChild(button);
+      });
+    }
+
+    function createGridCells() {
+      gridElement.innerHTML = '';
+      gridElement.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+      gridElement.style.gridTemplateRows = `repeat(${rows}, ${cellSize}px)`;
+      gridElement.className = showGrid ? 'fullscreen-grid with-grid' : 'fullscreen-grid';
+      
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+          cell.style.width = cellSize + 'px';
+          cell.style.height = cellSize + 'px';
+          gridElement.appendChild(cell);
+        }
+      }
+    }
+
+    function setupEventListeners() {
+      // Toolbar buttons
+      document.getElementById('playBtn').onclick = togglePlay;
+      document.getElementById('stepBtn').onclick = step;
+      document.getElementById('randomBtn').onclick = () => randomize(0.3);
+      document.getElementById('clearBtn').onclick = clear;
+      document.getElementById('patternsBtn').onclick = () => showModal('patternsModal');
+      document.getElementById('settingsBtn').onclick = () => showModal('settingsModal');
+      document.getElementById('helpBtn').onclick = () => showModal('helpModal');
+      
+      // Grid interactions
+      gridElement.addEventListener('mousedown', startDrawing);
+      gridElement.addEventListener('mousemove', draw);
+      document.addEventListener('mouseup', stopDrawing);
+      
+      // Modal close buttons
+      document.getElementById('closeSettings').onclick = () => hideModal('settingsModal');
+      document.getElementById('closePatterns').onclick = () => hideModal('patternsModal');
+      document.getElementById('closeHelp').onclick = () => hideModal('helpModal');
+      
+      // Modal overlays
+      ['settingsModal', 'patternsModal', 'helpModal'].forEach(id => {
+        document.getElementById(id).onclick = (e) => {
+          if (e.target.className === 'modal-overlay') hideModal(id);
+        };
+      });
+      
+      // Settings controls
+      document.getElementById('speedSlider').oninput = (e) => {
+        speed = parseInt(e.target.value);
+        document.getElementById('speedValue').textContent = speed;
+        if (running) {
+          stopSimulation();
+          startSimulation();
+        }
+      };
+      
+      document.getElementById('cellSizeSlider').oninput = (e) => {
+        cellSize = parseInt(e.target.value);
+        document.getElementById('cellSizeValue').textContent = cellSize;
+        const size = calculateGridSize();
+        rows = size.rows;
+        cols = size.cols;
+        grid = createEmptyGrid(rows, cols);
+        generation = 0;
+        createGridCells();
+        updateUI();
+      };
+      
+      document.getElementById('wrapEdges').onchange = (e) => {
+        wrapEdges = e.target.checked;
+      };
+      
+      document.getElementById('showGridLines').onchange = (e) => {
+        showGrid = e.target.checked;
+        gridElement.className = showGrid ? 'fullscreen-grid with-grid' : 'fullscreen-grid';
+      };
+      
+      document.getElementById('themeSelect').onchange = (e) => {
+        theme = e.target.value;
+        applyTheme(theme);
+      };
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        
+        switch(e.key.toLowerCase()) {
+          case ' ':
+            e.preventDefault();
+            togglePlay();
+            break;
+          case 'r':
+            if (!e.ctrlKey && !e.metaKey) {
+              e.preventDefault();
+              randomize(0.3);
+            }
+            break;
+          case 'c':
+            if (!e.ctrlKey && !e.metaKey) {
+              e.preventDefault();
+              clear();
+            }
+            break;
+          case 's':
+            if (!e.ctrlKey && !e.metaKey) {
+              e.preventDefault();
+              step();
+            }
+            break;
+        }
+      });
+      
+      // Resize handler
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          const size = calculateGridSize();
+          rows = size.rows;
+          cols = size.cols;
+          grid = createEmptyGrid(rows, cols);
+          generation = 0;
+          createGridCells();
+          updateUI();
+        }, 150);
+      });
+      
+      // Create pattern library
+      createPatternLibrary();
+    }
+
+    function createPatternLibrary() {
+      const container = document.getElementById('patternCategories');
+      const categories = {};
+      
+      // Group patterns by category
+      Object.entries(PATTERNS).forEach(([key, pattern]) => {
+        if (!categories[pattern.category]) {
+          categories[pattern.category] = [];
+        }
+        categories[pattern.category].push({ key, ...pattern });
+      });
+      
+      // Create category sections
+      Object.entries(categories).forEach(([category, patterns]) => {
+        const div = document.createElement('div');
+        div.className = 'pattern-category';
+        
+        const h3 = document.createElement('h3');
+        h3.textContent = category;
+        div.appendChild(h3);
+        
+        const grid = document.createElement('div');
+        grid.className = 'pattern-grid';
+        
+        patterns.forEach(pattern => {
+          const btn = document.createElement('button');
+          btn.className = 'pattern-btn';
+          btn.textContent = pattern.name;
+          btn.onclick = () => {
+            loadPattern(pattern.key);
+            hideModal('patternsModal');
+          };
+          grid.appendChild(btn);
+        });
+        
+        div.appendChild(grid);
+        container.appendChild(div);
+      });
+      
+      // Add random fill section
+      const randomDiv = document.createElement('div');
+      randomDiv.className = 'pattern-category';
+      randomDiv.innerHTML = `
+        <h3>Random Fill</h3>
+        <div class="pattern-grid">
+          <button class="pattern-btn" onclick="randomize(0.1); hideModal('patternsModal')">Sparse (10%)</button>
+          <button class="pattern-btn" onclick="randomize(0.3); hideModal('patternsModal')">Normal (30%)</button>
+          <button class="pattern-btn" onclick="randomize(0.5); hideModal('patternsModal')">Dense (50%)</button>
+        </div>
+      `;
+      container.appendChild(randomDiv);
+    }
+
+    function showModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    function hideModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function applyTheme(themeName) {
+      const t = THEMES[themeName];
+      container.style.setProperty('--alive-color', t.alive);
+      container.style.setProperty('--dead-color', t.dead);
+      container.style.setProperty('--grid-color', t.grid);
+      container.style.setProperty('--bg-color', t.bg);
+    }
+
+    function togglePlay() {
+      running = !running;
+      const btn = document.getElementById('playBtn');
+      btn.textContent = running ? '⏸' : '▶️';
+      btn.classList.toggle('active', running);
+      btn.classList.toggle('pulse', running);
+      
+      if (running) {
+        startSimulation();
+      } else {
+        stopSimulation();
+      }
+    }
+
+    function startSimulation() {
+      intervalId = setInterval(() => {
+        step();
+      }, speed);
+    }
+
+    function stopSimulation() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+
+    function step() {
+      const newGrid = createEmptyGrid(rows, cols);
+      
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const neighbors = countNeighbors(r, c);
+          const isAlive = grid[r][c] === 1;
+          
+          if (isAlive) {
+            newGrid[r][c] = (neighbors === 2 || neighbors === 3) ? 1 : 0;
+          } else {
+            newGrid[r][c] = neighbors === 3 ? 1 : 0;
+          }
+        }
+      }
+      
+      grid = newGrid;
+      generation++;
+      updateUI();
+    }
+
+    function randomize(density) {
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          grid[r][c] = Math.random() < density ? 1 : 0;
+        }
+      }
+      generation = 0;
+      updateUI();
+    }
+
+    function clear() {
+      grid = createEmptyGrid(rows, cols);
+      generation = 0;
+      updateUI();
+    }
+
+    function loadPattern(patternKey) {
+      const pattern = PATTERNS[patternKey];
+      if (!pattern) return;
+      
+      clear();
+      
+      const offsetRow = Math.floor(rows / 2) - 5;
+      const offsetCol = Math.floor(cols / 2) - 5;
+      
+      pattern.cells.forEach(([r, c]) => {
+        const newRow = r + offsetRow;
+        const newCol = c + offsetCol;
+        if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+          grid[newRow][newCol] = 1;
+        }
+      });
+      
+      updateUI();
+    }
+
+    function startDrawing(e) {
+      if (e.target.classList.contains('cell')) {
+        drawing = true;
+        const row = parseInt(e.target.dataset.row);
+        const col = parseInt(e.target.dataset.col);
+        drawMode = grid[row][col] === 1 ? 0 : 1;
+        toggleCell(row, col);
+      }
+    }
+
+    function draw(e) {
+      if (drawing && e.target.classList.contains('cell')) {
+        const row = parseInt(e.target.dataset.row);
+        const col = parseInt(e.target.dataset.col);
+        if (grid[row][col] !== drawMode) {
+          toggleCell(row, col);
+        }
+      }
+    }
+
+    function stopDrawing() {
+      drawing = false;
+    }
+
+    function toggleCell(row, col) {
+      grid[row][col] = drawMode;
+      updateCell(row, col);
+      updateStats();
+    }
+
+    function updateCell(row, col) {
+      const index = row * cols + col;
+      const cell = gridElement.children[index];
+      if (cell) {
+        cell.classList.toggle('alive', grid[row][col] === 1);
+      }
+    }
+
+    function updateUI() {
+      // Update all cells
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          updateCell(r, c);
+        }
+      }
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('generation').textContent = generation;
+      document.getElementById('liveCells').textContent = countLiveCells();
+    }
+
+    // Make functions global for inline onclick handlers
+    window.randomize = randomize;
+    window.hideModal = hideModal;
+
+    // Start when page loads
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
