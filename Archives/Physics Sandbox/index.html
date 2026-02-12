@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Physics Sandbox</title>
+  <meta name="description" content="Create shapes and launch balls with elastic collisions in this physics sandbox.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ball-game-container" id="container">
+    <!-- Fullscreen Canvas -->
+    <canvas id="gameCanvas" class="game-canvas"></canvas>
+
+    <!-- Floating Top Bar -->
+    <div class="floating-topbar">
+      <div class="topbar-left">
+        <a href="../" class="back-link" title="Back to Home">←</a>
+        <h1>Physics Sandbox</h1>
+      </div>
+      
+      <div class="topbar-center">
+        <div class="stat-pill">
+          <span class="stat-icon">🏀</span>
+          <span class="stat-value" id="ballCount">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-icon">🔷</span>
+          <span class="stat-value" id="shapeCount">0</span>
+        </div>
+      </div>
+
+      <div class="topbar-right" id="toolbar">
+        <!-- Toolbar buttons will be added via JavaScript -->
+      </div>
+    </div>
+
+    <!-- Hover Badge -->
+    <div class="hover-badge" id="hoverBadge" style="display: none;"></div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal" style="display: none;">
+      <div class="modal">
+        <h2>❓ How to Play</h2>
+        
+        <div class="help-section">
+          <h3>🎮 Tools</h3>
+          <ul>
+            <li><strong>🏀 Ball</strong> - Click-drag to set launch direction and speed</li>
+            <li><strong>📏 Line</strong> - Click-drag to draw a wall segment</li>
+            <li><strong>⬜ Square</strong> - Click-drag to draw a rectangle</li>
+            <li><strong>⭕ Circle</strong> - Click-drag to set center and radius</li>
+            <li><strong>🔺 Triangle</strong> - Click three points to create a triangle</li>
+            <li><strong>✋ Move</strong> - Drag any item to reposition it</li>
+            <li><strong>🗑️ Delete</strong> - Click any item to remove it</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h3>⚡ Physics</h3>
+          <p>Balls bounce off shapes and canvas edges with elastic collisions. Pause the simulation if things are moving too fast!</p>
+        </div>
+
+        <button class="btn-primary" id="closeHelp">
+          Got it!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Utility functions
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const normalize = (x, y) => {
+      const l = Math.hypot(x, y) || 1;
+      return [x / l, y / l];
+    };
+    const dot = (ax, ay, bx, by) => ax * bx + ay * by;
+    const reflect = (vx, vy, nx, ny) => {
+      const d = 2 * (vx * nx + vy * ny);
+      return [vx - d * nx, vy - d * ny];
+    };
+
+    // Hit testing helpers
+    function pointOnSegment(px, py, x1, y1, x2, y2, tol = 6) {
+      const vx = x2 - x1, vy = y2 - y1;
+      const wx = px - x1, wy = py - y1;
+      const c1 = vx * wx + vy * wy;
+      const c2 = vx * vx + vy * vy;
+      const t = clamp(c1 / (c2 || 1), 0, 1);
+      const cx = x1 + t * vx, cy = y1 + t * vy;
+      return Math.hypot(px - cx, py - cy) <= tol;
+    }
+
+    function closestPointOnSegment(px, py, x1, y1, x2, y2) {
+      const vx = x2 - x1, vy = y2 - y1;
+      const wx = px - x1, wy = py - y1;
+      const c1 = vx * wx + vy * wy;
+      const c2 = vx * vx + vy * vy;
+      const t = clamp(c1 / (c2 || 1), 0, 1);
+      return { x: x1 + t * vx, y: y1 + t * vy, t };
+    }
+
+    function circleAABBCollision(ball, rect) {
+      const cx = clamp(ball.x, rect.x, rect.x + rect.w);
+      const cy = clamp(ball.y, rect.y, rect.y + rect.h);
+      const dx = ball.x - cx, dy = ball.y - cy;
+      const d2 = dx * dx + dy * dy;
+      if (d2 > ball.r * ball.r) return null;
+      const [nx, ny] = normalize(dx || (ball.x < rect.x ? -1 : 1), dy || (ball.y < rect.y ? -1 : 1));
+      return { nx, ny, px: cx, py: cy };
+    }
+
+    function circleCircleCollision(bx, by, br, cx, cy, cr) {
+      const dx = bx - cx, dy = by - cy;
+      const d = Math.hypot(dx, dy);
+      if (d === 0 || d > br + cr) return null;
+      const nx = dx / d, ny = dy / d;
+      const px = cx + nx * cr, py = cy + ny * cr;
+      return { nx, ny, px, py, penetration: br + cr - d };
+    }
+
+    function edgesOfTriangle(points) {
+      return [
+        [points[0], points[1]],
+        [points[1], points[2]],
+        [points[2], points[0]],
+      ];
+    }
+
+    function uid() { 
+      return Math.random().toString(36).slice(2, 9); 
+    }
+
+    // Game State
+    const STORAGE_KEY = "ball-game-state-v1";
+    let canvas, ctx, container;
+    let tool = "ball";
+    let isPlaying = true;
+    let balls = [];
+    let shapes = [];
+    let hoverInfo = null;
+    let drag = { active: false };
+    let rafId = 0;
+    let lastTime = 0;
+    let trianglePoints = [];
+
+    // Toolbar buttons
+    const toolbarButtons = [
+      { id: "ball", label: "🏀", tip: "Ball: drag to set launch direction" },
+      { id: "line", label: "📏", tip: "Line: click-drag to draw wall" },
+      { id: "rect", label: "⬜", tip: "Square: drag to draw axis-aligned square/rect" },
+      { id: "circle", label: "⭕", tip: "Circle: drag to set center and radius" },
+      { id: "triangle", label: "🔺", tip: "Triangle: click 3 points" },
+      { id: "move", label: "✋", tip: "Move: drag to reposition shapes/balls" },
+      { id: "delete", label: "🗑️", tip: "Delete: click to remove" },
+    ];
+
+    // Initialize
+    function init() {
+      canvas = document.getElementById('gameCanvas');
+      ctx = canvas.getContext('2d');
+      container = document.getElementById('container');
+      
+      // Create toolbar
+      const toolbar = document.getElementById('toolbar');
+      toolbarButtons.forEach(btn => {
+        const button = document.createElement('button');
+        button.className = 'icon-btn';
+        button.title = btn.tip;
+        button.textContent = btn.label;
+        button.onclick = () => setTool(btn.id);
+        button.dataset.tool = btn.id;
+        toolbar.appendChild(button);
+      });
+
+      // Add divider
+      const divider = document.createElement('div');
+      divider.className = 'divider';
+      toolbar.appendChild(divider);
+
+      // Play/Pause button
+      const playBtn = document.createElement('button');
+      playBtn.className = 'icon-btn active pulse';
+      playBtn.id = 'playBtn';
+      playBtn.textContent = '⏸';
+      playBtn.title = 'Pause';
+      playBtn.onclick = togglePlay;
+      toolbar.appendChild(playBtn);
+
+      // Clear button
+      const clearBtn = document.createElement('button');
+      clearBtn.className = 'icon-btn';
+      clearBtn.textContent = '🧹';
+      clearBtn.title = 'Clear All';
+      clearBtn.onclick = clearAll;
+      toolbar.appendChild(clearBtn);
+
+      // Help button
+      const helpBtn = document.createElement('button');
+      helpBtn.className = 'icon-btn';
+      helpBtn.textContent = '❓';
+      helpBtn.title = 'Help';
+      helpBtn.onclick = () => document.getElementById('helpModal').style.display = 'flex';
+      toolbar.appendChild(helpBtn);
+
+      // Modal close handlers
+      document.getElementById('closeHelp').onclick = () => {
+        document.getElementById('helpModal').style.display = 'none';
+      };
+      document.getElementById('helpModal').onclick = (e) => {
+        if (e.target.className === 'modal-overlay') {
+          document.getElementById('helpModal').style.display = 'none';
+        }
+      };
+
+      // Canvas event listeners
+      canvas.addEventListener('mousedown', onPointerDown);
+      canvas.addEventListener('mousemove', onPointerMove);
+      canvas.addEventListener('mouseup', onPointerUp);
+
+      // Resize handling
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Load saved state
+      loadState();
+
+      // Set active tool
+      updateToolButtons();
+
+      // Start animation loop
+      requestAnimationFrame(animate);
+    }
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const w = container.clientWidth;
+      const h = container.clientHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function setTool(newTool) {
+      tool = newTool;
+      trianglePoints = [];
+      updateToolButtons();
+    }
+
+    function updateToolButtons() {
+      document.querySelectorAll('.icon-btn[data-tool]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tool === tool);
+      });
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const playBtn = document.getElementById('playBtn');
+      playBtn.textContent = isPlaying ? '⏸' : '▶️';
+      playBtn.title = isPlaying ? 'Pause' : 'Play';
+      playBtn.classList.toggle('active', isPlaying);
+      playBtn.classList.toggle('pulse', isPlaying);
+    }
+
+    function clearAll() {
+      balls = [];
+      shapes = [];
+      trianglePoints = [];
+      saveState();
+      updateCounts();
+    }
+
+    function updateCounts() {
+      document.getElementById('ballCount').textContent = balls.length;
+      document.getElementById('shapeCount').textContent = shapes.length;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ balls, shapes }));
+      } catch (e) {}
+    }
+
+    function loadState() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) {
+          const parsed = JSON.parse(data);
+          balls = parsed.balls || [];
+          shapes = parsed.shapes || [];
+          updateCounts();
+        }
+      } catch (e) {}
+    }
+
+    // Pick entity at position
+    function pickEntityAt(x, y) {
+      // Check balls
+      for (let i = balls.length - 1; i >= 0; i--) {
+        const b = balls[i];
+        if (Math.hypot(x - b.x, y - b.y) <= b.r) {
+          return { kind: "ball", index: i, entity: b };
+        }
+      }
+
+      // Check shapes
+      for (let i = shapes.length - 1; i >= 0; i--) {
+        const s = shapes[i];
+        if (s.type === "line") {
+          if (pointOnSegment(x, y, s.x1, s.y1, s.x2, s.y2)) {
+            return { kind: "shape", index: i, entity: s };
+          }
+        } else if (s.type === "rect") {
+          if (x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) {
+            return { kind: "shape", index: i, entity: s };
+          }
+        } else if (s.type === "circle") {
+          if (Math.hypot(x - s.x, y - s.y) <= s.r) {
+            return { kind: "shape", index: i, entity: s };
+          }
+        } else if (s.type === "triangle") {
+          // Simple point-in-triangle test
+          const p1 = s.points[0], p2 = s.points[1], p3 = s.points[2];
+          const sign = (px, py, ax, ay, bx, by) => (px - bx) * (ay - by) - (ax - bx) * (py - by);
+          const d1 = sign(x, y, p1.x, p1.y, p2.x, p2.y);
+          const d2 = sign(x, y, p2.x, p2.y, p3.x, p3.y);
+          const d3 = sign(x, y, p3.x, p3.y, p1.x, p1.y);
+          const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+          const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+          if (!(hasNeg && hasPos)) {
+            return { kind: "shape", index: i, entity: s };
+          }
+        }
+      }
+      return null;
+    }
+
+    // Mouse handlers
+    function onPointerDown(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (tool === "triangle") {
+        trianglePoints.push({ x, y });
+        if (trianglePoints.length === 3) {
+          shapes.push({ id: uid(), type: "triangle", points: [...trianglePoints] });
+          trianglePoints = [];
+          saveState();
+          updateCounts();
+        }
+        return;
+      }
+
+      if (tool === "delete") {
+        const hit = pickEntityAt(x, y);
+        if (hit) {
+          if (hit.kind === "ball") {
+            balls.splice(hit.index, 1);
+          } else {
+            shapes.splice(hit.index, 1);
+          }
+          saveState();
+          updateCounts();
+        }
+        return;
+      }
+
+      const hit = (tool === "move") ? pickEntityAt(x, y) : null;
+      drag = { active: true, sx: x, sy: y, x, y, lastx: x, lasty: y, hit };
+    }
+
+    function onPointerMove(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (drag.active) {
+        drag.x = x;
+        drag.y = y;
+        
+        if (tool === "move" && drag.hit) {
+          const dx = x - drag.lastx;
+          const dy = y - drag.lasty;
+          drag.lastx = x;
+          drag.lasty = y;
+
+          if (drag.hit.kind === "ball") {
+            const ball = balls[drag.hit.index];
+            ball.x += dx;
+            ball.y += dy;
+          } else {
+            const shape = shapes[drag.hit.index];
+            if (shape.type === "line") {
+              shape.x1 += dx;
+              shape.y1 += dy;
+              shape.x2 += dx;
+              shape.y2 += dy;
+            } else if (shape.type === "rect") {
+              shape.x += dx;
+              shape.y += dy;
+            } else if (shape.type === "circle") {
+              shape.x += dx;
+              shape.y += dy;
+            } else if (shape.type === "triangle") {
+              shape.points.forEach(p => {
+                p.x += dx;
+                p.y += dy;
+              });
+            }
+          }
+        }
+      } else {
+        // Hover
+        const hit = pickEntityAt(x, y);
+        hoverInfo = hit;
+        
+        const badge = document.getElementById('hoverBadge');
+        if (hit) {
+          badge.style.display = 'block';
+          badge.style.left = (hit.entity.x || hit.entity.x1 || 0) + 12 + 'px';
+          badge.style.top = (hit.entity.y || hit.entity.y1 || 0) - 12 + 'px';
+          badge.textContent = hit.kind === "ball" ? "Ball" : hit.entity.type;
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+    }
+
+    function onPointerUp(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (!drag.active) return;
+
+      if (tool === "ball") {
+        const dx = x - drag.sx, dy = y - drag.sy;
+        const speed = Math.min(400, Math.hypot(dx, dy) * 3);
+        const [nx, ny] = normalize(dx, dy);
+        const color = `hsl(${Math.floor(Math.random() * 360)}, 80%, 60%)`;
+        balls.push({
+          id: uid(),
+          x: drag.sx,
+          y: drag.sy,
+          vx: (speed || 200) * (nx || Math.random()*2-1),
+          vy: (speed || 200) * (ny || Math.random()*2-1),
+          r: 12,
+          color
+        });
+        saveState();
+        updateCounts();
+      } else if (tool === "line") {
+        if (Math.hypot(x - drag.sx, y - drag.sy) > 3) {
+          shapes.push({ id: uid(), type: "line", x1: drag.sx, y1: drag.sy, x2: x, y2: y });
+          saveState();
+          updateCounts();
+        }
+      } else if (tool === "rect") {
+        const x0 = Math.min(drag.sx, x), y0 = Math.min(drag.sy, y);
+        const w = Math.abs(x - drag.sx), h = Math.abs(y - drag.sy);
+        if (w > 4 && h > 4) {
+          shapes.push({ id: uid(), type: "rect", x: x0, y: y0, w, h });
+          saveState();
+          updateCounts();
+        }
+      } else if (tool === "circle") {
+        const r = Math.hypot(x - drag.sx, y - drag.sy);
+        if (r > 4) {
+          shapes.push({ id: uid(), type: "circle", x: drag.sx, y: drag.sy, r });
+          saveState();
+          updateCounts();
+        }
+      } else if (tool === "move") {
+        saveState();
+      }
+
+      drag = { active: false };
+    }
+
+    // Physics simulation
+    function stepPhysics(dt) {
+      if (!isPlaying) return;
+
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+      const gravity = 0;
+      const damping = 0.998;
+
+      balls.forEach((ball, idx) => {
+        // Velocity update
+        ball.vx *= damping;
+        ball.vy = ball.vy * damping + gravity * dt;
+
+        // Tentative position
+        ball.x += ball.vx * dt;
+        ball.y += ball.vy * dt;
+
+        // Canvas edge collisions
+        if (ball.x - ball.r < 0) {
+          ball.x = ball.r;
+          ball.vx = Math.abs(ball.vx);
+        }
+        if (ball.x + ball.r > w) {
+          ball.x = w - ball.r;
+          ball.vx = -Math.abs(ball.vx);
+        }
+        if (ball.y - ball.r < 0) {
+          ball.y = ball.r;
+          ball.vy = Math.abs(ball.vy);
+        }
+        if (ball.y + ball.r > h) {
+          ball.y = h - ball.r;
+          ball.vy = -Math.abs(ball.vy);
+        }
+
+        // Shape collisions
+        shapes.forEach(shape => {
+          if (shape.type === "line") {
+            const cp = closestPointOnSegment(ball.x, ball.y, shape.x1, shape.y1, shape.x2, shape.y2);
+            const dx = ball.x - cp.x, dy = ball.y - cp.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist < ball.r) {
+              const penetration = ball.r - dist;
+              const nx = dx / (dist || 1), ny = dy / (dist || 1);
+              ball.x += nx * penetration;
+              ball.y += ny * penetration;
+              [ball.vx, ball.vy] = reflect(ball.vx, ball.vy, nx, ny);
+            }
+          } else if (shape.type === "rect") {
+            const coll = circleAABBCollision(ball, shape);
+            if (coll) {
+              const penetration = ball.r - Math.hypot(ball.x - coll.px, ball.y - coll.py);
+              ball.x += coll.nx * penetration;
+              ball.y += coll.ny * penetration;
+              [ball.vx, ball.vy] = reflect(ball.vx, ball.vy, coll.nx, coll.ny);
+            }
+          } else if (shape.type === "circle") {
+            const coll = circleCircleCollision(ball.x, ball.y, ball.r, shape.x, shape.y, shape.r);
+            if (coll) {
+              ball.x += coll.nx * coll.penetration;
+              ball.y += coll.ny * coll.penetration;
+              [ball.vx, ball.vy] = reflect(ball.vx, ball.vy, coll.nx, coll.ny);
+            }
+          } else if (shape.type === "triangle") {
+            const edges = edgesOfTriangle(shape.points);
+            edges.forEach(([p1, p2]) => {
+              const cp = closestPointOnSegment(ball.x, ball.y, p1.x, p1.y, p2.x, p2.y);
+              const dx = ball.x - cp.x, dy = ball.y - cp.y;
+              const dist = Math.hypot(dx, dy);
+              if (dist < ball.r) {
+                const penetration = ball.r - dist;
+                const nx = dx / (dist || 1), ny = dy / (dist || 1);
+                ball.x += nx * penetration;
+                ball.y += ny * penetration;
+                [ball.vx, ball.vy] = reflect(ball.vx, ball.vy, nx, ny);
+              }
+            });
+          }
+        });
+
+        // Ball-ball collisions
+        for (let i = idx + 1; i < balls.length; i++) {
+          const other = balls[i];
+          const coll = circleCircleCollision(ball.x, ball.y, ball.r, other.x, other.y, other.r);
+          if (coll) {
+            const sep = coll.penetration / 2;
+            ball.x += coll.nx * sep;
+            ball.y += coll.ny * sep;
+            other.x -= coll.nx * sep;
+            other.y -= coll.ny * sep;
+
+            // Elastic collision response
+            const v1n = ball.vx * coll.nx + ball.vy * coll.ny;
+            const v2n = other.vx * coll.nx + other.vy * coll.ny;
+            const v1t = ball.vx * (-coll.ny) + ball.vy * coll.nx;
+            const v2t = other.vx * (-coll.ny) + other.vy * coll.nx;
+
+            ball.vx = v2n * coll.nx - v1t * coll.ny;
+            ball.vy = v2n * coll.ny + v1t * coll.nx;
+            other.vx = v1n * coll.nx - v2t * coll.ny;
+            other.vy = v1n * coll.ny + v2t * coll.nx;
+          }
+        }
+      });
+    }
+
+    // Render
+    function render() {
+      const w = canvas.width / (window.devicePixelRatio || 1);
+      const h = canvas.height / (window.devicePixelRatio || 1);
+
+      // Clear
+      ctx.fillStyle = 'rgba(26, 26, 46, 0.3)';
+      ctx.fillRect(0, 0, w, h);
+
+      // Draw shapes
+      shapes.forEach(shape => {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 3;
+
+        if (shape.type === "line") {
+          ctx.beginPath();
+          ctx.moveTo(shape.x1, shape.y1);
+          ctx.lineTo(shape.x2, shape.y2);
+          ctx.stroke();
+        } else if (shape.type === "rect") {
+          ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
+          ctx.strokeRect(shape.x, shape.y, shape.w, shape.h);
+        } else if (shape.type === "circle") {
+          ctx.beginPath();
+          ctx.arc(shape.x, shape.y, shape.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        } else if (shape.type === "triangle") {
+          ctx.beginPath();
+          ctx.moveTo(shape.points[0].x, shape.points[0].y);
+          ctx.lineTo(shape.points[1].x, shape.points[1].y);
+          ctx.lineTo(shape.points[2].x, shape.points[2].y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
+      });
+
+      // Draw balls
+      balls.forEach(ball => {
+        ctx.fillStyle = ball.color;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // Draw triangle points in progress
+      if (tool === "triangle" && trianglePoints.length > 0) {
+        ctx.fillStyle = 'rgba(102, 126, 234, 0.8)';
+        trianglePoints.forEach(pt => {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+
+      // Draw drag preview
+      if (drag.active && drag.sx !== undefined) {
+        ctx.strokeStyle = 'rgba(102, 126, 234, 0.8)';
+        ctx.fillStyle = 'rgba(102, 126, 234, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+
+        if (tool === "ball") {
+          const dx = drag.x - drag.sx, dy = drag.y - drag.sy;
+          ctx.beginPath();
+          ctx.moveTo(drag.sx, drag.sy);
+          ctx.lineTo(drag.x, drag.y);
+          ctx.stroke();
+          // Arrow head
+          const angle = Math.atan2(dy, dx);
+          ctx.beginPath();
+          ctx.moveTo(drag.x, drag.y);
+          ctx.lineTo(drag.x - 10 * Math.cos(angle - 0.3), drag.y - 10 * Math.sin(angle - 0.3));
+          ctx.lineTo(drag.x - 10 * Math.cos(angle + 0.3), drag.y - 10 * Math.sin(angle + 0.3));
+          ctx.closePath();
+          ctx.fill();
+        } else if (tool === "line") {
+          ctx.beginPath();
+          ctx.moveTo(drag.sx, drag.sy);
+          ctx.lineTo(drag.x, drag.y);
+          ctx.stroke();
+        } else if (tool === "rect") {
+          const x0 = Math.min(drag.sx, drag.x), y0 = Math.min(drag.sy, drag.y);
+          const w = Math.abs(drag.x - drag.sx), h = Math.abs(drag.y - drag.sy);
+          ctx.fillRect(x0, y0, w, h);
+          ctx.strokeRect(x0, y0, w, h);
+        } else if (tool === "circle") {
+          const r = Math.hypot(drag.x - drag.sx, drag.y - drag.sy);
+          ctx.beginPath();
+          ctx.arc(drag.sx, drag.sy, r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+      }
+    }
+
+    // Animation loop
+    function animate(time) {
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+
+      stepPhysics(dt);
+      render();
+
+      rafId = requestAnimationFrame(animate);
+    }
+
+    // Start when page loads
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
