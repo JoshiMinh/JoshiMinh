@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minh Nguyen - Interactive Projects</title>
-    <meta name="description" content="Interactive web-based simulations and games by Minh Nguyen">
+    <title>Minh Nguyen - Computer Engineering Student</title>
+    <meta name="description" content="Minh Nguyen - Vietnamese Computer Engineering student, AI enthusiast, and creator of interactive web projects">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,60 +13,261 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #00d4ff;
+            --primary-light: #33e9ff;
+            --secondary: #9d4edd;
+            --secondary-light: #c77dff;
+            --accent: #ff006e;
+            --accent-warm: #ffbe0b;
+            --bg-dark: #0a0e27;
+            --bg-darker: #050812;
+            --bg-card: #1a1f3a;
+            --text-primary: #f0f3f7;
+            --text-secondary: #a8b2c1;
+            --border: #2d3561;
+            --glow: rgba(0, 212, 255, 0.2);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, #1a0033 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: #333;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 15% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 20%, rgba(157, 78, 221, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(255, 0, 110, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
         }
 
         .container {
-            max-width: 900px;
-            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+            position: relative;
+            z-index: 1;
         }
 
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 80px;
+            animation: slideDown 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         h1 {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, var(--primary), var(--secondary-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 3.8rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            letter-spacing: -1.5px;
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            font-weight: 300;
+            color: var(--text-secondary);
+            font-size: 1.15rem;
+            font-weight: 400;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+
+        .tagline {
+            color: var(--primary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .intro-section {
+            max-width: 700px;
+            margin: 0 auto 100px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .intro-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+        }
+
+        .intro-section p {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 32px;
+        }
+
+        .link-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+
+        .pill-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 26px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--bg-dark);
+            background: linear-gradient(135deg, var(--primary), var(--secondary-light));
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
+        }
+
+        .pill-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--secondary-light), var(--accent));
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .pill-link:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0, 212, 255, 0.35);
+        }
+
+        .pill-link:hover::before {
+            left: 0;
+        }
+
+        .pill-link:focus-visible {
+            outline: 2px solid var(--accent-warm);
+            outline-offset: 3px;
+        }
+
+        .support-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(157, 78, 221, 0.08));
+            border: 1.5px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 80px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+        }
+
+        .support-section:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+        }
+
+        .support-section h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .support-section p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .projects-section {
+            margin-bottom: 80px;
+        }
+
+        .projects-section h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
         }
 
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
         }
 
         .project-card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.95), rgba(26, 31, 58, 0.6));
+            border-radius: 24px;
+            padding: 36px;
             text-decoration: none;
             color: inherit;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            border: 1.5px solid rgba(0, 212, 255, 0.15);
+            animation: fadeInUp 0.7s ease-out both;
+            backdrop-filter: blur(15px);
+        }
+
+        .project-card:nth-child(1) { animation-delay: 0.1s; }
+        .project-card:nth-child(2) { animation-delay: 0.2s; }
+        .project-card:nth-child(3) { animation-delay: 0.3s; }
+        .project-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .project-card::before {
@@ -74,119 +276,207 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(157, 78, 221, 0.1));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
         }
 
         .project-card:hover::before {
-            transform: scaleX(1);
+            opacity: 1;
         }
 
         .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-16px);
+            box-shadow: 0 24px 60px rgba(0, 212, 255, 0.25);
+            border-color: rgba(0, 212, 255, 0.4);
         }
 
         .project-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 4.5rem;
+            margin-bottom: 24px;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            line-height: 1;
+            filter: drop-shadow(0 8px 20px rgba(0, 212, 255, 0.15));
+        }
+
+        .project-card:hover .project-icon {
+            transform: scale(1.25) rotate(-8deg);
+            filter: drop-shadow(0 12px 30px rgba(157, 78, 221, 0.3));
         }
 
         .project-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #2d3748;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: var(--text-primary);
         }
 
         .project-description {
             font-size: 0.95rem;
-            color: #718096;
-            line-height: 1.5;
+            color: var(--text-secondary);
+            line-height: 1.8;
             flex-grow: 1;
+            margin-bottom: 20px;
+        }
+
+        .project-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(157, 78, 221, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: auto;
+            width: fit-content;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         footer {
             text-align: center;
-            color: white;
-            font-size: 0.9rem;
-            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 100px;
+            padding-top: 48px;
+            border-top: 1px solid rgba(0, 212, 255, 0.15);
+            animation: fadeInUp 0.8s ease-out 0.7s both;
         }
 
         footer a {
-            color: white;
+            color: var(--primary);
             text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.3s;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        footer a:hover {
-            opacity: 0.8;
+        footer a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
         }
 
-        @media (max-width: 640px) {
+        footer a:hover::after {
+            width: 100%;
+        }
+
+        .project-card:focus-visible {
+            outline: 2px solid var(--accent-warm);
+            outline-offset: 4px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        @media (max-width: 768px) {
             h1 {
-                font-size: 2rem;
+                font-size: 2.5rem;
             }
 
-            .subtitle {
-                font-size: 1rem;
+            .intro-section h2 {
+                font-size: 1.6rem;
+            }
+
+            .projects-section h2 {
+                font-size: 1.6rem;
             }
 
             .projects-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
-        }
 
-        /* Accessibility */
-        .project-card:focus {
-            outline: 3px solid white;
-            outline-offset: 2px;
+            .project-card {
+                padding: 28px;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+
+            .link-row {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎮 Interactive Projects</h1>
-            <p class="subtitle">Web-based simulations and games</p>
+            <p class="tagline">✨ Welcome</p>
+            <h1>Minh Nguyen</h1>
+            <p class="subtitle">Computer Engineering Student & Web Developer</p>
         </header>
 
-        <div class="projects-grid">
-            <a href="Archives/Conway's%20Game%20of%20Life/" class="project-card">
-                <div class="project-icon">🧬</div>
-                <h2 class="project-title">Conway's Game of Life</h2>
-                <p class="project-description">
-                    Cellular automaton simulation with multiple patterns, themes, and real-time controls. Watch emergent complexity unfold!
-                </p>
-            </a>
+        <section class="intro-section" aria-labelledby="intro-title">
+            <h2 id="intro-title">Hi, I'm Minh</h2>
+            <p>Vietnamese Computer Engineering student passionate about AI and systems. Tech enthusiast, anime and movie lover. I build interactive web projects and explore creative coding solutions.</p>
+            
+            <div class="link-row" aria-label="Social links">
+                <a class="pill-link" href="https://www.youtube.com/@JOSHItheShitalker" target="_blank" rel="noopener"><i class="fab fa-youtube"></i>YouTube</a>
+                <a class="pill-link" href="https://www.linkedin.com/in/nguyen-binh-minh-jm/" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i>LinkedIn</a>
+                <a class="pill-link" href="https://x.com/js_minh" target="_blank" rel="noopener"><i class="fab fa-x-twitter"></i>X</a>
+            </div>
 
-            <a href="Archives/Physics%20Sandbox/" class="project-card">
-                <div class="project-icon">🎱</div>
-                <h2 class="project-title">Physics Sandbox</h2>
-                <p class="project-description">
-                    Interactive physics playground. Create shapes and launch balls with realistic elastic collisions and gravity.
-                </p>
-            </a>
+            <div class="support-section">
+                <h3>💝 Support My Work</h3>
+                <p>If you find my projects valuable, consider supporting:</p>
+                <div class="link-row" aria-label="Support links">
+                    <a class="pill-link" href="https://patreon.com/u16604577" target="_blank" rel="noopener"><i class="fab fa-patreon"></i>Patreon</a>
+                    <a class="pill-link" href="https://ko-fi.com/joshiminh" target="_blank" rel="noopener"><i class="fas fa-mug-hot"></i>Ko-fi</a>
+                </div>
+            </div>
+        </section>
 
-            <a href="Archives/Solar%20System%20Simulator/" class="project-card">
-                <div class="project-icon">🪐</div>
-                <h2 class="project-title">Solar System Simulator</h2>
-                <p class="project-description">
-                    3D space visualization with realistic orbital mechanics and celestial bodies. (Work in Progress)
-                </p>
-            </a>
+        <section class="projects-section" aria-labelledby="projects-title">
+            <h2 id="projects-title">🎮 Interactive Projects</h2>
+            <div class="projects-grid">
+                <a href="Archives/Conway's%20Game%20of%20Life/" class="project-card">
+                    <div class="project-icon" aria-hidden="true">🧬</div>
+                    <h3 class="project-title">Conway's Game of Life</h3>
+                    <p class="project-description">Cellular automaton simulation with multiple patterns, themes, and real-time controls.</p>
+                    <span class="project-tag">Simulation</span>
+                </a>
 
-            <a href="Archives/iPong%20X/" class="project-card">
-                <div class="project-icon">📱</div>
-                <h2 class="project-title">iPong X</h2>
-                <p class="project-description">
-                    A humorous parody product page for the fictional "iPong X" smartphone with absurd specifications.
-                </p>
-            </a>
-        </div>
+                <a href="Archives/Physics%20Sandbox/" class="project-card">
+                    <div class="project-icon" aria-hidden="true">🎱</div>
+                    <h3 class="project-title">Physics Sandbox</h3>
+                    <p class="project-description">Create shapes and launch balls with realistic elastic collisions and gravity.</p>
+                    <span class="project-tag">Interactive</span>
+                </a>
+
+                <a href="Archives/Solar%20System%20Simulator/" class="project-card">
+                    <div class="project-icon" aria-hidden="true">🪐</div>
+                    <h3 class="project-title">Solar System Simulator</h3>
+                    <p class="project-description">3D space visualization with realistic orbital mechanics and celestial bodies.</p>
+                    <span class="project-tag">3D</span>
+                </a>
+
+                <a href="Archives/iPong%20X/" class="project-card">
+                    <div class="project-icon" aria-hidden="true">📱</div>
+                    <h3 class="project-title">iPong X</h3>
+                    <p class="project-description">A humorous parody product page for the fictional "iPong X" smartphone.</p>
+                    <span class="project-tag">Parody</span>
+                </a>
+            </div>
+        </section>
 
         <footer>
             <p>Made with ❤️ by <a href="https://github.com/JoshiMinh" target="_blank">Minh Nguyen</a></p>

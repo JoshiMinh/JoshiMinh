@@ -5,20 +5,19 @@
 ### Vietnamese Computer Engineering Student  
 Tech Enthusiast | Passionate About AI & Systems | Anime & Movie Lover
 
-[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@JOSHItheShitalker)
+[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@JOSHI)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/nguyen-binh-minh-jm/)
 [![X](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/js_minh)
 
 </div>
 
-## 🛠️ Tech Stack
+## 🛠️ Technologies
 
-[![Skills](https://skillicons.dev/icons?i=python,java,cpp,kotlin,php,js,html,css,react,next)](https://skillicons.dev)
-[![Tools](https://skillicons.dev/icons?i=git,github,vscode,vercel,figma,firebase,supabase,npm,pnpm,illustrator)](https://skillicons.dev)
+![Stack](https://skillicons.dev/icons?i=python,java,cpp,kotlin,javascript,php,html,css,react,next,git,github,npm,pnpm,vscode,vercel,firebase,supabase,figma,illustrator,arduino)
 
-## 💖 Support My Work
+## 💖 Support Me
 
-If you find my projects valuable or helpful, please consider supporting me:
+If you find my projects valuable or helpful, consider supporting me:
 
 <div align="center">
 
