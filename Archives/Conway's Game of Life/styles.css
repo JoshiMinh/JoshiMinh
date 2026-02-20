@@ -1,4 +1,10 @@
-/* Conway's Game of Life - Modern Fullscreen Redesign */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
 
 .conway-container {
   width: 100vw;

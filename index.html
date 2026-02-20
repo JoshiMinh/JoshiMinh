@@ -3,16 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minh Nguyen - Computer Engineering Student</title>
+    <title>Joshi Minh</title>
     <meta name="description" content="Minh Nguyen - Vietnamese Computer Engineering student, AI enthusiast, and creator of interactive web projects">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
             --primary: #00d4ff;
             --primary-light: #33e9ff;
@@ -26,7 +20,14 @@
             --text-primary: #f0f3f7;
             --text-secondary: #a8b2c1;
             --border: #2d3561;
-            --glow: rgba(0, 212, 255, 0.2);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
@@ -41,10 +42,7 @@
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: 
                 radial-gradient(circle at 15% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
                 radial-gradient(circle at 85% 20%, rgba(157, 78, 221, 0.08) 0%, transparent 50%),
@@ -84,19 +82,40 @@
             }
         }
 
-        h1 {
-            background: linear-gradient(135deg, var(--primary), var(--secondary-light), var(--accent));
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1,
+        .intro-section h2,
+        .projects-section h2 {
+            background: linear-gradient(135deg, var(--primary), var(--secondary-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-weight: 800;
+        }
+
+        h1 {
             font-size: 3.8rem;
-            font-weight: 900;
             margin-bottom: 16px;
             letter-spacing: -1.5px;
         }
 
-        .subtitle {
+        .subtitle,
+        .intro-section p,
+        .project-description {
             color: var(--text-secondary);
+        }
+
+        .subtitle {
             font-size: 1.15rem;
             font-weight: 400;
             letter-spacing: 0.6px;
@@ -120,16 +139,10 @@
         .intro-section h2 {
             font-size: 2rem;
             margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
         }
 
         .intro-section p {
             font-size: 1.05rem;
-            color: var(--text-secondary);
             line-height: 1.9;
             margin-bottom: 32px;
         }
@@ -152,7 +165,7 @@
             text-decoration: none;
             font-weight: 700;
             font-size: 0.95rem;
-            color: var(--bg-dark);
+            color: white;
             background: linear-gradient(135deg, var(--primary), var(--secondary-light));
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
@@ -162,6 +175,32 @@
             box-shadow: 0 8px 24px rgba(0, 212, 255, 0.2);
         }
 
+        .pill-link[href*="youtube"] {
+            background: linear-gradient(135deg, #ff0000, #ff4444);
+            box-shadow: 0 8px 24px rgba(255, 0, 0, 0.3);
+        }
+
+        .pill-link[href*="linkedin"] {
+            background: linear-gradient(135deg, #0a66c2, #0d47a1);
+            box-shadow: 0 8px 24px rgba(10, 102, 194, 0.3);
+        }
+
+        .pill-link[href*="x.com"],
+        .pill-link[href*="twitter"] {
+            background: linear-gradient(135deg, #000000, #333333);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .pill-link[href*="patreon"] {
+            background: linear-gradient(135deg, #ff424d, #ff6b7a);
+            box-shadow: 0 8px 24px rgba(255, 66, 77, 0.3);
+        }
+
+        .pill-link[href*="ko-fi"] {
+            background: linear-gradient(135deg, #ff5e62, #ff7f7f);
+            box-shadow: 0 8px 24px rgba(255, 94, 98, 0.3);
+        }
+
         .pill-link::before {
             content: '';
             position: absolute;
@@ -169,14 +208,15 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--secondary-light), var(--accent));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
             transition: left 0.4s ease;
             z-index: -1;
         }
 
-        .pill-link:hover {
+        .pill-link:hover,
+        .pill-link:focus-visible {
             transform: translateY(-6px);
-            box-shadow: 0 16px 40px rgba(0, 212, 255, 0.35);
+            filter: brightness(1.15);
         }
 
         .pill-link:hover::before {
@@ -188,34 +228,6 @@
             outline-offset: 3px;
         }
 
-        .support-section {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(157, 78, 221, 0.08));
-            border: 1.5px solid rgba(0, 212, 255, 0.2);
-            border-radius: 20px;
-            padding: 32px;
-            margin-bottom: 80px;
-            backdrop-filter: blur(20px);
-            transition: all 0.4s ease;
-        }
-
-        .support-section:hover {
-            border-color: rgba(0, 212, 255, 0.4);
-            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
-        }
-
-        .support-section h3 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--primary);
-        }
-
-        .support-section p {
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-        }
-
         .projects-section {
             margin-bottom: 80px;
         }
@@ -224,11 +236,6 @@
             font-size: 2rem;
             margin-bottom: 40px;
             text-align: center;
-            background: linear-gradient(135deg, var(--primary), var(--secondary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
         }
 
         .projects-grid {
@@ -259,38 +266,29 @@
         .project-card:nth-child(3) { animation-delay: 0.3s; }
         .project-card:nth-child(4) { animation-delay: 0.4s; }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .project-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(157, 78, 221, 0.1));
             opacity: 0;
             transition: opacity 0.5s ease;
             pointer-events: none;
         }
 
-        .project-card:hover::before {
-            opacity: 1;
-        }
-
         .project-card:hover {
             transform: translateY(-16px);
             box-shadow: 0 24px 60px rgba(0, 212, 255, 0.25);
             border-color: rgba(0, 212, 255, 0.4);
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:focus-visible {
+            outline: 2px solid var(--accent-warm);
+            outline-offset: 4px;
         }
 
         .project-icon {
@@ -315,7 +313,6 @@
 
         .project-description {
             font-size: 0.95rem;
-            color: var(--text-secondary);
             line-height: 1.8;
             flex-grow: 1;
             margin-bottom: 20px;
@@ -369,11 +366,6 @@
             width: 100%;
         }
 
-        .project-card:focus-visible {
-            outline: 2px solid var(--accent-warm);
-            outline-offset: 4px;
-        }
-
         .sr-only {
             position: absolute;
             width: 1px;
@@ -390,10 +382,7 @@
                 font-size: 2.5rem;
             }
 
-            .intro-section h2 {
-                font-size: 1.6rem;
-            }
-
+            .intro-section h2,
             .projects-section h2 {
                 font-size: 1.6rem;
             }
@@ -409,10 +398,6 @@
 
             .container {
                 padding: 40px 20px;
-            }
-
-            .link-row {
-                justify-content: center;
             }
         }
     </style>
@@ -435,13 +420,9 @@
                 <a class="pill-link" href="https://x.com/js_minh" target="_blank" rel="noopener"><i class="fab fa-x-twitter"></i>X</a>
             </div>
 
-            <div class="support-section">
-                <h3>💝 Support My Work</h3>
-                <p>If you find my projects valuable, consider supporting:</p>
-                <div class="link-row" aria-label="Support links">
-                    <a class="pill-link" href="https://patreon.com/u16604577" target="_blank" rel="noopener"><i class="fab fa-patreon"></i>Patreon</a>
-                    <a class="pill-link" href="https://ko-fi.com/joshiminh" target="_blank" rel="noopener"><i class="fas fa-mug-hot"></i>Ko-fi</a>
-                </div>
+            <div class="link-row" aria-label="Support links">
+                <a class="pill-link" href="https://patreon.com/u16604577" target="_blank" rel="noopener"><i class="fab fa-patreon"></i>Patreon</a>
+                <a class="pill-link" href="https://ko-fi.com/joshiminh" target="_blank" rel="noopener"><i class="fas fa-mug-hot"></i>Ko-fi</a>
             </div>
         </section>
 
@@ -455,9 +436,9 @@
                     <span class="project-tag">Simulation</span>
                 </a>
 
-                <a href="Archives/Physics%20Sandbox/" class="project-card">
+                <a href="Archives/Ball%20Game/" class="project-card">
                     <div class="project-icon" aria-hidden="true">🎱</div>
-                    <h3 class="project-title">Physics Sandbox</h3>
+                    <h3 class="project-title">Ball Game</h3>
                     <p class="project-description">Create shapes and launch balls with realistic elastic collisions and gravity.</p>
                     <span class="project-tag">Interactive</span>
                 </a>
