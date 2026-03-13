@@ -1,0 +1,3 @@
+@echo off
+echo Running...
+java -cp bin joshiminh.flappybird.Launcher
