@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minh Nguyen — Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Fira+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+            color: #232946;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .portfolio-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px rgba(80, 60, 120, 0.18);
+            max-width: 800px;
+            width: 95vw;
+            padding: 3rem 2.5rem 2.5rem 2.5rem;
+            margin: 2rem 0;
+            text-align: center;
+            position: relative;
+        }
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #a777e3;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 12px rgba(80, 60, 120, 0.12);
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            margin: 0.2em 0 0.1em 0;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            font-size: 1.25rem;
+            color: #6c63ff;
+            margin-bottom: 1.2rem;
+            font-weight: 500;
+        }
+        .bio {
+            font-size: 1.1rem;
+            color: #444;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        .badges {
+            margin-bottom: 1.5rem;
+        }
+        .badges a {
+            display: inline-block;
+            margin: 0 10px 10px 10px;
+            transition: transform 0.15s;
+        }
+        .badges a:hover {
+            transform: scale(1.12) translateY(-2px);
+        }
+        .tech-section {
+            margin: 2.5rem 0 1.5rem 0;
+        }
+        .tech-title {
+            font-size: 1.1rem;
+            color: #a777e3;
+            font-weight: 600;
+            margin-bottom: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .tech-icons img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(80, 60, 120, 0.07);
+        }
+        .support {
+            margin: 2.5rem 0 1.5rem 0;
+        }
+        .support p {
+            margin-bottom: 1rem;
+            color: #555;
+        }
+        .support a {
+            margin: 0 12px;
+            display: inline-block;
+            transition: transform 0.15s;
+        }
+        .support a:hover {
+            transform: scale(1.1) translateY(-2px);
+        }
+        .footer {
+            margin-top: 2.5rem;
+            color: #888;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+        }
+        @media (max-width: 600px) {
+            .portfolio-container {
+                padding: 1.2rem 0.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="portfolio-container">
+        <!-- Optionally add your avatar below. Replace src with your image if available. -->
+        <!-- <img src="assets/avatar.jpg" alt="Minh Nguyen Avatar" class="avatar"> -->
+        <h1>👋 Hi, I'm Minh Nguyen</h1>
+        <div class="subtitle">Computer Engineering Student from Vietnam</div>
+        <div class="bio">
+            I'm a passionate tech enthusiast, always exploring the world of <b>AI</b>, <b>systems</b>, and creative coding.<br>
+            I love building things, learning new technologies, and sharing knowledge.<br>
+            When I'm not coding, you'll find me watching anime, movies, or tinkering with electronics.
+        </div>
+        <div class="badges">
+            <a href="https://www.youtube.com/@JOSHI" target="_blank" rel="noopener" title="YouTube">
+                <img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube">
+            </a>
+            <a href="https://www.linkedin.com/in/nguyen-binh-minh-jm/" target="_blank" rel="noopener" title="LinkedIn">
+                <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+            </a>
+            <a href="https://x.com/js_minh" target="_blank" rel="noopener" title="X">
+                <img src="https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white" alt="X">
+            </a>
+        </div>
+        <div class="tech-section">
+            <div class="tech-title">Tech Stack &amp; Tools</div>
+            <div class="tech-icons">
+                <img src="https://skillicons.dev/icons?i=python,java,cpp,kotlin,javascript,php,html,css,react,next,git,github,npm,pnpm,vscode,vercel,firebase,supabase,figma,illustrator,arduino" alt="Tech Stack">
+            </div>
+        </div>
+        <div class="support">
+            <p>If you find my projects valuable or helpful, consider supporting me:</p>
+            <a href="https://patreon.com/u16604577" target="_blank" rel="noopener" title="Patreon">
+                <img src="https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white" alt="Patreon">
+            </a>
+            <a href="https://ko-fi.com/joshiminh" target="_blank" rel="noopener" title="Ko-fi">
+                <img src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi">
+            </a>
+        </div>
+        <div class="footer">
+            <hr style="margin: 2rem 0; border: none; border-top: 1.5px solid #e0e0e0;">
+            <strong>Thanks for visiting! 🚀</strong>
+        </div>
+    </div>
+</body>
+</html>

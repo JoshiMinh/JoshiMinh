@@ -1,0 +1,138 @@
+:root {
+    --bg-primary: #fff;
+    --bg-secondary: #f8f9fa;
+    --bg-elevated: #e7e7e7;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --primary-color: #0071bc;
+    --primary-hover: #005f8b;
+    --secondary-color: #2e3192;
+    --navbar-hover: rgba(0, 0, 0, 0.1);
+    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme {
+    --bg-primary: #1c1c1c;
+    --bg-secondary: #3b3b3b;
+    --bg-elevated: #2d2d2d;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #404040;
+    --primary-color: #2196f3;
+    --primary-hover: #1976d2;
+    --secondary-color: #3f51b5;
+    --navbar-hover: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background 0.3s, color 0.3s;
+    margin: 0;
+    height: 100%;
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.form-control {
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.component-card,
+.card {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+}
+
+.component-card:hover,
+.card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .component-card,
+.dark-mode .card,
+.dark-mode .bg-white {
+    background: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .text-dark {
+    color: var(--text-primary) !important;
+}
+
+.dark-mode .text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.dark-mode .btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.dark-mode .btn-primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.icon {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    transition: color 0.3s;
+}
+
+.footer-gradient {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+}
+
+.footer-gradient a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-gradient a:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-gradient h5 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.modal-content {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+}
