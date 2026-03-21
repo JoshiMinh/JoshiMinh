@@ -1,0 +1,13 @@
+pyshorteners
+pyTelegramBotAPI
+speedtest-cli
+SpeechRecognition
+numpy
+mysql-connector-python
+colorama
+tqdm
+sympy
+opencv-python
+pyfiglet
+manim
+Pillow

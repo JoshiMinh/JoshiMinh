@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Archives Portal</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(15,23,42,1) 0%, rgba(30,41,59,0.3) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 2rem 4rem;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), #818cf8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--text-muted);
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-footer {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        .card-footer::after {
+            content: '→';
+            margin-left: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-footer::after {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            header { padding: 3rem 1rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Web Archives</h1>
+        <p class="subtitle">A collection of static web projects, toys, and minigames.</p>
+    </header>
+
+    <div class="grid">
+        <a href="BallGame/index.html" class="card">
+            <div class="card-icon">🎾</div>
+            <h2>BallGame</h2>
+            <p>An interactive bouncing ball simulation. Test physics directly in your browser.</p>
+            <div class="card-footer">Launch Project</div>
+        </a>
+
+        <a href="Conway/index.html" class="card">
+            <div class="card-icon">🧬</div>
+            <h2>Conway's Life</h2>
+            <p>A web implementation of Conway's Game of Life cellular automaton.</p>
+            <div class="card-footer">Launch Project</div>
+        </a>
+
+        <a href="SolarSystem/index.html" class="card">
+            <div class="card-icon">🪐</div>
+            <h2>Solar System</h2>
+            <p>A visual, interactive simulation mapping the orbits of our solar system.</p>
+            <div class="card-footer">Launch Project</div>
+        </a>
+
+        <a href="iPong X/index.html" class="card">
+            <div class="card-icon">📱</div>
+            <h2>iPong X</h2>
+            <p>A beautifully laid-out static promotional page for a fictional phone design.</p>
+            <div class="card-footer">Launch Project</div>
+        </a>
+    </div>
+
+</body>
+</html>
