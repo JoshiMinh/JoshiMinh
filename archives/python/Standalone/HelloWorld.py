@@ -4,10 +4,10 @@ s = "Hello World"
 r = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#1234567890$%^&"
 e = ""
 
-for i in range(len(s)):
-    for j in r:
+for char in s:
+    for candidate in r:
+        print(e + candidate)
         time.sleep(0.025)
-        print(e + j)
-        if j == s[i]:
-            e += s[i]
+        if candidate == char:
+            e += char
             break

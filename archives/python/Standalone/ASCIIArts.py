@@ -2,17 +2,30 @@ import pyfiglet
 
 def create_ascii_art(text, font):
     try:
-        return pyfiglet.Figlet(font=font).renderText(text)
+        figlet = pyfiglet.Figlet(font=font)
+        return figlet.renderText(text)
     except pyfiglet.FontNotFound:
-        return f"Font '{font}' not found. Choose a valid font."
+        return f"Font '{font}' not found. Please choose a valid font."
 
-user_text = input("Text for ASCII art: ")
+def main():
+    user_text = input("Enter text for ASCII art: ").strip()
+    fonts = ['standard', 'slant', '3-d', '5lineoblique', 'banner3-D']
 
-fonts = ['standard', 'slant', '3-d', '5lineoblique', 'banner3-D']
-print("Choose a font:")
-for i, font in enumerate(fonts, 1):
-    print(f"{i}. {font}")
+    print("\nAvailable Fonts:")
+    for idx, font in enumerate(fonts, 1):
+        print(f"  {idx}. {font}")
 
-font_choice = int(input("Font number: "))
-ascii_art = create_ascii_art(user_text, fonts[font_choice - 1])
-print(ascii_art)
+    while True:
+        try:
+            choice = int(input("Select font number: "))
+            if 1 <= choice <= len(fonts):
+                break
+            print(f"Please enter a number between 1 and {len(fonts)}.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+    ascii_art = create_ascii_art(user_text, fonts[choice - 1])
+    print("\n" + ascii_art)
+
+if __name__ == "__main__":
+    main()

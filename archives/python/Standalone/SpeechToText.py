@@ -12,10 +12,12 @@ def speech_to_text():
             return
 
     try:
-        print("You said: {}".format(recognizer.recognize_google(audio)))
+        text = recognizer.recognize_google(audio)
+        print(f"You said: {text}")
     except sr.UnknownValueError:
         print("Could not understand audio")
     except sr.RequestError as e:
-        print("Error with the service; {}".format(e))
+        print(f"Error with the service; {e}")
 
-speech_to_text()
+if __name__ == "__main__":
+    speech_to_text()

@@ -1,6 +1,19 @@
+import os
 import telebot
 
-bot = telebot.TeleBot('6599034334:AAEn_o_KMSkHfM2WcKOqnPEumXeQf0KWBYY')
+# Get the Telegram bot token from environment variable
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("Please set the TELEGRAM_BOT_TOKEN environment variable.")
+
+# Get document and image paths from environment variables
+DOCUMENT_PATH = os.getenv('TELEGRAM_BOT_DOCUMENT_PATH')
+IMAGE_PATH = os.getenv('TELEGRAM_BOT_IMAGE_PATH')
+
+if not DOCUMENT_PATH or not IMAGE_PATH:
+    raise ValueError("Please set the TELEGRAM_BOT_DOCUMENT_PATH and TELEGRAM_BOT_IMAGE_PATH environment variables.")
+
+bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -11,13 +24,11 @@ def echo_all(message):
     bot.send_message(message.chat.id, "Here's what I think about you:")
 
     # Send a document
-    document_path = r'I:\My Drive\Học Kỳ 1\Giải Tích\Bai Giang Giai Tich 1\c2-3-ung dung tp xac dinh-VKU.pdf'
-    with open(document_path, 'rb') as doc:
+    with open(DOCUMENT_PATH, 'rb') as doc:
         bot.send_document(message.chat.id, doc)
 
     # Send an image
-    image_path = r'G:\My Drive\Avatars\fuckyoufb.jpg'
-    with open(image_path, 'rb') as img:
+    with open(IMAGE_PATH, 'rb') as img:
         bot.send_photo(message.chat.id, img)
 
 print("Bot is online!")

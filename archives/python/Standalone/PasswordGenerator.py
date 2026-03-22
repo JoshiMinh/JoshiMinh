@@ -1,10 +1,19 @@
-from random import choice
+import string
+import random
 
-alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!()'
-leng = int(input("Enter Password Length: "))
+def generate_password(length: int) -> str:
+    if length <= 8:
+        raise ValueError("Password should be longer than 8 characters!")
+    chars = string.ascii_letters + string.digits + "!()"
+    return ''.join(random.choice(chars) for _ in range(length))
 
-if leng > 8:
-    pwd = ''.join(choice(alpha) for _ in range(leng))
-    print("Your Generated Password is:", pwd)
-else:
-    print("Password should be longer than 8 characters!")
+def main():
+    try:
+        length = int(input("Enter Password Length: "))
+        password = generate_password(length)
+        print("Your Generated Password is:", password)
+    except ValueError as e:
+        print(e)
+
+if __name__ == "__main__":
+    main()
