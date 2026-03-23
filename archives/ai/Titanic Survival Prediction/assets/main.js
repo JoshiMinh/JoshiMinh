@@ -1,19 +1,15 @@
 // Titanic Demo Interactivity
-(function () {
+(() => {
   // ========== SCROLL INDICATOR ==========
   const scrollIndicator = document.querySelector('.scroll-indicator');
   if (scrollIndicator) {
     scrollIndicator.addEventListener('click', () => {
-      const aboutSection = document.querySelector('.about');
-      if (aboutSection) {
-        aboutSection.scrollIntoView({ behavior: 'smooth' });
-      }
+      document.querySelector('.about')?.scrollIntoView({ behavior: 'smooth' });
     });
   }
 
-  const deckIds = ['A','B','C','D','E','F','G','T','U'];
-
-  // Descriptions are illustrative; the visualization itself is not to scale.
+  // ========== DECK INTERACTIVITY ==========
+  const deckIds = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'T', 'U'];
   const deckDescriptions = {
     A: {
       title: 'Deck A',
@@ -53,50 +49,35 @@
     }
   };
 
-  const clearActive = () => {
-    document.querySelectorAll('.decks .deck').forEach(el => el.classList.remove('active'));
-  };
-
-  // Initialize deck events
   deckIds.forEach(id => {
     const el = document.getElementById(`deck-${id}`);
     if (!el) return;
-
-    el.addEventListener('mouseenter', () => {
-      el.classList.add('active');
-    });
-
-    el.addEventListener('mouseleave', () => {
-      el.classList.remove('active');
-    });
+    el.addEventListener('mouseenter', () => el.classList.add('active'));
+    el.addEventListener('mouseleave', () => el.classList.remove('active'));
   });
 
-  // Gentle ship bobbing animation via transform
+  // ========== SHIP BOBBING ANIMATION ==========
   const ship = document.getElementById('ship-group');
   if (ship) {
     let t = 0;
-    function animate() {
+    (function animate() {
       t += 0.02;
-      const dy = Math.sin(t) * 1.6; // small vertical bob
-      const dx = Math.cos(t * 0.6) * 0.8; // slight horizontal sway
+      const dy = Math.sin(t) * 1.6;
+      const dx = Math.cos(t * 0.6) * 0.8;
       ship.setAttribute('transform', `translate(${dx}, ${dy})`);
       requestAnimationFrame(animate);
-    }
-    animate();
+    })();
   }
 
   // ========== PREDICTION FORM HANDLER ==========
   const predictionForm = document.getElementById('prediction-form');
   const predictionResult = document.getElementById('prediction-result');
-  const API_URL = '/api';  // Relative URL since we're on the same server
+  const API_URL = '/api';
 
   if (predictionForm) {
-    predictionForm.addEventListener('submit', async (e) => {
+    predictionForm.addEventListener('submit', async e => {
       e.preventDefault();
-      
       const formData = new FormData(predictionForm);
-      
-      // Coerce numeric fields early for clearer UI logic; API still validates.
       const data = {
         pclass: Number(formData.get('pclass')),
         sex: formData.get('sex'),
@@ -108,28 +89,18 @@
         deck: formData.get('deck')
       };
 
-      // Show loading state
       predictionResult.style.display = 'block';
       predictionResult.innerHTML = '<p class="loading">⏳ Analyzing passenger data...</p>';
 
       try {
         const response = await fetch(`${API_URL}/predict`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
-
-        if (!response.ok) {
-          throw new Error('Prediction server is not running');
-        }
-
+        if (!response.ok) throw new Error('Prediction server is not running');
         const result = await response.json();
-        if (result.error) {
-          throw new Error(result.error);
-        }
-
+        if (result.error) throw new Error(result.error);
         displayPrediction(result, data);
       } catch (error) {
         predictionResult.innerHTML = `
@@ -185,5 +156,4 @@
       <p class="model-info">Model: ${result.model}</p>
     `;
   }
-
 })();

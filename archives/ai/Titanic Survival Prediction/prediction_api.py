@@ -6,41 +6,40 @@ import numpy as np
 import pandas as pd
 import os
 
-app = Flask(__name__, static_folder='.', static_url_path='')
-CORS(app)  # Enable CORS for web browser requests
-
-# Load model and metadata
-model_dir = 'model_output'
-model = joblib.load(os.path.join(model_dir, 'titanic_model.pkl'))
-
-with open(os.path.join(model_dir, 'model_metadata.json'), 'r') as f:
-    metadata = json.load(f)
-
+# --- Configuration ---
+MODEL_DIR = 'model_output'
 REQUIRED_FIELDS = ("pclass", "sex", "age", "fare", "familySize", "embarked", "title")
 EMBARKED_MAP = {'S': 2, 'C': 0, 'Q': 1}
-TITLE_FALLBACK = metadata['encodings']['title'].get('Mr', 1)
 
-# Load scaler if needed
-scaler = None
-if metadata['uses_scaler']:
-    scaler = joblib.load(os.path.join(model_dir, 'scaler.pkl'))
+# --- App Initialization ---
+app = Flask(__name__, static_folder='.', static_url_path='')
+CORS(app)
+
+# --- Model & Metadata Loading ---
+model = joblib.load(os.path.join(MODEL_DIR, 'titanic_model.pkl'))
+with open(os.path.join(MODEL_DIR, 'model_metadata.json'), 'r') as f:
+    metadata = json.load(f)
+
+TITLE_FALLBACK = metadata['encodings']['title'].get('Mr', 1)
+scaler = joblib.load(os.path.join(MODEL_DIR, 'scaler.pkl')) if metadata.get('uses_scaler') else None
 
 print(f"✅ Loaded model: {metadata['model_name']}")
 print(f"   Accuracy: {metadata['accuracy']*100:.2f}%")
 
+# --- Routes ---
 @app.route('/')
 def home():
-    """Serve the main index.html page"""
+    """Serve the main index.html page."""
     return send_from_directory('.', 'index.html')
 
 @app.route('/assets/<path:path>')
 def send_assets(path):
-    """Serve static assets (CSS, JS, images)"""
+    """Serve static assets (CSS, JS, images)."""
     return send_from_directory('assets', path)
 
 @app.route('/api')
 def api_home():
-    """API information endpoint"""
+    """API information endpoint."""
     return jsonify({
         'status': 'online',
         'model': metadata['model_name'],
@@ -50,8 +49,10 @@ def api_home():
 
 @app.route('/api/model-info')
 def model_info():
+    """Return model metadata."""
     return jsonify(metadata)
 
+# --- Feature Preparation ---
 def _prepare_features(data: dict) -> pd.DataFrame:
     """Validate and convert incoming request JSON into model-ready features."""
     if not isinstance(data, dict):
@@ -93,19 +94,17 @@ def _prepare_features(data: dict) -> pd.DataFrame:
         'Title': title_code,
     }])
 
-    fare_per_person = input_df['Fare'] / input_df['FamilySize']
-    input_df['FarePerPerson_Log'] = np.log1p(fare_per_person)
+    input_df['FarePerPerson_Log'] = np.log1p(input_df['Fare'] / input_df['FamilySize'])
     input_df['Age_Class'] = input_df['Age'] * input_df['Pclass']
 
     return input_df[metadata['features']]
 
-
+# --- Prediction Endpoint ---
 @app.route('/api/predict', methods=['POST'])
 def predict():
     data = request.get_json(silent=True)
     try:
         X_pred = _prepare_features(data)
-
         if scaler is not None:
             X_pred = scaler.transform(X_pred)
 
@@ -120,11 +119,12 @@ def predict():
             probability = 0.5
 
         probability = float(np.clip(probability, 0.0, 1.0))
+        confidence = 'High' if abs(probability - 0.5) > 0.2 else 'Moderate'
 
         return jsonify({
             'survived': bool(prediction),
             'probability': probability,
-            'confidence': 'High' if abs(probability - 0.5) > 0.2 else 'Moderate',
+            'confidence': confidence,
             'model': metadata['model_name']
         })
 
@@ -133,6 +133,7 @@ def predict():
     except Exception as exc:
         return jsonify({'error': f'Unexpected error: {exc}'}), 500
 
+# --- Main Entrypoint ---
 if __name__ == '__main__':
     print("\n" + "="*70)
     print("🚢 TITANIC SURVIVAL PREDICTION API SERVER")

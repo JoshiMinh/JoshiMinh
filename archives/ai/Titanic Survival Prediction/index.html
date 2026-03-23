@@ -9,317 +9,284 @@
 </head>
 <body>
   <main>
-  <!-- Full-screen Ship Hero Section -->
-  <section id="hero-ship" class="hero-ship" aria-labelledby="hero-title">
-    <div class="hero-overlay">
-      <div class="hero-header">
-        <h1 id="hero-title" class="hero-title">🚢 Titanic Survival Prediction</h1>
-        <p class="hero-subtitle">Experience the Voyage • Predict Your Fate</p>
-      </div>
-      
-      <!-- Scroll indicator -->
-      <div class="scroll-indicator">
-        <div class="scroll-arrow">↓</div>
-        <p class="scroll-text">Explore</p>
-      </div>
-    </div>
-
-    <!-- Full-screen Ship Visualization -->
-    <div class="ship-container">
-      <!-- Decorative waves -->
-      <div class="waves" aria-hidden="true">
-        <div class="wave"></div>
-        <div class="wave"></div>
-        <div class="wave"></div>
+    <!-- Full-screen Ship Hero Section -->
+    <section id="hero-ship" class="hero-ship" aria-labelledby="hero-title">
+      <div class="hero-overlay">
+        <header class="hero-header">
+          <h1 id="hero-title" class="hero-title">🚢 Titanic Survival Prediction</h1>
+          <p class="hero-subtitle">Experience the Voyage • Predict Your Fate</p>
+        </header>
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+          <div class="scroll-arrow">↓</div>
+          <p class="scroll-text">Explore</p>
+        </div>
       </div>
 
-      <!-- Enhanced Titanic SVG (improved detailed design) -->
-      <svg class="titanic-svg-hero" viewBox="0 0 1200 420" role="img" aria-labelledby="svgTitle svgDesc">
-        <title id="svgTitle">Stylized Titanic side profile visualization</title>
-        <desc id="svgDesc">A detailed side view of the Titanic with clickable deck bands labeled A through G, T, and U for unknown.</desc>
+      <!-- Ship Visualization -->
+      <div class="ship-container">
+        <!-- Decorative waves -->
+        <div class="waves" aria-hidden="true">
+          <div class="wave"></div>
+          <div class="wave"></div>
+          <div class="wave"></div>
+        </div>
 
-        <!-- Definitions for effects -->
-        <defs>
-          <!-- Gradient for hull -->
-          <linearGradient id="hullGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#3a4d6a;stop-opacity:1" />
-            <stop offset="50%" style="stop-color:#2b3a55;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#1a2434;stop-opacity:1" />
-          </linearGradient>
-          
-          <!-- Gradient for upper structure -->
-          <linearGradient id="upperGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-            <stop offset="50%" style="stop-color:#e6e6e6;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#cccccc;stop-opacity:1" />
-          </linearGradient>
-          
-          <!-- Gradient for smokestacks -->
-          <linearGradient id="stackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color:#a03030;stop-opacity:1" />
-            <stop offset="50%" style="stop-color:#b83c3c;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#8b2a2a;stop-opacity:1" />
-          </linearGradient>
-          
-          <!-- Smoke effect -->
-          <filter id="smoke">
-            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3">
-              <animate attributeName="baseFrequency" dur="20s" values="0.05;0.08;0.05" repeatCount="indefinite"/>
-            </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" scale="10"/>
-          </filter>
-          
-          <!-- Glow effect for windows -->
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        <!-- Ship Group -->
-        <g class="ship" id="ship-group">
-          
-          <!-- Hull with gradient -->
-          <path class="hull" d="M 60,300 L 1140,300 L 1120,320 Q 1100,350 1060,355 L 140,355 Q 100,350 80,320 Z" 
-                fill="url(#hullGradient)" stroke="#121e33" stroke-width="2"/>
-          
-          <!-- Hull windows (portholes) -->
-          <g class="portholes">
-            <circle cx="200" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="250" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="300" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="350" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="400" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="450" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="500" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="550" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="600" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="650" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="700" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="750" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="800" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="850" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="900" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="950" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-            <circle cx="1000" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
-          </g>
-          
-          <!-- Upper structure with gradient -->
-          <rect class="upper" x="150" y="220" width="900" height="80" rx="8" 
-                fill="url(#upperGradient)" stroke="#999" stroke-width="2"/>
-          
-          <!-- Upper deck windows -->
-          <g class="windows">
-            <!-- First row -->
-            <rect x="180" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="220" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="260" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="300" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="340" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="450" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="490" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="530" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="640" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="680" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="720" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="830" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="870" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="910" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="950" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            <rect x="990" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
-            
-            <!-- Second row -->
-            <rect x="180" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="210" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="240" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="270" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="300" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="330" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="900" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="930" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="960" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-            <rect x="990" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
-          </g>
-
-          <!-- Smokestacks with gradient and smoke -->
-          <g class="stacks">
-            <!-- Stack 1 -->
-            <rect class="stack" x="340" y="130" width="60" height="90" rx="8" 
-                  fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="370" cy="130" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="370" cy="120" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
-              <animate attributeName="ry" values="6;10;6" dur="3s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3s" repeatCount="indefinite"/>
-            </ellipse>
-            
-            <!-- Stack 2 -->
-            <rect class="stack" x="510" y="120" width="60" height="100" rx="8" 
-                  fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="540" cy="120" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="540" cy="110" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
-              <animate attributeName="ry" values="6;10;6" dur="3.5s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3.5s" repeatCount="indefinite"/>
-            </ellipse>
-            
-            <!-- Stack 3 -->
-            <rect class="stack" x="680" y="130" width="60" height="90" rx="8" 
-                  fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="710" cy="130" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="710" cy="120" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
-              <animate attributeName="ry" values="6;10;6" dur="4s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.4;0.2;0.4" dur="4s" repeatCount="indefinite"/>
-            </ellipse>
-            
-            <!-- Stack 4 -->
-            <rect class="stack" x="850" y="140" width="60" height="80" rx="8" 
-                  fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="880" cy="140" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
-            <ellipse cx="880" cy="130" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
-              <animate attributeName="ry" values="6;10;6" dur="3.2s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3.2s" repeatCount="indefinite"/>
-            </ellipse>
-          </g>
-          
-          <!-- Bridge/Command area -->
-          <rect x="580" y="200" width="100" height="20" rx="4" fill="#d4d4d4" stroke="#999"/>
-          <rect x="600" y="185" width="60" height="15" rx="3" fill="#e6e6e6" stroke="#999"/>
-          <rect x="615" y="192" width="8" height="8" rx="1" fill="#66d4ff" opacity="0.8" filter="url(#glow)"/>
-          <rect x="630" y="192" width="8" height="8" rx="1" fill="#66d4ff" opacity="0.8" filter="url(#glow)"/>
-          <rect x="645" y="192" width="8" height="8" rx="1" fill="#66d4ff" opacity="0.8" filter="url(#glow)"/>
-
-          <!-- Deck bands (illustrative positions) with improved styling -->
-          <g class="decks" aria-label="Decks">
-            <rect id="deck-A" class="deck" x="170" y="258" width="860" height="9" rx="1"/>
-            <rect id="deck-B" class="deck" x="170" y="267" width="860" height="9" rx="1"/>
-            <rect id="deck-C" class="deck" x="170" y="276" width="860" height="9" rx="1"/>
-            <rect id="deck-D" class="deck" x="170" y="285" width="860" height="9" rx="1"/>
-            <rect id="deck-E" class="deck" x="170" y="294" width="860" height="9" rx="1"/>
-            <rect id="deck-F" class="deck" x="170" y="303" width="860" height="9" rx="1"/>
-            <rect id="deck-G" class="deck" x="170" y="312" width="860" height="9" rx="1"/>
-            <rect id="deck-T" class="deck" x="170" y="321" width="860" height="9" rx="1"/>
-            <rect id="deck-U" class="deck" x="170" y="330" width="860" height="9" rx="1"/>
-
-            <!-- Labels with better positioning -->
-            <g class="deck-labels" aria-hidden="true">
-              <text x="1045" y="265" class="label">A</text>
-              <text x="1045" y="274" class="label">B</text>
-              <text x="1045" y="283" class="label">C</text>
-              <text x="1045" y="292" class="label">D</text>
-              <text x="1045" y="301" class="label">E</text>
-              <text x="1045" y="310" class="label">F</text>
-              <text x="1045" y="319" class="label">G</text>
-              <text x="1045" y="328" class="label">T</text>
-              <text x="1045" y="337" class="label">U</text>
+        <!-- Titanic SVG -->
+        <svg class="titanic-svg-hero" viewBox="0 0 1200 420" role="img" aria-labelledby="svgTitle svgDesc">
+          <title id="svgTitle">Stylized Titanic side profile visualization</title>
+          <desc id="svgDesc">A detailed side view of the Titanic with clickable deck bands labeled A through G, T, and U for unknown.</desc>
+          <defs>
+            <linearGradient id="hullGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#3a4d6a"/>
+              <stop offset="50%" stop-color="#2b3a55"/>
+              <stop offset="100%" stop-color="#1a2434"/>
+            </linearGradient>
+            <linearGradient id="upperGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fff"/>
+              <stop offset="50%" stop-color="#e6e6e6"/>
+              <stop offset="100%" stop-color="#ccc"/>
+            </linearGradient>
+            <linearGradient id="stackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#a03030"/>
+              <stop offset="50%" stop-color="#b83c3c"/>
+              <stop offset="100%" stop-color="#8b2a2a"/>
+            </linearGradient>
+            <filter id="smoke">
+              <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3">
+                <animate attributeName="baseFrequency" dur="20s" values="0.05;0.08;0.05" repeatCount="indefinite"/>
+              </feTurbulence>
+              <feDisplacementMap in="SourceGraphic" scale="10"/>
+            </filter>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <g class="ship" id="ship-group">
+            <!-- Hull -->
+            <path class="hull" d="M 60,300 L 1140,300 L 1120,320 Q 1100,350 1060,355 L 140,355 Q 100,350 80,320 Z"
+              fill="url(#hullGradient)" stroke="#121e33" stroke-width="2"/>
+            <!-- Portholes -->
+            <g class="portholes">
+              <!-- Use a loop in JS for more DRY, but here is static for HTML -->
+              <circle cx="200" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="250" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="300" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="350" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="400" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="450" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="500" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="550" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="600" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="650" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="700" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="750" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="800" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="850" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="900" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="950" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+              <circle cx="1000" cy="325" r="4" fill="#ffcc66" opacity="0.8" filter="url(#glow)"/>
+            </g>
+            <!-- Upper structure -->
+            <rect class="upper" x="150" y="220" width="900" height="80" rx="8"
+              fill="url(#upperGradient)" stroke="#999" stroke-width="2"/>
+            <!-- Upper deck windows -->
+            <g class="windows">
+              <!-- First row -->
+              <rect x="180" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="220" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="260" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="300" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="340" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="450" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="490" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="530" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="640" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="680" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="720" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="830" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="870" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="910" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="950" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <rect x="990" y="235" width="25" height="18" rx="2" fill="#66d4ff" opacity="0.7" filter="url(#glow)"/>
+              <!-- Second row -->
+              <rect x="180" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="210" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="240" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="270" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="300" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="330" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="900" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="930" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="960" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+              <rect x="990" y="265" width="20" height="15" rx="2" fill="#ffcc66" opacity="0.6" filter="url(#glow)"/>
+            </g>
+            <!-- Smokestacks -->
+            <g class="stacks">
+              <!-- Stack 1 -->
+              <rect class="stack" x="340" y="130" width="60" height="90" rx="8"
+                fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="370" cy="130" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="370" cy="120" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
+                <animate attributeName="ry" values="6;10;6" dur="3s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3s" repeatCount="indefinite"/>
+              </ellipse>
+              <!-- Stack 2 -->
+              <rect class="stack" x="510" y="120" width="60" height="100" rx="8"
+                fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="540" cy="120" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="540" cy="110" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
+                <animate attributeName="ry" values="6;10;6" dur="3.5s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3.5s" repeatCount="indefinite"/>
+              </ellipse>
+              <!-- Stack 3 -->
+              <rect class="stack" x="680" y="130" width="60" height="90" rx="8"
+                fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="710" cy="130" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="710" cy="120" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
+                <animate attributeName="ry" values="6;10;6" dur="4s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.4;0.2;0.4" dur="4s" repeatCount="indefinite"/>
+              </ellipse>
+              <!-- Stack 4 -->
+              <rect class="stack" x="850" y="140" width="60" height="80" rx="8"
+                fill="url(#stackGradient)" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="880" cy="140" rx="30" ry="8" fill="#8b2a2a" stroke="#7e2727" stroke-width="2"/>
+              <ellipse cx="880" cy="130" rx="28" ry="6" fill="#999" opacity="0.4" filter="url(#smoke)">
+                <animate attributeName="ry" values="6;10;6" dur="3.2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.4;0.2;0.4" dur="3.2s" repeatCount="indefinite"/>
+              </ellipse>
+            </g>
+            <!-- Bridge/Command area -->
+            <rect x="580" y="200" width="100" height="20" rx="4" fill="#d4d4d4" stroke="#999"/>
+            <rect x="600" y="185" width="60" height="15" rx="3" fill="#e6e6e6" stroke="#999"/>
+            <rect x="615" y="192" width="8" height="8" rx="1" fill="#66d4ff" opacity="0.8" filter="url(#glow)"/>
+            <rect x="630" y="192" width="8" height="8" rx="1" fill="#66d4ff" opacity="0.8" filter="url(#glow)"/>
+            <rect x="645" y="192" width="8" height="8" rx="1" fill="#66d4ff" opacity="0.8" filter="url(#glow)"/>
+            <!-- Deck bands -->
+            <g class="decks" aria-label="Decks">
+              <rect id="deck-A" class="deck" x="170" y="258" width="860" height="9" rx="1"/>
+              <rect id="deck-B" class="deck" x="170" y="267" width="860" height="9" rx="1"/>
+              <rect id="deck-C" class="deck" x="170" y="276" width="860" height="9" rx="1"/>
+              <rect id="deck-D" class="deck" x="170" y="285" width="860" height="9" rx="1"/>
+              <rect id="deck-E" class="deck" x="170" y="294" width="860" height="9" rx="1"/>
+              <rect id="deck-F" class="deck" x="170" y="303" width="860" height="9" rx="1"/>
+              <rect id="deck-G" class="deck" x="170" y="312" width="860" height="9" rx="1"/>
+              <rect id="deck-T" class="deck" x="170" y="321" width="860" height="9" rx="1"/>
+              <rect id="deck-U" class="deck" x="170" y="330" width="860" height="9" rx="1"/>
+              <!-- Deck labels -->
+              <g class="deck-labels" aria-hidden="true">
+                <text x="1045" y="265" class="label">A</text>
+                <text x="1045" y="274" class="label">B</text>
+                <text x="1045" y="283" class="label">C</text>
+                <text x="1045" y="292" class="label">D</text>
+                <text x="1045" y="301" class="label">E</text>
+                <text x="1045" y="310" class="label">F</text>
+                <text x="1045" y="319" class="label">G</text>
+                <text x="1045" y="328" class="label">T</text>
+                <text x="1045" y="337" class="label">U</text>
+              </g>
+            </g>
+            <!-- Bow detail -->
+            <path d="M 1140,300 Q 1155,295 1165,285 L 1160,315 Q 1150,310 1120,320"
+              fill="#2b3a55" stroke="#121e33" stroke-width="2"/>
+            <!-- Anchor -->
+            <g class="anchor" opacity="0.6">
+              <path d="M 120,310 L 120,340 M 115,340 L 125,340 M 112,335 Q 112,342 120,342 M 128,335 Q 128,342 120,342"
+                stroke="#444" stroke-width="2" fill="none"/>
             </g>
           </g>
-          
-          <!-- Bow detail -->
-          <path d="M 1140,300 Q 1155,295 1165,285 L 1160,315 Q 1150,310 1120,320" 
-                fill="#2b3a55" stroke="#121e33" stroke-width="2"/>
-          
-          <!-- Anchor -->
-          <g class="anchor" opacity="0.6">
-            <path d="M 120,310 L 120,340 M 115,340 L 125,340 M 112,335 Q 112,342 120,342 M 128,335 Q 128,342 120,342" 
-                  stroke="#444" stroke-width="2" fill="none"/>
-          </g>
-        </g>
-      </svg>
-    </div>
-
-    <!-- Floating Prediction Panel -->
-    <aside class="floating-panel" aria-labelledby="panel-title">
-      <h3 id="panel-title">🔮 Will You Survive?</h3>
-      <form id="prediction-form" class="prediction-form">
-
-            <div class="form-section">
-              <h4>👤 Personal Info</h4>
-              <label>
-                Title:
-                <select name="title" required>
-                  <option value="Mr">Mr</option>
-                  <option value="Mrs">Mrs</option>
-                  <option value="Miss">Miss</option>
-                  <option value="Master">Master</option>
-                  <option value="Dr">Dr</option>
-                  <option value="Rev">Rev</option>
-                  <option value="Col">Col</option>
-                  <option value="Major">Major</option>
-                </select>
-              </label>
-              <label>
-                Gender:
-                <select name="sex" required>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </label>
-              <label>
-                Age:
-                <input type="number" name="age" min="0" max="80" value="30" required>
-              </label>
-              <label>
-                Family Size:
-                <input type="number" name="familySize" min="1" max="11" value="1" required>
-              </label>
-            </div>
-            
-            <div class="form-section">
-              <h4>🎫 Ticket Info</h4>
-              <label>
-                Class:
-                <select name="pclass" required>
-                  <option value="1">First Class</option>
-                  <option value="2">Second Class</option>
-                  <option value="3" selected>Third Class</option>
-                </select>
-              </label>
-              <label>
-                Fare ($):
-                <input type="number" name="fare" min="0" max="600" value="20" step="0.01" required>
-              </label>
-              <label>
-                Port:
-                <select name="embarked" required>
-                  <option value="S" selected>Southampton</option>
-                  <option value="C">Cherbourg</option>
-                  <option value="Q">Queenstown</option>
-                </select>
-              </label>
-              <label>
-                Deck:
-                <select name="deck">
-                  <option value="A">Deck A</option>
-                  <option value="B">Deck B</option>
-                  <option value="C">Deck C</option>
-                  <option value="D">Deck D</option>
-                  <option value="E">Deck E</option>
-                  <option value="F">Deck F</option>
-                  <option value="G">Deck G</option>
-                  <option value="T">Deck T</option>
-                  <option value="U" selected>Unknown</option>
-                </select>
-              </label>
-            </div>
-            
-            <button type="submit" class="predict-btn">Predict Survival</button>
-          </form>
-          
-          <div id="prediction-result" class="prediction-result" style="display: none;"></div>
-          
-          <div class="legend" style="margin-top: 20px;">
-            <h4>Legend</h4>
-            <ul>
-              <li><span class="chip chip-upper"></span> Upper structures</li>
-              <li><span class="chip chip-hull"></span> Hull</li>
-              <li><span class="chip chip-deck"></span> Deck bands (A–G, T, U)</li>
-            </ul>
-            <p class="small">Note: Visualization is illustrative and not to scale.</p>
-          </div>
-        </aside>
+        </svg>
       </div>
+
+      <!-- Floating Prediction Panel -->
+      <aside class="floating-panel" aria-labelledby="panel-title">
+        <h3 id="panel-title">🔮 Will You Survive?</h3>
+        <form id="prediction-form" class="prediction-form">
+          <fieldset class="form-section">
+            <legend>👤 Personal Info</legend>
+            <label>
+              Title:
+              <select name="title" required>
+                <option value="Mr">Mr</option>
+                <option value="Mrs">Mrs</option>
+                <option value="Miss">Miss</option>
+                <option value="Master">Master</option>
+                <option value="Dr">Dr</option>
+                <option value="Rev">Rev</option>
+                <option value="Col">Col</option>
+                <option value="Major">Major</option>
+              </select>
+            </label>
+            <label>
+              Gender:
+              <select name="sex" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </label>
+            <label>
+              Age:
+              <input type="number" name="age" min="0" max="80" value="30" required>
+            </label>
+            <label>
+              Family Size:
+              <input type="number" name="familySize" min="1" max="11" value="1" required>
+            </label>
+          </fieldset>
+          <fieldset class="form-section">
+            <legend>🎫 Ticket Info</legend>
+            <label>
+              Class:
+              <select name="pclass" required>
+                <option value="1">First Class</option>
+                <option value="2">Second Class</option>
+                <option value="3" selected>Third Class</option>
+              </select>
+            </label>
+            <label>
+              Fare ($):
+              <input type="number" name="fare" min="0" max="600" value="20" step="0.01" required>
+            </label>
+            <label>
+              Port:
+              <select name="embarked" required>
+                <option value="S" selected>Southampton</option>
+                <option value="C">Cherbourg</option>
+                <option value="Q">Queenstown</option>
+              </select>
+            </label>
+            <label>
+              Deck:
+              <select name="deck">
+                <option value="A">Deck A</option>
+                <option value="B">Deck B</option>
+                <option value="C">Deck C</option>
+                <option value="D">Deck D</option>
+                <option value="E">Deck E</option>
+                <option value="F">Deck F</option>
+                <option value="G">Deck G</option>
+                <option value="T">Deck T</option>
+                <option value="U" selected>Unknown</option>
+              </select>
+            </label>
+          </fieldset>
+          <button type="submit" class="predict-btn">Predict Survival</button>
+        </form>
+        <div id="prediction-result" class="prediction-result" style="display: none;"></div>
+        <div class="legend" style="margin-top: 20px;">
+          <h4>Legend</h4>
+          <ul>
+            <li><span class="chip chip-upper"></span> Upper structures</li>
+            <li><span class="chip chip-hull"></span> Hull</li>
+            <li><span class="chip chip-deck"></span> Deck bands (A–G, T, U)</li>
+          </ul>
+          <p class="small">Note: Visualization is illustrative and not to scale.</p>
+        </div>
+      </aside>
     </section>
 
     <section class="about container" aria-labelledby="about-title">
@@ -376,7 +343,6 @@
       <p>© 2025 Titanic Survival Prediction — Demo</p>
     </div>
   </footer>
-
   <script src="assets/main.js"></script>
 </body>
 </html>

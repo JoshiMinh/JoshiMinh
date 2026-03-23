@@ -1,11 +1,11 @@
 /* Titanic Demo Styles - Full Screen Hero Design */
 :root {
-  --bg: #001f3f;            /* deep navy */
+  --bg: #001f3f;
   --bg-2: #002a5c;
-  --text: #f4f8ff;          /* soft white */
+  --text: #f4f8ff;
   --muted: #c7d2e6;
-  --accent: #ffcc66;        /* maritime gold */
-  --accent-2: #66d4ff;      /* sea blue */
+  --accent: #ffcc66;
+  --accent-2: #66d4ff;
   --hull: #2b3a55;
   --upper: #e6e6e6;
   --stack: #b83c3c;
@@ -14,14 +14,20 @@
   --panel: #0b2a4a;
 }
 
-* { box-sizing: border-box; }
-html { 
+* {
+  box-sizing: border-box;
+}
+
+html {
   scroll-behavior: smooth;
 }
-html, body { 
-  height: 100%; 
+
+html,
+body {
+  height: 100%;
   margin: 0;
 }
+
 body {
   color: var(--text);
   background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
@@ -29,7 +35,11 @@ body {
   overflow-x: hidden;
 }
 
-.container { width: 95%; max-width: 1100px; margin: 0 auto; }
+.container {
+  width: 95%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
 
 /* ===== FULL-SCREEN SHIP HERO ===== */
 .hero-ship {
@@ -40,8 +50,9 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, rgba(11, 58, 103, 0.6) 0%, transparent 70%),
-              linear-gradient(180deg, var(--bg) 0%, #001a33 50%, #000d1a 100%);
+  background:
+    radial-gradient(ellipse at center, rgba(11, 58, 103, 0.6) 0%, transparent 70%),
+    linear-gradient(180deg, var(--bg) 0%, #001a33 50%, #000d1a 100%);
 }
 
 /* Stars in the background */
@@ -52,7 +63,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
+  background-image:
     radial-gradient(2px 2px at 20% 30%, white, transparent),
     radial-gradient(2px 2px at 60% 70%, white, transparent),
     radial-gradient(1px 1px at 50% 50%, white, transparent),
@@ -69,9 +80,18 @@ body {
 }
 
 @keyframes twinkleStars {
-  0% { background-position: 0% 0%; opacity: 0.6; }
-  50% { background-position: 100% 100%; opacity: 0.4; }
-  100% { background-position: 0% 0%; opacity: 0.6; }
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.6;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: 0.4;
+  }
+  100% {
+    background-position: 0% 0%;
+    opacity: 0.6;
+  }
 }
 
 /* Aurora/Northern lights effect */
@@ -82,11 +102,11 @@ body {
   left: -50%;
   right: -50%;
   height: 40%;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(102, 212, 255, 0.1) 20%, 
-    rgba(66, 153, 225, 0.15) 40%, 
-    rgba(102, 212, 255, 0.1) 60%, 
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(102, 212, 255, 0.1) 20%,
+    rgba(66, 153, 225, 0.15) 40%,
+    rgba(102, 212, 255, 0.1) 60%,
     transparent 80%);
   animation: aurora 30s ease-in-out infinite;
   opacity: 0.3;
@@ -95,8 +115,14 @@ body {
 }
 
 @keyframes aurora {
-  0%, 100% { transform: translateX(0) skewX(-10deg); opacity: 0.2; }
-  50% { transform: translateX(20%) skewX(10deg); opacity: 0.4; }
+  0%, 100% {
+    transform: translateX(0) skewX(-10deg);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(20%) skewX(10deg);
+    opacity: 0.4;
+  }
 }
 
 .hero-overlay {
@@ -119,8 +145,14 @@ body {
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .hero-title {
@@ -157,9 +189,15 @@ body {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-  40% { transform: translateX(-50%) translateY(-12px); }
-  60% { transform: translateX(-50%) translateY(-6px); }
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-12px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-6px);
+  }
 }
 
 .scroll-arrow {
@@ -167,13 +205,19 @@ body {
   color: var(--accent);
   margin-bottom: 4px;
   text-shadow: 0 0 20px rgba(255, 204, 102, 0.8),
-               0 0 40px rgba(255, 204, 102, 0.4);
+    0 0 40px rgba(255, 204, 102, 0.4);
   animation: arrowPulse 2s ease-in-out infinite;
 }
 
 @keyframes arrowPulse {
-  0%, 100% { opacity: 1; text-shadow: 0 0 20px rgba(255, 204, 102, 0.8); }
-  50% { opacity: 0.7; text-shadow: 0 0 30px rgba(255, 204, 102, 1); }
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 20px rgba(255, 204, 102, 0.8);
+  }
+  50% {
+    opacity: 0.7;
+    text-shadow: 0 0 30px rgba(255, 204, 102, 1);
+  }
 }
 
 .scroll-text {
@@ -196,8 +240,14 @@ body {
 }
 
 @keyframes shipFloat {
-  from { opacity: 0; transform: translateY(50px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Reflection effect under ship */
@@ -208,8 +258,8 @@ body {
   left: 10%;
   right: 10%;
   height: 40%;
-  background: linear-gradient(to bottom, 
-    rgba(43, 58, 85, 0.3) 0%, 
+  background: linear-gradient(to bottom,
+    rgba(43, 58, 85, 0.3) 0%,
     rgba(102, 212, 255, 0.15) 30%,
     transparent 100%);
   filter: blur(15px);
@@ -220,11 +270,11 @@ body {
 }
 
 @keyframes reflectionWave {
-  0%, 100% { 
+  0%, 100% {
     transform: scaleY(-1) scaleX(1);
     opacity: 0.4;
   }
-  50% { 
+  50% {
     transform: scaleY(-1) scaleX(1.05);
     opacity: 0.3;
   }
@@ -234,22 +284,22 @@ body {
   width: 100%;
   height: auto;
   filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.7))
-          drop-shadow(0 -5px 30px rgba(102, 212, 255, 0.2));
+    drop-shadow(0 -5px 30px rgba(102, 212, 255, 0.2));
   animation: gentleFloat 6s ease-in-out infinite;
 }
 
 @keyframes gentleFloat {
-  0%, 100% { 
-    transform: translateY(0px) rotate(0deg); 
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
   }
-  25% { 
-    transform: translateY(-12px) rotate(-0.5deg); 
+  25% {
+    transform: translateY(-12px) rotate(-0.5deg);
   }
-  50% { 
-    transform: translateY(-18px) rotate(0deg); 
+  50% {
+    transform: translateY(-18px) rotate(0deg);
   }
-  75% { 
-    transform: translateY(-12px) rotate(0.5deg); 
+  75% {
+    transform: translateY(-12px) rotate(0.5deg);
   }
 }
 
@@ -274,8 +324,9 @@ body {
 }
 
 .wave:nth-child(1) {
-  background: radial-gradient(180px 50px at 25% 35%, rgba(102, 212, 255, 0.7) 0%, rgba(102, 212, 255, 0.0) 70%),
-              radial-gradient(120px 30px at 75% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.0) 80%);
+  background:
+    radial-gradient(180px 50px at 25% 35%, rgba(102, 212, 255, 0.7) 0%, rgba(102, 212, 255, 0.0) 70%),
+    radial-gradient(120px 30px at 75% 50%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.0) 80%);
   animation-duration: 14s;
   opacity: 0.55;
 }
@@ -295,9 +346,15 @@ body {
 }
 
 @keyframes drift {
-  from { transform: translateX(0) translateY(0); }
-  50% { transform: translateX(-25%) translateY(-2px); }
-  to { transform: translateX(-50%) translateY(0); }
+  from {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(-25%) translateY(-2px);
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* Add moonlight/spotlight effect on water */
@@ -315,20 +372,24 @@ body {
 }
 
 @keyframes shimmer {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* Ship SVG Elements - Enhanced */
 .hull {
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7)) 
-          drop-shadow(0 0 30px rgba(43, 58, 85, 0.4));
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7))
+    drop-shadow(0 0 30px rgba(43, 58, 85, 0.4));
   transition: filter 0.3s ease;
 }
 
 .ship:hover .hull {
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8)) 
-          drop-shadow(0 0 50px rgba(102, 212, 255, 0.3));
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.8))
+    drop-shadow(0 0 50px rgba(102, 212, 255, 0.3));
 }
 
 .upper {
@@ -340,10 +401,10 @@ body {
 }
 
 @keyframes stackGlow {
-  0%, 100% { 
+  0%, 100% {
     filter: brightness(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
   }
-  50% { 
+  50% {
     filter: brightness(1.1) drop-shadow(0 0 15px rgba(184, 60, 60, 0.6));
   }
 }
@@ -366,8 +427,12 @@ body {
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 0.4; }
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* Windows glow effect */
@@ -384,8 +449,12 @@ body {
 }
 
 @keyframes windowGlow {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 0.4; }
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* Deck bands - enhanced interactivity */
@@ -402,8 +471,8 @@ body {
 .decks .deck.active {
   opacity: 1;
   fill: #6e8fc0;
-  filter: drop-shadow(0 0 12px rgba(255, 204, 102, 1)) 
-          drop-shadow(0 0 20px rgba(102, 212, 255, 0.6));
+  filter: drop-shadow(0 0 12px rgba(255, 204, 102, 1))
+    drop-shadow(0 0 20px rgba(102, 212, 255, 0.6));
   transform: scaleY(1.3);
   transform-origin: center;
 }
@@ -435,8 +504,12 @@ body {
 }
 
 @keyframes anchorSway {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  50% { transform: translateX(2px) rotate(2deg); }
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(2px) rotate(2deg);
+  }
 }
 
 /* Stacks - Add steam puff animation */
@@ -459,7 +532,7 @@ body {
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6),
-              0 0 1px rgba(255, 255, 255, 0.3) inset;
+    0 0 1px rgba(255, 255, 255, 0.3) inset;
   z-index: 10;
   pointer-events: auto;
   animation: slideInRight 0.8s ease-out 0.5s backwards;
@@ -513,79 +586,134 @@ body {
   padding: 80px 0 40px;
   background: linear-gradient(180deg, transparent 0%, rgba(0, 20, 40, 0.3) 100%);
 }
-.about h2 { margin-bottom: 12px; font-size: 2rem; }
-.quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
+
+.about h2 {
+  margin-bottom: 12px;
+  font-size: 2rem;
+}
+
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
 .card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
   padding: 16px;
 }
-.card h3 { margin-top: 0; }
+
+.card h3 {
+  margin-top: 0;
+}
+
 .path {
-  padding: 8px 10px; border-radius: 6px; background: rgba(255,255,255,0.08); color: var(--accent-2);
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent-2);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
-.note { color: var(--muted); margin-bottom: 4px; }
+
+.note {
+  color: var(--muted);
+  margin-bottom: 4px;
+}
 
 /* ===== OLD VIZ SECTION (REMOVED) ===== */
-.viz { display: none; }
-.viz-layout { display: none; }
-.ship-wrap { display: none; }
-.titanic-svg { display: none; }
-
-/* Info panel (old - hidden) */
+.viz,
+.viz-layout,
+.ship-wrap,
+.titanic-svg,
 .panel {
   display: none;
 }
 
-.deck-info { min-height: 120px; display: grid; gap: 6px; }
-.deck-info .title { font-weight: 700; color: var(--accent); }
-.deck-info .desc { color: var(--muted); }
+.deck-info {
+  min-height: 120px;
+  display: grid;
+  gap: 6px;
+}
 
-.legend { margin-top: 12px; }
-.legend h4 { margin-bottom: 8px; }
-.legend ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
-.chip { display: inline-block; width: 18px; height: 10px; border-radius: 4px; margin-right: 6px; }
-.chip-upper { background: var(--upper); border: 1px solid #999; }
-.chip-hull { background: var(--hull); border: 1px solid #121e33; }
-.chip-deck { background: var(--deck); border: 1px solid #33517f; }
-.small { color: var(--muted); font-size: 12px; }
+.deck-info .title {
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.deck-info .desc {
+  color: var(--muted);
+}
+
+.legend {
+  margin-top: 12px;
+}
+
+.legend h4 {
+  margin-bottom: 8px;
+}
+
+.legend ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border-radius: 4px;
+  margin-right: 6px;
+}
+
+.chip-upper {
+  background: var(--upper);
+  border: 1px solid #999;
+}
+
+.chip-hull {
+  background: var(--hull);
+  border: 1px solid #121e33;
+}
+
+.chip-deck {
+  background: var(--deck);
+  border: 1px solid #33517f;
+}
+
+.small {
+  color: var(--muted);
+  font-size: 12px;
+}
 
 /* Notes */
-.notes { padding: 40px 0 60px; }
-.notes ul { margin-top: 8px; }
+.notes {
+  padding: 40px 0 60px;
+}
+
+.notes ul {
+  margin-top: 8px;
+}
 
 /* Footer */
-.site-footer { padding: 18px 0 24px; color: var(--muted); text-align: center; border-top: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); }
+.site-footer {
+  padding: 18px 0 24px;
+  color: var(--muted);
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
 
 /* Prediction Form Styles */
 .prediction-form {
   display: grid;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.form-section {
-  background: rgba(255,255,255,0.04);
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.form-section h4 {
-  margin: 0 0 12px 0;
-  color: var(--accent);
-  font-size: 0.95rem;
-}
-
-.prediction-form label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 0.9rem;(Updated for Floating Panel) */
-.prediction-form {
-  display: grid;
   gap: 14px;
+  margin-top: 16px;
 }
 
 .form-section {
@@ -673,7 +801,8 @@ body {
   to {
     opacity: 1;
     transform: scale(1);
- 
+  }
+}
 
 .result-header .confidence {
   font-size: 0.9rem;
@@ -749,9 +878,7 @@ body {
 }
 
 /* Responsiveness */
-@media (max-width: 920px) { .viz-layout { grid-template-columns: 1fr; } .panel { order: -1; }
-  .site-title { font-size: 1.75rem; } }
-1200px) {
+@media (max-width: 1200px) {
   .floating-panel {
     right: 3%;
     width: clamp(260px, 30vw, 350px);
@@ -762,7 +889,6 @@ body {
   .hero-ship {
     min-height: 650px;
   }
-  
   .floating-panel {
     position: relative;
     right: auto;
@@ -772,20 +898,16 @@ body {
     max-width: 450px;
     margin: 40px auto 0;
   }
-  
   .ship-container {
     width: 95%;
     margin-bottom: 20px;
   }
-  
   .hero-header {
     top: 30px;
   }
-  
   .hero-title {
     font-size: 2rem;
   }
-  
   .scroll-indicator {
     bottom: 20px;
   }
@@ -795,20 +917,17 @@ body {
   .hero-ship {
     min-height: 600px;
   }
-  
   .hero-title {
     font-size: 1.75rem;
   }
-  
   .hero-subtitle {
     font-size: 1rem;
   }
-  
   .floating-panel {
     width: 95%;
     padding: 20px;
   }
-  
   .about {
     padding: 60px 0 30px;
   }
+}
