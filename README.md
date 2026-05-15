@@ -1,3 +1,21 @@
+# Joshi Minh — Portfolio (Vite + React + TypeScript)
+
+This is a self-contained static portfolio built with Vite, React, TypeScript, Tailwind CSS, and Framer Motion. It uses local JSON files for data and is configured to output to `docs/` for easy GitHub Pages hosting.
+
+Quick start (using pnpm):
+
+```bash
+pnpm install
+pnpm run dev
+```
+
+Build for production (outputs to `docs/`):
+
+```bash
+pnpm run build
+```
+
+Then push the `docs/` folder to GitHub and enable GitHub Pages from `main/docs`.
 <div align="center">
 
 # 👋 Joshi Minh

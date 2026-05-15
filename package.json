@@ -1,0 +1,30 @@
+{
+  "name": "joshi-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@8.8.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "framer-motion": "^10.12.16",
+    "clsx": "^1.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6",
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.1.0",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "tailwindcss": "^4.3.0",
+    "postcss": "^8.4.24",
+    "autoprefixer": "^10.4.14",
+    "@tailwindcss/postcss": "^4.3.0",
+    "prettier": "^2.8.8"
+  }
+}

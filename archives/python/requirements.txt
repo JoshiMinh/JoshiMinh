@@ -1,4 +1,7 @@
-pyshorteners
+pandas
+openpyxl
+pykakasi
+jamdictpyshorteners
 pyTelegramBotAPI
 speedtest-cli
 SpeechRecognition

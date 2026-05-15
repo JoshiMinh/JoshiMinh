@@ -1,0 +1,53 @@
+# Node
+node_modules/
+
+# pnpm store (local cache)
+.pnpm/
+
+# Vite / build outputs
+dist/
+build/
+
+# environment
+.env
+.env.*.local
+.env.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# TypeScript
+*.tsbuildinfo
+
+# Testing / coverage
+coverage/
+
+# Misc
+.cache/
+/.turbo
+
+# Ignore local secrets or temp files
+secrets.json
+*.secret
+
+# Ignore legacy build artifacts
+*.tgz
+
+# Keep lockfiles (pnpm-lock.yaml) committed
+# If you prefer otherwise, uncomment the next line
+# pnpm-lock.yaml

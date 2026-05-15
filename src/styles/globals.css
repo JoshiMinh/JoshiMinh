@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --bg: #09090B;
+  --accent: #2563EB;
+  --muted: #94a3b8;
+}
+
+html,body,#root{height:100%;}
+body{font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg);}
+
+/* Grid texture */
+.bg-grid::before{
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container { position: relative; z-index: 10; }
+.card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px); border-radius: 12px; }
+
+/* Terminal */
+.term { font-family: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; background: rgba(2,6,23,0.6); border: 1px solid rgba(255,255,255,0.03); padding:1rem; border-radius:8px; }
+
+/* Buttons */
+.btn { display:inline-flex; gap:0.5rem; align-items:center; padding:0.6rem 1rem; border-radius:8px; background:linear-gradient(180deg,var(--accent),#1e40af); color:white; font-weight:600 }
+.btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted) }
+
+/* small utilities */
+.fade-up { transform-origin: 0 0; }
+
+/* responsive */
+@media (max-width:768px){ h1.responsive { font-size: 2rem } }
