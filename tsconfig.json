@@ -1,17 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "ES2021",
-    "lib": ["DOM", "ES2021"],
-    "jsx": "react-jsx",
-    "moduleResolution": "bundler",
-    "module": "ESNext",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true
-  },
-  "include": ["src"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

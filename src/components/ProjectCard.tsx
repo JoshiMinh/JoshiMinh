@@ -1,30 +1,61 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import Button from './ui/Button'
-import Badge from './ui/Badge'
+import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 
-type Project = {
-  id: string
-  title: string
-  description: string
-  tags: string[]
-  repo?: string
-  demo?: string
+interface ProjectCardProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+  link: string;
+  tags: string[];
+  delay?: number;
 }
 
-export default function ProjectCard({ project }: { project: Project }){
+export const ProjectCard = ({ title, description, imageUrl, link, tags, delay = 0 }: ProjectCardProps) => {
   return (
-    <motion.article whileHover={{ y: -6 }} className="card p-4 h-full flex flex-col">
-      <div className="h-40 rounded-md mb-4 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center text-sm text-muted">Image placeholder</div>
-      <h3 className="font-semibold text-lg mb-2">{project.title}</h3>
-      <p className="text-sm text-muted flex-1">{project.description}</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {project.tags.map(t=> <Badge key={t} label={t} />)}
+    <motion.a
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+      className="group relative block glass-card rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-300"
+    >
+      <div className="aspect-[16/9] w-full bg-zinc-900 relative overflow-hidden">
+        {imageUrl ? (
+          <img 
+            src={imageUrl} 
+            alt={title} 
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-900 to-zinc-800 text-zinc-700">
+            [Image Placeholder]
+          </div>
+        )}
       </div>
-      <div className="mt-4 flex gap-2">
-        {project.repo && <Button as="a" href={project.repo} variant="ghost">GitHub</Button>}
-        {project.demo && <Button as="a" href={project.demo}>Demo</Button>}
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-xl font-semibold text-zinc-100 group-hover:text-blue-400 transition-colors">
+            {title}
+          </h3>
+          <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-blue-400 transition-colors" />
+        </div>
+        <p className="text-zinc-400 mb-6 line-clamp-2">
+          {description}
+        </p>
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {tags.map((tag) => (
+            <span 
+              key={tag} 
+              className="px-3 py-1 text-xs font-medium bg-blue-500/10 text-blue-400 rounded-full border border-blue-500/20"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
-    </motion.article>
-  )
-}
+    </motion.a>
+  );
+};

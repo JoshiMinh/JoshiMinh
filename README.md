@@ -1,54 +1,73 @@
-# Joshi Minh — Portfolio (Vite + React + TypeScript)
+# React + TypeScript + Vite
 
-This is a self-contained static portfolio built with Vite, React, TypeScript, Tailwind CSS, and Framer Motion. It uses local JSON files for data and is configured to output to `docs/` for easy GitHub Pages hosting.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Quick start (using pnpm):
+Currently, two official plugins are available:
 
-```bash
-pnpm install
-pnpm run dev
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-Build for production (outputs to `docs/`):
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```bash
-pnpm run build
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-Then push the `docs/` folder to GitHub and enable GitHub Pages from `main/docs`.
-<div align="center">
-
-# 👋 Joshi Minh
-
-### Vietnamese Computer Engineering Student  
-**Tech Enthusiast | AI & Systems Passionate | Anime & Movie Lover**
-
-[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/@JOSHI)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/nguyen-binh-minh-jm/)
-[![X](https://img.shields.io/badge/X-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/js_minh)
-
-<img src="https://visitor-badge.laobi.icu/badge?page_id=joshiminh&" alt="visitor badge" />
-<img src="https://img.shields.io/badge/🎓_University-VKU-yellow" alt="university: vku" />
-<img src="https://img.shields.io/github/followers/joshiminh?label=Follow&style=social" alt="GitHub followers" />
-<img src="https://img.shields.io/github/stars/joshiminh?label=Stars&style=social" alt="GitHub stars" />
-
-## 🛠️ Technologies I Use
-
-![used Stack](https://skillicons.dev/icons?i=python,java,cpp,kotlin,javascript,php,html,css,react,next,git,github,npm,pnpm,vscode)
-
-### 🧑‍💻 Technologies I'm Familiar With
-
-![familiar stack](https://skillicons.dev/icons?i=vercel,firebase,supabase,figma,illustrator,arduino)
-
-## ☕ Support Me
-
-*If you find my projects valuable or helpful, consider supporting me:*
-
-[![Patreon](https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white)](https://patreon.com/u16604577)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/joshiminh)
-
----
-
-**Thanks for visiting!**
-
-</div>
