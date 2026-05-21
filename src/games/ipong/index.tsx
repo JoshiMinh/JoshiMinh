@@ -1,21 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iPong X - Lawsuit Bait Deluxe</title>
-  <meta name="description" content="Introducing the iPong X - Absolutely not the suspiciously familiar rectangle you're picturing.">
-  
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+import React, { useEffect, useRef } from 'react';
+import './style.css';
+import { useNavigate } from 'react-router-dom';
+
+export default function Ipong() {
+    const navigate = useNavigate();
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        
+        // Setup back link
+        const backLink = containerRef.current.querySelector('.back-link');
+        if (backLink) {
+            backLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigate('/');
+            });
+        }
+
+        
+
+        return () => {
+            // Best effort cleanup
+            if (typeof stopSimulation === 'function') {
+                try { stopSimulation(); } catch (e) {}
+            }
+            if (typeof rafId !== 'undefined' && rafId) {
+                try { cancelAnimationFrame(rafId); } catch (e) {}
+            }
+        };
+    }, [navigate]);
+
+    return (
+        <div ref={containerRef} dangerouslySetInnerHTML={{ __html: `
   <header class="site-header">
     <nav class="navbar navbar-expand-lg navbar-light bg-white" aria-label="Primary navigation">
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#latest-model">
           <img
-            src="assets/pear-logo.png"
+            src="/pear-logo.png"
             alt="iPong logo"
             width="28"
             height="28"
@@ -151,7 +174,7 @@
                   <th scope="col">
                     <div class="device-card device-card--highlight">
                       <img
-                        src="assets/phones/ipong-x-black.png"
+                        src="/phones/ipong-x-black.png"
                         alt="iPong X"
                         width="120"
                         height="240"
@@ -165,7 +188,7 @@
                   <th scope="col">
                     <div class="device-card">
                       <img
-                        src="assets/phones/iphone-15-pro-max.png"
+                        src="/phones/iphone-15-pro-max.png"
                         alt="iPhone 15 Pro Max"
                         width="120"
                         height="240"
@@ -179,7 +202,7 @@
                   <th scope="col">
                     <div class="device-card">
                       <img
-                        src="assets/phones/galaxy-s24-ultra.png"
+                        src="/phones/galaxy-s24-ultra.png"
                         alt="Samsung Galaxy S24 Ultra"
                         width="120"
                         height="240"
@@ -197,7 +220,7 @@
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="assets/icons/cpu.png"
+                        src="/icons/cpu.png"
                         width="40"
                         height="40"
                         alt=""
@@ -225,7 +248,7 @@
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="assets/icons/ram.png"
+                        src="/icons/ram.png"
                         width="40"
                         height="40"
                         alt=""
@@ -253,7 +276,7 @@
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="assets/icons/gpu.png"
+                        src="/icons/gpu.png"
                         width="40"
                         height="40"
                         alt=""
@@ -281,7 +304,7 @@
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="assets/icons/screen.png"
+                        src="/icons/screen.png"
                         width="40"
                         height="40"
                         alt=""
@@ -324,7 +347,7 @@
         <div class="color-variations">
           <figure class="color-card color-card--black">
             <img
-              src="assets/phones/ipong-x-black.png"
+              src="/phones/ipong-x-black.png"
               alt="iPong X in black"
               width="220"
               height="440"
@@ -338,7 +361,7 @@
           </figure>
           <figure class="color-card color-card--white">
             <img
-              src="assets/phones/ipong-x-white.png"
+              src="/phones/ipong-x-white.png"
               alt="iPong X in white"
               width="220"
               height="440"
@@ -352,7 +375,7 @@
           </figure>
           <figure class="color-card color-card--purple">
             <img
-              src="assets/phones/ipong-x-purple.png"
+              src="/phones/ipong-x-purple.png"
               alt="iPong X in purple"
               width="220"
               height="440"
@@ -376,7 +399,7 @@
             Reserve your iPong X before someone from legal notices the resemblance.
           </p>
           <a class="btn btn-lg" href="#">Purchase Now*</a>
-          <p class="mt-3 mb-0">Starting at <strong>$9999</strong> (because nines feel cheaper)</p>
+          <p class="mt-3 mb-0">Starting at <strong>\$9999</strong> (because nines feel cheaper)</p>
         </div>
       </div>
     </section>
@@ -388,7 +411,7 @@
         <div class="col-md-6 text-md-start text-center">
           <a class="footer-brand d-inline-flex align-items-center" href="#latest-model">
             <img
-              src="assets/pear-logo.png"
+              src="/pear-logo.png"
               alt="iPong logo"
               width="28"
               height="28"
@@ -416,5 +439,6 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+` }} />
+    );
+}

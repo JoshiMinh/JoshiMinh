@@ -11,17 +11,17 @@
   "socials": [
     {
       "name": "GitHub",
-      "url": "https://github.com",
+      "url": "https://github.com/JoshiMinh",
       "icon": "github"
     },
     {
       "name": "X/Twitter",
-      "url": "https://twitter.com",
+      "url": "https://x.com/js_minh",
       "icon": "twitter"
     },
     {
       "name": "LinkedIn",
-      "url": "https://linkedin.com",
+      "url": "https://www.linkedin.com/in/nguyen-binh-minh-jm/",
       "icon": "linkedin"
     }
   ],
@@ -41,7 +41,11 @@
       "description": "An intelligent writing assistant that helps authors brainstorm, outline, and write full-length novels using advanced language models.",
       "imageUrl": "",
       "link": "#",
-      "tags": ["AI", "Next.js", "TypeScript"]
+      "tags": [
+        "AI",
+        "Next.js",
+        "TypeScript"
+      ]
     },
     {
       "id": "ai-bookmark-manager",
@@ -49,7 +53,11 @@
       "description": "A smart bookmarking tool that automatically categorizes, tags, and summarizes your saved links using AI.",
       "imageUrl": "",
       "link": "#",
-      "tags": ["React", "PostgreSQL", "Tailwind"]
+      "tags": [
+        "React",
+        "PostgreSQL",
+        "Tailwind"
+      ]
     },
     {
       "id": "tv-movie-tracker",
@@ -57,7 +65,11 @@
       "description": "A comprehensive platform to track, rate, and discover new TV shows and movies with personalized recommendations.",
       "imageUrl": "",
       "link": "#",
-      "tags": ["Vite", "TypeScript", "React"]
+      "tags": [
+        "Vite",
+        "TypeScript",
+        "React"
+      ]
     }
   ],
   "games": [
@@ -66,32 +78,48 @@
       "title": "Conway's Game of Life",
       "description": "An interactive implementation of the classic cellular automaton.",
       "imageUrl": "",
-      "link": "/games/conway/index.html",
-      "tags": ["JavaScript", "Canvas", "Simulation"]
+      "link": "/games/conway",
+      "tags": [
+        "JavaScript",
+        "Canvas",
+        "Simulation"
+      ]
     },
     {
       "id": "solar-system",
       "title": "Solar System Simulator",
       "description": "A dynamic 3D simulation of our solar system with interactive planets and orbits.",
       "imageUrl": "",
-      "link": "/games/solarsystem/index.html",
-      "tags": ["Three.js", "WebGL", "Space"]
+      "link": "/games/solarsystem",
+      "tags": [
+        "Three.js",
+        "WebGL",
+        "Space"
+      ]
     },
     {
       "id": "ipong-x",
       "title": "iPong X",
       "description": "A modern twist on the classic Pong game with fluid physics and sleek visuals.",
       "imageUrl": "",
-      "link": "/games/ipong/index.html",
-      "tags": ["Game Dev", "HTML5", "Physics"]
+      "link": "/games/ipong",
+      "tags": [
+        "Game Dev",
+        "HTML5",
+        "Physics"
+      ]
     },
     {
       "id": "ball-game",
       "title": "The Ball Game",
       "description": "A physics-based puzzle game where you control a ball through intricate obstacles.",
       "imageUrl": "",
-      "link": "/games/ballgame/index.html",
-      "tags": ["Puzzle", "Logic", "Interactive"]
+      "link": "/games/ballgame",
+      "tags": [
+        "Puzzle",
+        "Logic",
+        "Interactive"
+      ]
     }
   ]
 }
