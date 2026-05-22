@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
  
 import { useNavigate } from 'react-router-dom';
+import scriptUrl from './solarsystem-script.js?url';
 
 export default function Solarsystem() {
     const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function Solarsystem() {
 
         // Load solarsystem script dynamically
         const script = document.createElement('script');
-        script.src = '/solarsystem-script.js';
+        script.src = scriptUrl;
         script.async = true;
         document.body.appendChild(script);
 

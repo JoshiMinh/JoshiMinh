@@ -38,7 +38,7 @@ export default function Ipong() {
       <div class="container">
         <a class="navbar-brand d-flex align-items-center" href="#latest-model">
           <img
-            src="/pear-logo.png"
+            src="/games/ipong/pear-logo.png"
             alt="iPong logo"
             width="28"
             height="28"
@@ -174,7 +174,7 @@ export default function Ipong() {
                   <th scope="col">
                     <div class="device-card device-card--highlight">
                       <img
-                        src="/phones/ipong-x-black.png"
+                        src="/games/ipong/phones/ipong-x-black.png"
                         alt="iPong X"
                         width="120"
                         height="240"
@@ -188,7 +188,7 @@ export default function Ipong() {
                   <th scope="col">
                     <div class="device-card">
                       <img
-                        src="/phones/iphone-15-pro-max.png"
+                        src="/games/ipong/phones/iphone-15-pro-max.png"
                         alt="iPhone 15 Pro Max"
                         width="120"
                         height="240"
@@ -202,7 +202,7 @@ export default function Ipong() {
                   <th scope="col">
                     <div class="device-card">
                       <img
-                        src="/phones/galaxy-s24-ultra.png"
+                        src="/games/ipong/phones/galaxy-s24-ultra.png"
                         alt="Samsung Galaxy S24 Ultra"
                         width="120"
                         height="240"
@@ -220,7 +220,7 @@ export default function Ipong() {
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="/icons/cpu.png"
+                        src="/games/ipong/icons/cpu.png"
                         width="40"
                         height="40"
                         alt=""
@@ -248,7 +248,7 @@ export default function Ipong() {
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="/icons/ram.png"
+                        src="/games/ipong/icons/ram.png"
                         width="40"
                         height="40"
                         alt=""
@@ -276,7 +276,7 @@ export default function Ipong() {
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="/icons/gpu.png"
+                        src="/games/ipong/icons/gpu.png"
                         width="40"
                         height="40"
                         alt=""
@@ -304,7 +304,7 @@ export default function Ipong() {
                   <th scope="row">
                     <div class="spec-label">
                       <img
-                        src="/icons/screen.png"
+                        src="/games/ipong/icons/screen.png"
                         width="40"
                         height="40"
                         alt=""
@@ -347,7 +347,7 @@ export default function Ipong() {
         <div class="color-variations">
           <figure class="color-card color-card--black">
             <img
-              src="/phones/ipong-x-black.png"
+              src="/games/ipong/phones/ipong-x-black.png"
               alt="iPong X in black"
               width="220"
               height="440"
@@ -361,7 +361,7 @@ export default function Ipong() {
           </figure>
           <figure class="color-card color-card--white">
             <img
-              src="/phones/ipong-x-white.png"
+              src="/games/ipong/phones/ipong-x-white.png"
               alt="iPong X in white"
               width="220"
               height="440"
@@ -375,7 +375,7 @@ export default function Ipong() {
           </figure>
           <figure class="color-card color-card--purple">
             <img
-              src="/phones/ipong-x-purple.png"
+              src="/games/ipong/phones/ipong-x-purple.png"
               alt="iPong X in purple"
               width="220"
               height="440"
@@ -411,7 +411,7 @@ export default function Ipong() {
         <div class="col-md-6 text-md-start text-center">
           <a class="footer-brand d-inline-flex align-items-center" href="#latest-model">
             <img
-              src="/pear-logo.png"
+              src="/games/ipong/pear-logo.png"
               alt="iPong logo"
               width="28"
               height="28"

@@ -3,7 +3,9 @@ import { ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Terminal } from '../components/Terminal';
 import { ProjectCard } from '../components/ProjectCard';
-import portfolioData from '../../data/portfolio.json';
+import { Badge } from '../components/ui/badge';
+import { Button } from '../components/ui/button';
+import { portfolioData } from '../../data';
 
 const Github = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -33,82 +35,76 @@ const iconMap: Record<string, React.ReactNode> = {
 
 function App() {
   return (
-    <div className="min-h-screen selection:bg-blue-500/30 selection:text-white">
+    <div className="min-h-screen bg-black text-[#ededed] font-sans selection:bg-accent/30 selection:text-white">
+      {/* Background Ambient Glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-accent/15 rounded-[100%] blur-[120px] pointer-events-none -z-10" />
+
+      {/* Header Navigation Area (Minimal) */}
+      <header className="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto">
+        <div className="font-bold text-xl tracking-tighter text-white">JM.</div>
+        <div className="flex gap-4">
+          {portfolioData.socials.map((social) => (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#666] hover:text-white transition-colors"
+              aria-label={social.name}
+            >
+              {iconMap[social.icon.toLowerCase()]}
+            </a>
+          ))}
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
-        {/* Background glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
-        
-        <div className="z-10 w-full max-w-4xl mx-auto text-center">
+      <section className="relative pt-24 pb-32 flex flex-col items-center justify-center px-6 overflow-hidden">
+        <div className="z-10 w-full max-w-5xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white mb-6">
+            <Badge variant="outline" className="mb-6 border-[#333] text-[#aaa] bg-[#111]">
+              Available for new opportunities
+            </Badge>
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-gradient mb-6">
               {portfolioData.personalInfo.name}
             </h1>
-            <div className="flex flex-wrap items-center justify-center gap-3 text-lg md:text-xl text-zinc-400 mb-8 font-medium">
-              {portfolioData.personalInfo.roles.map((role, index) => (
-                <React.Fragment key={role}>
-                  <span>{role}</span>
-                  {index < portfolioData.personalInfo.roles.length - 1 && (
-                    <span className="text-blue-500">•</span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-            <p className="text-lg text-zinc-500 max-w-2xl mx-auto mb-10">
+            <p className="text-xl md:text-2xl text-[#888] max-w-2xl mx-auto mb-10 leading-relaxed font-light">
               {portfolioData.personalInfo.bio}
             </p>
+            
+            <div className="flex items-center justify-center gap-4 mb-16">
+              <Button variant="default" size="lg" className="font-semibold px-8" asChild>
+                <a href="#projects">View Projects</a>
+              </Button>
+              <Button variant="secondary" size="lg" className="font-semibold px-8" asChild>
+                <a href={portfolioData.socials[0].url} target="_blank" rel="noopener noreferrer">
+                  GitHub
+                </a>
+              </Button>
+            </div>
           </motion.div>
 
           <Terminal />
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="flex items-center justify-center gap-6 mt-12"
-          >
-            {portfolioData.socials.map((social) => (
-              <a
-                key={social.name}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-zinc-400 hover:text-white hover:scale-110 transition-all duration-300"
-                aria-label={social.name}
-              >
-                {iconMap[social.icon.toLowerCase()]}
-              </a>
-            ))}
-          </motion.div>
         </div>
-
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-zinc-600"
-        >
-          <ChevronDown className="w-6 h-6" />
-        </motion.div>
       </section>
 
       {/* Featured Projects Section */}
-      <section className="py-24 px-6 max-w-6xl mx-auto relative">
+      <section id="projects" className="py-24 px-6 max-w-7xl mx-auto border-t border-[#111]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16 text-center md:text-left"
+          className="mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Featured Projects</h2>
-          <div className="w-20 h-1 bg-blue-500 rounded-full mx-auto md:mx-0"></div>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Featured Work</h2>
+          <p className="text-[#888] max-w-2xl text-lg">A selection of my recent engineering projects and creative experiments.</p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {portfolioData.projects.map((project, index) => (
             <ProjectCard 
               key={project.id}
@@ -120,21 +116,20 @@ function App() {
       </section>
 
       {/* Fun Games Section */}
-      <section className="py-24 px-6 max-w-6xl mx-auto relative border-t border-zinc-800/50">
+      <section className="py-24 px-6 max-w-7xl mx-auto border-t border-[#111]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-16 text-center md:text-left"
+          className="mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Fun Games</h2>
-          <div className="w-20 h-1 bg-blue-500 rounded-full mx-auto md:mx-0"></div>
-          <p className="mt-6 text-zinc-400 max-w-2xl mx-auto md:mx-0">
-            A collection of interactive games and simulations I built. Take a break and have some fun!
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 tracking-tight">Interactive Experiences</h2>
+          <p className="text-[#888] max-w-2xl text-lg">
+            Complex simulations and games built entirely with web technologies.
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {portfolioData.games.map((game, index) => (
             <ProjectCard 
               key={game.id}
@@ -146,36 +141,40 @@ function App() {
       </section>
 
       {/* Tech Stack Section */}
-      <section className="py-24 px-6 max-w-4xl mx-auto text-center border-t border-zinc-800/50">
+      <section className="py-24 px-6 max-w-4xl mx-auto text-center border-t border-[#111]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Tech Stack</h2>
-          <p className="text-zinc-500">The tools I use to build modern experiences</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">Technologies</h2>
+          <p className="text-[#888] text-lg">The stack I use to build scalable, high-performance applications.</p>
         </motion.div>
         
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-3">
           {portfolioData.techStack.map((tech, index) => (
             <motion.div
               key={tech}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.05 }}
-              className="glass px-6 py-3 rounded-full text-zinc-300 font-medium hover:text-white hover:border-blue-500/50 hover:bg-blue-500/10 transition-colors cursor-default"
+              transition={{ delay: index * 0.03 }}
             >
-              {tech}
+              <Badge variant="outline" className="px-4 py-2 text-sm text-[#aaa] border-[#333] hover:border-accent hover:text-white transition-colors bg-black cursor-default">
+                {tech}
+              </Badge>
             </motion.div>
           ))}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 text-center text-zinc-600 text-sm border-t border-zinc-800/50">
-        <p>© {new Date().getFullYear()} Joshi Minh. All rights reserved.</p>
+      <footer className="py-12 text-center border-t border-[#111]">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="font-bold text-2xl tracking-tighter text-white">JM.</div>
+          <p className="text-[#666] text-sm">© {new Date().getFullYear()} Joshi Minh. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );
