@@ -1,13 +1,134 @@
 <!doctype html>
 <html lang="en" class="dark">
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joshi Minh - Portfolio</title>
+    <link rel="stylesheet" href="./assets/styles.css">
+    <script src="./assets/script.js" defer></script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div class="site-shell">
+      <div class="ambient-glow" aria-hidden="true"></div>
+
+      <header class="site-header" aria-label="Primary">
+        <a class="brand" href="./">JM.</a>
+        <nav class="social-links" aria-label="Social links">
+          <a href="https://github.com/JoshiMinh" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          </a>
+          <a href="https://x.com/js_minh" target="_blank" rel="noopener noreferrer" aria-label="X/Twitter">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/nguyen-binh-minh-jm/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+          </a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero-section">
+          <div class="hero-inner reveal is-visible">
+            <div class="badge badge-outline hero-badge">Available for new opportunities</div>
+            <h1 class="hero-title text-gradient">Joshi Minh</h1>
+            <p class="hero-copy">Building AI-powered applications, creative tools, and modern web experiences.</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#projects">View Projects</a>
+              <a class="button button-secondary" href="https://github.com/JoshiMinh" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </div>
+
+            <div class="terminal-card reveal is-visible">
+              <div class="terminal-window">
+                <div class="terminal-topbar">
+                  <div class="window-controls" aria-hidden="true"><span></span><span></span><span></span></div>
+                  <div class="terminal-title">~ / joshiminh / profile</div>
+                </div>
+                <div class="terminal-body">
+                  <div class="terminal-command"><span class="prompt">❯</span><span class="typing-animation">cat profile.json</span></div>
+                  <div class="terminal-output">
+                    <p><span>"name"</span><b>:</b> <em>"Joshi Minh"</em>,</p>
+                    <p><span>"role"</span><b>:</b> <em>"AI Engineer &amp; Full-Stack Builder"</em>,</p>
+                    <p><span>"mission"</span><b>:</b> <em>"Building intelligent, beautiful web experiences."</em></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="projects" class="content-section bordered-section">
+          <div class="section-heading reveal">
+            <h2>Featured Work</h2>
+            <p>A selection of my recent engineering projects and creative experiments.</p>
+          </div>
+          <div class="card-grid three-up">
+            <a class="project-card reveal" href="#">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body">
+                <div class="project-title-row"><h3>AI Novel Writing Platform</h3><span class="arrow-icon">↗</span></div>
+                <p>An intelligent writing assistant that helps authors brainstorm, outline, and write full-length novels using advanced language models.</p>
+                <div class="tag-row"><span>AI</span><span>Next.js</span><span>TypeScript</span></div>
+              </div>
+            </a>
+            <a class="project-card reveal" href="#">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body">
+                <div class="project-title-row"><h3>AI Bookmark Manager</h3><span class="arrow-icon">↗</span></div>
+                <p>A smart bookmarking tool that automatically categorizes, tags, and summarizes your saved links using AI.</p>
+                <div class="tag-row"><span>React</span><span>PostgreSQL</span><span>Tailwind</span></div>
+              </div>
+            </a>
+            <a class="project-card reveal" href="#">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body">
+                <div class="project-title-row"><h3>TV &amp; Movie Tracking Platform</h3><span class="arrow-icon">↗</span></div>
+                <p>A comprehensive platform to track, rate, and discover new TV shows and movies with personalized recommendations.</p>
+                <div class="tag-row"><span>Vite</span><span>TypeScript</span><span>React</span></div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <section class="content-section bordered-section">
+          <div class="section-heading reveal">
+            <h2>Interactive Experiences</h2>
+            <p>Complex simulations and games built entirely with web technologies.</p>
+          </div>
+          <div class="card-grid two-up">
+            <a class="project-card reveal" href="./games/conway/">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body"><div class="project-title-row"><h3>Conway's Game of Life</h3><span class="arrow-icon">↗</span></div><p>An interactive implementation of the classic cellular automaton.</p><div class="tag-row"><span>JavaScript</span><span>Canvas</span><span>Simulation</span></div></div>
+            </a>
+            <a class="project-card reveal" href="./games/solarsystem/">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body"><div class="project-title-row"><h3>Solar System Simulator</h3><span class="arrow-icon">↗</span></div><p>A dynamic 3D simulation of our solar system with interactive planets and orbits.</p><div class="tag-row"><span>Three.js</span><span>WebGL</span><span>Space</span></div></div>
+            </a>
+            <a class="project-card reveal" href="./games/ipong/">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body"><div class="project-title-row"><h3>iPong X</h3><span class="arrow-icon">↗</span></div><p>A modern twist on the classic Pong game with fluid physics and sleek visuals.</p><div class="tag-row"><span>Game Dev</span><span>HTML5</span><span>Physics</span></div></div>
+            </a>
+            <a class="project-card reveal" href="./games/ballgame/">
+              <div class="project-media"><span>No Image Provided</span></div>
+              <div class="project-body"><div class="project-title-row"><h3>The Ball Game</h3><span class="arrow-icon">↗</span></div><p>A physics-based puzzle game where you control a ball through intricate obstacles.</p><div class="tag-row"><span>Puzzle</span><span>Logic</span><span>Interactive</span></div></div>
+            </a>
+          </div>
+        </section>
+
+        <section class="tech-section bordered-section">
+          <div class="section-heading reveal centered">
+            <h2>Technologies</h2>
+            <p>The stack I use to build scalable, high-performance applications.</p>
+          </div>
+          <div class="tech-row reveal">
+            <span>Next.js</span><span>React</span><span>TypeScript</span><span>Python</span><span>AI</span><span>PostgreSQL</span><span>Tailwind</span>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer-bottom">
+        <div class="footer-brand">JM.</div>
+        <p>© <span id="current-year">2026</span> Joshi Minh. All rights reserved.</p>
+      </footer>
+    </div>
   </body>
 </html>

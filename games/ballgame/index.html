@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Game</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="ball-game-container" id="container">
+        <!-- Fullscreen Canvas -->
+        <canvas id="gameCanvas" class="game-canvas"></canvas>
+    
+        <!-- Floating Top Bar -->
+        <div class="floating-topbar">
+          <div class="topbar-left">
+            <a href="../../" class="back-link" title="Back to Home">←</a>
+            <h1>Ball Game</h1>
+          </div>
+          
+          <div class="topbar-center">
+            <div class="stat-pill">
+              <span class="stat-icon">🏀</span>
+              <span class="stat-value" id="ballCount">0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-icon">🔷</span>
+              <span class="stat-value" id="shapeCount">0</span>
+            </div>
+          </div>
+    
+          <div class="topbar-right" id="toolbar">
+            <!-- Toolbar buttons will be added via JavaScript -->
+          </div>
+        </div>
+    
+        <!-- Hover Badge -->
+        <div class="hover-badge" id="hoverBadge" style="display: none;"></div>
+    
+        <!-- Help Modal -->
+        <div class="modal-overlay" id="helpModal" style="display: none;">
+          <div class="modal">
+            <h2>❓ How to Play</h2>
+            
+            <div class="help-section">
+              <h3>🎮 Tools</h3>
+              <ul>
+                <li><strong>🏀 Ball</strong> - Click-drag to set launch direction and speed</li>
+                <li><strong>📏 Line</strong> - Click-drag to draw a wall segment</li>
+                <li><strong>⬜ Square</strong> - Click-drag to draw a rectangle</li>
+                <li><strong>⭕ Circle</strong> - Click-drag to set center and radius</li>
+                <li><strong>🔺 Triangle</strong> - Click three points to create a triangle</li>
+                <li><strong>✋ Move</strong> - Drag any item to reposition it</li>
+                <li><strong>🗑️ Delete</strong> - Click any item to remove it</li>
+              </ul>
+            </div>
+    
+            <div class="help-section">
+              <h3>⚡ Physics</h3>
+              <p>Balls bounce off shapes and canvas edges with elastic collisions. Pause the simulation if things are moving too fast!</p>
+            </div>
+    
+            <button class="btn-primary" id="closeHelp">
+              Got it!
+            </button>
+          </div>
+        </div>
+      </div>
+  </body>
+</html>

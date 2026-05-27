@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's Game of Life</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./script.js" defer></script>
+  </head>
+  <body>
+    <div class="conway-container" id="container">
+        <!-- Fullscreen Grid Container -->
+        <div class="fullscreen-grid-container">
+          <div class="fullscreen-grid" id="grid"></div>
+        </div>
+    
+        <!-- Floating Top Bar -->
+        <div class="floating-topbar">
+          <div class="topbar-left">
+            <a href="../../" class="back-link" title="Back to Home">←</a>
+            <h1>Conway's Game of Life</h1>
+          </div>
+          
+          <div class="topbar-center">
+            <div class="stat-pill">
+              <span class="stat-icon">🧬</span>
+              <span class="stat-value" id="generation">0</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-icon">📊</span>
+              <span class="stat-value" id="liveCells">0</span>
+            </div>
+          </div>
+    
+          <div class="topbar-right" id="toolbar"></div>
+        </div>
+    
+        <!-- Settings Modal -->
+        <div class="modal-overlay" id="settingsModal" style="display: none;">
+          <div class="modal">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="setting-group">
+              <label>
+                <span>Speed (ms)</span>
+                <input type="range" id="speedSlider" min="10" max="500" value="100" step="10">
+                <span id="speedValue">100</span>
+              </label>
+            </div>
+    
+            <div class="setting-group">
+              <label>
+                <span>Cell Size (px)</span>
+                <input type="range" id="cellSizeSlider" min="8" max="24" value="14" step="2">
+                <span id="cellSizeValue">14</span>
+              </label>
+            </div>
+    
+            <div class="setting-group">
+              <label>
+                <input type="checkbox" id="wrapEdges" checked>
+                <span>Wrap Edges (Toroidal Grid)</span>
+              </label>
+            </div>
+    
+            <div class="setting-group">
+              <label>
+                <input type="checkbox" id="showGridLines" checked>
+                <span>Show Grid Lines</span>
+              </label>
+            </div>
+    
+            <div class="setting-group">
+              <label>
+                <span>Theme</span>
+                <select id="themeSelect">
+                  <option value="classic">Classic</option>
+                  <option value="neon">Neon</option>
+                  <option value="ocean">Ocean</option>
+                  <option value="fire">Fire</option>
+                  <option value="matrix">Matrix</option>
+                  <option value="sunset">Sunset</option>
+                  <option value="cyber">Cyber</option>
+                  <option value="plasma">Plasma</option>
+                </select>
+              </label>
+            </div>
+    
+            <button class="btn-primary" id="closeSettings">Close</button>
+          </div>
+        </div>
+    
+        <!-- Patterns Modal -->
+        <div class="modal-overlay" id="patternsModal" style="display: none;">
+          <div class="modal patterns-modal">
+            <h2>🧬 Pattern Library</h2>
+            <div id="patternCategories"></div>
+            <button class="btn-primary" id="closePatterns">Close</button>
+          </div>
+        </div>
+    
+        <!-- Help Modal -->
+        <div class="modal-overlay" id="helpModal" style="display: none;">
+          <div class="modal help-modal">
+            <h2>❓ How to Play</h2>
+            
+            <div class="help-section">
+              <h3>🎮 Controls</h3>
+              <ul>
+                <li><strong>Click/Drag</strong> - Draw or erase cells</li>
+                <li><strong>Space</strong> - Play/Pause simulation</li>
+                <li><strong>R</strong> - Randomize grid</li>
+                <li><strong>C</strong> - Clear all cells</li>
+                <li><strong>S</strong> - Step one generation</li>
+              </ul>
+            </div>
+    
+            <div class="help-section">
+              <h3>📜 Rules</h3>
+              <p>Each cell follows simple rules based on its 8 neighbors:</p>
+              <ul>
+                <li><strong>Underpopulation:</strong> A live cell with &lt;2 neighbors dies</li>
+                <li><strong>Survival:</strong> A live cell with 2-3 neighbors lives</li>
+                <li><strong>Overpopulation:</strong> A live cell with &gt;3 neighbors dies</li>
+                <li><strong>Reproduction:</strong> A dead cell with exactly 3 neighbors becomes alive</li>
+              </ul>
+            </div>
+    
+            <div class="help-section">
+              <h3>🧬 Pattern Types</h3>
+              <ul>
+                <li><strong>Still Lifes:</strong> Stable patterns that don't change</li>
+                <li><strong>Oscillators:</strong> Patterns that repeat in a cycle</li>
+                <li><strong>Spaceships:</strong> Patterns that move across the grid</li>
+                <li><strong>Guns:</strong> Patterns that emit spaceships</li>
+                <li><strong>Methuselahs:</strong> Small patterns with long evolution</li>
+              </ul>
+            </div>
+    
+            <button class="btn-primary" id="closeHelp">Got it!</button>
+          </div>
+        </div>
+      </div>
+  </body>
+</html>
