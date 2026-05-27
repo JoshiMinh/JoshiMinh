@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Conway's Game of Life",
+    "description": "An interactive implementation of the classic cellular automaton.",
+    "href": "./games/conway/",
+    "image": "./games/conway/assets/preview.png",
+    "emoji": "🧬",
+    "mediaLabel": "No Image Provided",
+    "tags": ["JavaScript", "Canvas", "Simulation"]
+  },
+  {
+    "title": "Solar System Simulator",
+    "description": "A dynamic 3D simulation of our solar system with interactive planets and orbits.",
+    "href": "./games/solarsystem/",
+    "image": "./games/solarsystem/assets/preview.png",
+    "emoji": "🪐",
+    "mediaLabel": "No Image Provided",
+    "tags": ["Three.js", "WebGL", "Space"]
+  },
+  {
+    "title": "iPong X",
+    "description": "A modern twist on the classic Pong game with fluid physics and sleek visuals.",
+    "href": "./games/ipong-x/",
+    "image": "./games/ipong-x/assets/preview.png",
+    "emoji": "🍐",
+    "mediaLabel": "No Image Provided",
+    "tags": ["Game Dev", "HTML5", "Physics"]
+  },
+  {
+    "title": "The Ball Game",
+    "description": "A physics-based puzzle game where you control a ball through intricate obstacles.",
+    "href": "./games/ballgame/",
+    "image": "./games/ballgame/assets/preview.png",
+    "emoji": "🏀",
+    "mediaLabel": "No Image Provided",
+    "tags": ["Puzzle", "Logic", "Interactive"]
+  }
+]

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joshi Minh - Portfolio</title>
+    <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y=".9em" font-size="52">💻</text></svg>'>
     <link rel="stylesheet" href="./assets/styles.css">
     <script src="./assets/script.js" defer></script>
   </head>
@@ -29,12 +30,12 @@
       <main>
         <section class="hero-section">
           <div class="hero-inner reveal is-visible">
-            <div class="badge badge-outline hero-badge">Available for new opportunities</div>
-            <h1 class="hero-title text-gradient">Joshi Minh</h1>
-            <p class="hero-copy">Building AI-powered applications, creative tools, and modern web experiences.</p>
+            <div id="hero-badge" class="badge badge-outline hero-badge">Available for new opportunities</div>
+            <h1 id="hero-title" class="hero-title text-gradient">Joshi Minh</h1>
+            <p id="hero-copy" class="hero-copy">Building AI-powered applications, creative tools, and modern web experiences.</p>
             <div class="hero-actions">
               <a class="button button-primary" href="#projects">View Projects</a>
-              <a class="button button-secondary" href="https://github.com/JoshiMinh" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a id="hero-github" class="button button-secondary" href="https://github.com/JoshiMinh" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
 
             <div class="terminal-card reveal is-visible">
@@ -44,8 +45,8 @@
                   <div class="terminal-title">~ / joshiminh / profile</div>
                 </div>
                 <div class="terminal-body">
-                  <div class="terminal-command"><span class="prompt">❯</span><span class="typing-animation">cat profile.json</span></div>
-                  <div class="terminal-output">
+                  <div class="terminal-command"><span class="prompt">&#10095;</span><span class="typing-animation">cat profile.json</span></div>
+                  <div id="profile-output" class="terminal-output">
                     <p><span>"name"</span><b>:</b> <em>"Joshi Minh"</em>,</p>
                     <p><span>"role"</span><b>:</b> <em>"AI Engineer &amp; Full-Stack Builder"</em>,</p>
                     <p><span>"mission"</span><b>:</b> <em>"Building intelligent, beautiful web experiences."</em></p>
@@ -61,32 +62,7 @@
             <h2>Featured Work</h2>
             <p>A selection of my recent engineering projects and creative experiments.</p>
           </div>
-          <div class="card-grid three-up">
-            <a class="project-card reveal" href="#">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body">
-                <div class="project-title-row"><h3>AI Novel Writing Platform</h3><span class="arrow-icon">↗</span></div>
-                <p>An intelligent writing assistant that helps authors brainstorm, outline, and write full-length novels using advanced language models.</p>
-                <div class="tag-row"><span>AI</span><span>Next.js</span><span>TypeScript</span></div>
-              </div>
-            </a>
-            <a class="project-card reveal" href="#">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body">
-                <div class="project-title-row"><h3>AI Bookmark Manager</h3><span class="arrow-icon">↗</span></div>
-                <p>A smart bookmarking tool that automatically categorizes, tags, and summarizes your saved links using AI.</p>
-                <div class="tag-row"><span>React</span><span>PostgreSQL</span><span>Tailwind</span></div>
-              </div>
-            </a>
-            <a class="project-card reveal" href="#">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body">
-                <div class="project-title-row"><h3>TV &amp; Movie Tracking Platform</h3><span class="arrow-icon">↗</span></div>
-                <p>A comprehensive platform to track, rate, and discover new TV shows and movies with personalized recommendations.</p>
-                <div class="tag-row"><span>Vite</span><span>TypeScript</span><span>React</span></div>
-              </div>
-            </a>
-          </div>
+          <div id="projects-grid" class="card-grid three-up"></div>
         </section>
 
         <section class="content-section bordered-section">
@@ -94,24 +70,7 @@
             <h2>Interactive Experiences</h2>
             <p>Complex simulations and games built entirely with web technologies.</p>
           </div>
-          <div class="card-grid two-up">
-            <a class="project-card reveal" href="./games/conway/">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body"><div class="project-title-row"><h3>Conway's Game of Life</h3><span class="arrow-icon">↗</span></div><p>An interactive implementation of the classic cellular automaton.</p><div class="tag-row"><span>JavaScript</span><span>Canvas</span><span>Simulation</span></div></div>
-            </a>
-            <a class="project-card reveal" href="./games/solarsystem/">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body"><div class="project-title-row"><h3>Solar System Simulator</h3><span class="arrow-icon">↗</span></div><p>A dynamic 3D simulation of our solar system with interactive planets and orbits.</p><div class="tag-row"><span>Three.js</span><span>WebGL</span><span>Space</span></div></div>
-            </a>
-            <a class="project-card reveal" href="./games/ipong/">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body"><div class="project-title-row"><h3>iPong X</h3><span class="arrow-icon">↗</span></div><p>A modern twist on the classic Pong game with fluid physics and sleek visuals.</p><div class="tag-row"><span>Game Dev</span><span>HTML5</span><span>Physics</span></div></div>
-            </a>
-            <a class="project-card reveal" href="./games/ballgame/">
-              <div class="project-media"><span>No Image Provided</span></div>
-              <div class="project-body"><div class="project-title-row"><h3>The Ball Game</h3><span class="arrow-icon">↗</span></div><p>A physics-based puzzle game where you control a ball through intricate obstacles.</p><div class="tag-row"><span>Puzzle</span><span>Logic</span><span>Interactive</span></div></div>
-            </a>
-          </div>
+          <div id="games-grid" class="card-grid two-up"></div>
         </section>
 
         <section class="tech-section bordered-section">
@@ -127,7 +86,7 @@
 
       <footer class="site-footer-bottom">
         <div class="footer-brand">JM.</div>
-        <p>© <span id="current-year">2026</span> Joshi Minh. All rights reserved.</p>
+        <p>&copy; <span id="current-year">2026</span> Joshi Minh. All rights reserved.</p>
       </footer>
     </div>
   </body>
