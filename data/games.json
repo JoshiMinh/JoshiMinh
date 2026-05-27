@@ -10,7 +10,7 @@
   },
   {
     "title": "Solar System Simulator",
-    "description": "A dynamic 3D simulation of our solar system with interactive planets and orbits.",
+    "description": "A mission-driven solar system explorer with interactive planets, orbit controls, and discovery challenges.",
     "href": "./games/solarsystem/",
     "image": "./games/solarsystem/assets/preview.png",
     "emoji": "🪐",

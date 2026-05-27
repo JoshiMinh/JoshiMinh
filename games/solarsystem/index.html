@@ -3,12 +3,208 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar System Simulator</title>
-    <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y=".9em" font-size="52">🪐</text></svg>'>
+    <title>Solar System Explorer</title>
     <link rel="stylesheet" href="./styles.css">
+    <script src="./script.js" defer></script>
   </head>
   <body>
-    <div id="root"></div>
-    <script src="./script.js"></script>
+    <div class="app-shell">
+      <canvas id="universe" aria-label="Interactive solar system canvas"></canvas>
+      <div class="cosmic-vignette" aria-hidden="true"></div>
+
+      <header class="topbar panel">
+        <div class="brand-row">
+          <a class="back-link" href="../../" aria-label="Back to home">Back</a>
+          <div>
+            <p class="eyebrow">Interactive Space Lab</p>
+            <h1>Solar System Explorer</h1>
+          </div>
+        </div>
+
+        <div class="headline-stats">
+          <div class="stat-chip">
+            <span class="stat-label">Score</span>
+            <strong id="scoreValue">0</strong>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-label">Streak</span>
+            <strong id="streakValue">0</strong>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-label">Discovered</span>
+            <strong id="discoveredValue">0/8</strong>
+          </div>
+          <div class="stat-chip">
+            <span class="stat-label">High Score</span>
+            <strong id="highScoreValue">0</strong>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="toolbar-btn" id="togglePlayBtn" type="button">Pause</button>
+          <button class="toolbar-btn" id="followBtn" type="button">Follow</button>
+          <button class="toolbar-btn" id="resetViewBtn" type="button">Reset View</button>
+          <button class="toolbar-btn" id="newRunBtn" type="button">New Run</button>
+          <button class="toolbar-btn" id="helpBtn" type="button">Help</button>
+        </div>
+      </header>
+
+      <main class="hud">
+        <section class="panel mission-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Mission Deck</p>
+            <span class="status-dot" id="missionStatus">Live</span>
+          </div>
+          <h2 id="missionTitle">Find the red planet.</h2>
+          <p id="missionBody">
+            Click the planet known for dusty storms and the tallest volcano in the
+            solar system.
+          </p>
+          <div class="progress-row">
+            <div class="progress-track">
+              <div class="progress-fill" id="missionProgress"></div>
+            </div>
+            <span id="missionStep">1/6</span>
+          </div>
+          <p class="hint-text" id="hintText">Hint: it is just beyond Earth.</p>
+          <div class="mission-actions">
+            <button class="toolbar-btn accent-btn" id="skipMissionBtn" type="button">Skip Mission</button>
+            <button class="toolbar-btn ghost-btn" id="focusMissionBtn" type="button">Focus Hint</button>
+          </div>
+        </section>
+
+        <section class="panel control-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Simulation Controls</p>
+            <span class="subtle-text">Drag to pan. Scroll to zoom.</span>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="speedRange">Time Speed</label>
+              <strong id="speedValue">12x</strong>
+            </div>
+            <input id="speedRange" type="range" min="0" max="24" step="1" value="12">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="zoomRange">Zoom</label>
+              <strong id="zoomValue">100%</strong>
+            </div>
+            <input id="zoomRange" type="range" min="55" max="220" step="1" value="100">
+          </div>
+
+          <div class="toggle-grid">
+            <button class="toggle-card is-active" id="toggleOrbitsBtn" type="button">
+              <span>Orbits</span>
+              <strong>On</strong>
+            </button>
+            <button class="toggle-card is-active" id="toggleLabelsBtn" type="button">
+              <span>Labels</span>
+              <strong>On</strong>
+            </button>
+          </div>
+
+          <div class="mini-stats">
+            <div>
+              <span class="mini-label">Simulation Day</span>
+              <strong id="dayValue">Day 0</strong>
+            </div>
+            <div>
+              <span class="mini-label">Selected</span>
+              <strong id="selectedName">Earth</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel detail-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Target Profile</p>
+            <span class="subtle-text" id="selectedType">Rocky planet</span>
+          </div>
+
+          <div class="planet-hero">
+            <div class="planet-preview" id="planetPreview"></div>
+            <div>
+              <h2 id="planetName">Earth</h2>
+              <p id="planetTagline">
+                Our ocean world and the current baseline for life in this explorer.
+              </p>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <article>
+              <span>Distance</span>
+              <strong id="planetDistance">1.00 AU</strong>
+            </article>
+            <article>
+              <span>Year Length</span>
+              <strong id="planetYear">365 days</strong>
+            </article>
+            <article>
+              <span>Moons</span>
+              <strong id="planetMoons">1</strong>
+            </article>
+            <article>
+              <span>Temperature</span>
+              <strong id="planetTemp">15 C</strong>
+            </article>
+          </div>
+
+          <div class="fact-card">
+            <span class="mini-label">Field Note</span>
+            <p id="planetFact">
+              Earth is the only known planet with stable liquid water at its surface.
+            </p>
+          </div>
+        </section>
+
+        <section class="panel roster-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Planet Roster</p>
+            <span class="subtle-text">Select or inspect every world</span>
+          </div>
+
+          <label class="search-field">
+            <span class="sr-only">Search planets</span>
+            <input id="searchInput" type="search" placeholder="Search a planet">
+          </label>
+
+          <div class="planet-list" id="planetList"></div>
+        </section>
+      </main>
+
+      <div class="toast" id="toast" aria-live="polite"></div>
+
+      <div class="modal hidden" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div class="panel modal-card">
+          <div class="panel-heading">
+            <p class="eyebrow">How To Play</p>
+            <button class="toolbar-btn ghost-btn" id="closeHelpBtn" type="button">Close</button>
+          </div>
+          <h2 id="helpTitle">Pilot the explorer, then clear the mission deck.</h2>
+          <div class="help-grid">
+            <article>
+              <h3>Core Loop</h3>
+              <p>Select planets on the canvas or roster. Correct mission answers build score and streak.</p>
+            </article>
+            <article>
+              <h3>Navigation</h3>
+              <p>Drag anywhere on the star field to pan. Use the mouse wheel or zoom slider to move in and out.</p>
+            </article>
+            <article>
+              <h3>Follow Mode</h3>
+              <p>Turn on follow mode to lock the camera onto the selected planet while the system keeps moving.</p>
+            </article>
+            <article>
+              <h3>Controls</h3>
+              <p>Press Space to pause, O to toggle orbits, L to toggle labels, R to reset the view.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
