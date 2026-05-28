@@ -68,6 +68,7 @@ function renderCard(item) {
 function renderProfile(profile) {
   const heroBadge = document.getElementById('hero-badge');
   const heroTitle = document.getElementById('hero-title');
+  const heroRealName = document.getElementById('hero-real-name');
   const heroCopy = document.getElementById('hero-copy');
   const heroGithub = document.getElementById('hero-github');
   const profileOutput = document.getElementById('profile-output');
@@ -78,6 +79,10 @@ function renderProfile(profile) {
 
   if (heroTitle && profile.name) {
     heroTitle.textContent = profile.name;
+  }
+
+  if (heroRealName && profile.realName) {
+    heroRealName.textContent = profile.realName;
   }
 
   if (heroCopy && profile.headline) {
@@ -110,6 +115,51 @@ function renderCollection(elementId, items) {
 
   container.innerHTML = items.map(renderCard).join('');
   applyReveal(container);
+}
+
+function renderProjectGroups(elementId, groups) {
+  const container = document.getElementById(elementId);
+
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = groups.map(({ title, description, items }) => `
+    <section class="project-group reveal">
+      <div class="project-group-heading">
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(description)}</p>
+      </div>
+      <div class="card-grid three-up">${items.map(renderCard).join('')}</div>
+    </section>
+  `).join('');
+
+  applyReveal(container);
+}
+
+function buildProjectGroups(items) {
+  const categoryMeta = {
+    Production: 'Shipped applications and product-focused work.',
+    Mini: 'Smaller experiments, games, and interactive builds.',
+  };
+  const order = ['Production', 'Mini'];
+  const buckets = new Map();
+
+  items.forEach((item) => {
+    const category = item.category || 'Other';
+    const bucket = buckets.get(category) || [];
+    bucket.push(item);
+    buckets.set(category, bucket);
+  });
+
+  return order
+    .filter((category) => buckets.has(category))
+    .concat(Array.from(buckets.keys()).filter((category) => !order.includes(category)))
+    .map((category) => ({
+      title: category,
+      description: categoryMeta[category] || 'Additional work.',
+      items: buckets.get(category) || [],
+    }));
 }
 
 async function fetchSocialPreview(projectUrl) {
@@ -167,15 +217,13 @@ async function loadJson(path) {
 
 async function initSiteData() {
   try {
-    const [profile, projects, games] = await Promise.all([
-      loadJson('./data/profile.json'),
-      loadJson('./data/projects.json'),
-      loadJson('./data/games.json'),
+    const [profile, projects] = await Promise.all([
+      loadJson('./assets/profile.json'),
+      loadJson('./assets/projects.json'),
     ]);
 
     renderProfile(profile);
-    renderCollection('projects-grid', projects);
-    renderCollection('games-grid', games);
+    renderProjectGroups('projects-grid', buildProjectGroups(projects));
     await hydrateProjectPreviews();
   } catch (error) {
     console.error('Unable to load site data.', error);

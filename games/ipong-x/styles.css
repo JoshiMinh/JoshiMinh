@@ -238,6 +238,15 @@ main section {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.capability-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: linear-gradient(90deg, transparent, rgba(0, 113, 227, 0.48), transparent);
+}
+
 .capability-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
@@ -249,9 +258,27 @@ main section {
     width: 56px;
     height: 56px;
     border-radius: var(--radius-md);
-    font-size: 1.75rem;
     margin-bottom: 1.25rem;
     background: var(--bg-secondary);
+}
+
+.capability-card__icon svg {
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.capability-card__eyebrow {
+    margin-bottom: 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
 }
 
 .capability-card h3 {
@@ -270,6 +297,25 @@ main section {
 
 .capability-card--eco .capability-card__icon {
     background: linear-gradient(135deg, rgba(13, 202, 240, 0.25), rgba(61, 220, 132, 0.32));
+}
+
+.capability-card--camera .capability-card__icon {
+    background: linear-gradient(135deg, rgba(0, 113, 227, 0.16), rgba(0, 212, 170, 0.18));
+    color: #0f68d1;
+}
+
+.capability-card--performance .capability-card__icon {
+    background: linear-gradient(135deg, rgba(88, 86, 214, 0.16), rgba(0, 113, 227, 0.18));
+    color: #4f46e5;
+}
+
+.capability-card--battery .capability-card__icon {
+    background: linear-gradient(135deg, rgba(255, 159, 10, 0.16), rgba(255, 212, 71, 0.2));
+    color: #c27c0a;
+}
+
+.capability-card--eco .capability-card__icon {
+    color: #0f9f68;
 }
 
 .comparison-table {

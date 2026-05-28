@@ -77,13 +77,13 @@
   
       // Toolbar buttons
       const toolbarButtons = [
-        { id: "ball", label: "🏀", tip: "Ball: drag to set launch direction" },
-        { id: "line", label: "📏", tip: "Line: click-drag to draw wall" },
-        { id: "rect", label: "⬜", tip: "Square: drag to draw axis-aligned square/rect" },
-        { id: "circle", label: "⭕", tip: "Circle: drag to set center and radius" },
-        { id: "triangle", label: "🔺", tip: "Triangle: click 3 points" },
-        { id: "move", label: "✋", tip: "Move: drag to reposition shapes/balls" },
-        { id: "delete", label: "🗑️", tip: "Delete: click to remove" },
+        { id: "ball", icon: "🏀", label: "Ball", tip: "Ball: drag to set launch direction" },
+        { id: "line", icon: "📏", label: "Line", tip: "Line: click-drag to draw wall" },
+        { id: "rect", icon: "⬜", label: "Box", tip: "Square: drag to draw axis-aligned square/rect" },
+        { id: "circle", icon: "⭕", label: "Circ", tip: "Circle: drag to set center and radius" },
+        { id: "triangle", icon: "🔺", label: "Tri", tip: "Triangle: click 3 points" },
+        { id: "move", icon: "✋", label: "Move", tip: "Move: drag to reposition shapes/balls" },
+        { id: "delete", icon: "🗑️", label: "Del", tip: "Delete: click to remove" },
       ];
   
       // Initialize
@@ -96,40 +96,36 @@
         const toolbar = document.getElementById('toolbar');
         toolbarButtons.forEach(btn => {
           const button = document.createElement('button');
-          button.className = 'icon-btn';
+          button.className = 'icon-btn icon-btn-tool';
           button.title = btn.tip;
-          button.textContent = btn.label;
+          button.setAttribute('aria-label', btn.label);
+          button.innerHTML = `<span class="control-btn__icon">${btn.icon}</span><span class="control-btn__text">${btn.label}</span>`;
           button.onclick = () => setTool(btn.id);
           button.dataset.tool = btn.id;
           toolbar.appendChild(button);
         });
-  
-        // Add divider
-        const divider = document.createElement('div');
-        divider.className = 'divider';
-        toolbar.appendChild(divider);
-  
+
         // Play/Pause button
         const playBtn = document.createElement('button');
-        playBtn.className = 'icon-btn active pulse';
+        playBtn.className = 'icon-btn icon-btn-play active pulse';
         playBtn.id = 'playBtn';
-        playBtn.textContent = '⏸';
+        playBtn.innerHTML = '<span class="control-btn__icon">⏸</span><span class="control-btn__text">Pause</span>';
         playBtn.title = 'Pause';
         playBtn.onclick = togglePlay;
         toolbar.appendChild(playBtn);
-  
+
         // Clear button
         const clearBtn = document.createElement('button');
-        clearBtn.className = 'icon-btn';
-        clearBtn.textContent = '🧹';
+        clearBtn.className = 'icon-btn icon-btn-compact';
+        clearBtn.innerHTML = '<span class="control-btn__icon">🧹</span><span class="control-btn__text">Clear</span>';
         clearBtn.title = 'Clear All';
         clearBtn.onclick = clearAll;
         toolbar.appendChild(clearBtn);
-  
+
         // Help button
         const helpBtn = document.createElement('button');
-        helpBtn.className = 'icon-btn';
-        helpBtn.textContent = '❓';
+        helpBtn.className = 'icon-btn icon-btn-compact';
+        helpBtn.innerHTML = '<span class="control-btn__icon">❓</span><span class="control-btn__text">Help</span>';
         helpBtn.title = 'Help';
         helpBtn.onclick = () => document.getElementById('helpModal').style.display = 'flex';
         toolbar.appendChild(helpBtn);
@@ -189,7 +185,10 @@
       function togglePlay() {
         isPlaying = !isPlaying;
         const playBtn = document.getElementById('playBtn');
-        playBtn.textContent = isPlaying ? '⏸' : '▶️';
+        const icon = playBtn.querySelector('.control-btn__icon');
+        const text = playBtn.querySelector('.control-btn__text');
+        if (icon) icon.textContent = isPlaying ? '⏸' : '▶️';
+        if (text) text.textContent = isPlaying ? 'Pause' : 'Play';
         playBtn.title = isPlaying ? 'Pause' : 'Play';
         playBtn.classList.toggle('active', isPlaying);
         playBtn.classList.toggle('pulse', isPlaying);

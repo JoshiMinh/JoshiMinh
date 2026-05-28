@@ -179,23 +179,24 @@
   
       function createToolbar() {
         const toolbar = document.getElementById('toolbar');
-        
         const buttons = [
-          { id: 'playBtn', label: '▶️', title: 'Play/Pause (Space)', active: false },
-          { id: 'stepBtn', label: '⏭', title: 'Step (S)' },
-          { id: 'randomBtn', label: '🎲', title: 'Random (R)' },
-          { id: 'clearBtn', label: '🧹', title: 'Clear (C)' },
-          { id: 'patternsBtn', label: '🧬', title: 'Patterns' },
-          { id: 'settingsBtn', label: '⚙️', title: 'Settings' },
-          { id: 'helpBtn', label: '❓', title: 'Help' }
+          { id: 'playBtn', icon: '▶️', label: 'Run', title: 'Play/Pause (Space)', active: false },
+          { id: 'stepBtn', icon: '⏭', label: 'Step', title: 'Step (S)' },
+          { id: 'randomBtn', icon: '🎲', label: 'Rand', title: 'Random (R)' },
+          { id: 'clearBtn', icon: '🧹', label: 'Clear', title: 'Clear (C)' },
+          { id: 'patternsBtn', icon: '🧬', label: 'Pats', title: 'Patterns' },
+          { id: 'settingsBtn', icon: '⚙️', label: 'Set', title: 'Settings' },
+          { id: 'helpBtn', icon: '❓', label: 'Help', title: 'Help' },
         ];
-        
-        buttons.forEach(btn => {
+
+        buttons.forEach((btn) => {
           const button = document.createElement('button');
+          const isPlayButton = btn.id === 'playBtn';
           button.id = btn.id;
-          button.className = 'icon-btn' + (btn.active ? ' active pulse' : '');
-          button.textContent = btn.label;
+          button.className = `icon-btn ${isPlayButton ? 'icon-btn-play' : 'icon-btn-compact'}${btn.active ? ' active pulse' : ''}`;
           button.title = btn.title;
+          button.setAttribute('aria-label', btn.label);
+          button.innerHTML = `<span class="control-btn__icon">${btn.icon}</span><span class="control-btn__text">${btn.label}</span>`;
           toolbar.appendChild(button);
         });
       }
@@ -403,9 +404,13 @@
       function togglePlay() {
         running = !running;
         const btn = document.getElementById('playBtn');
-        btn.textContent = running ? '⏸' : '▶️';
+        const icon = btn.querySelector('.control-btn__icon');
+        const text = btn.querySelector('.control-btn__text');
+        if (icon) icon.textContent = running ? '⏸' : '▶️';
+        if (text) text.textContent = running ? 'Pause' : 'Run';
         btn.classList.toggle('active', running);
         btn.classList.toggle('pulse', running);
+        btn.title = running ? 'Pause (Space)' : 'Play (Space)';
         
         if (running) {
           startSimulation();

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joshi Minh - Portfolio</title>
-    <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><text y=".9em" font-size="52">💻</text></svg>'>
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=3" sizes="any">
     <link rel="stylesheet" href="./assets/styles.css">
     <script src="./assets/script.js" defer></script>
   </head>
@@ -32,10 +32,14 @@
           <div class="hero-inner reveal is-visible">
             <div id="hero-badge" class="badge badge-outline hero-badge">Available for new opportunities</div>
             <h1 id="hero-title" class="hero-title text-gradient">Joshi Minh</h1>
+            <p id="hero-real-name" class="hero-real-name">Nguyen Binh Minh</p>
             <p id="hero-copy" class="hero-copy">Building AI-powered applications, creative tools, and modern web experiences.</p>
             <div class="hero-actions">
               <a class="button button-primary" href="#projects">View Projects</a>
-              <a id="hero-github" class="button button-secondary" href="https://github.com/JoshiMinh" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a id="hero-github" class="button button-secondary" href="https://github.com/JoshiMinh" target="_blank" rel="noopener noreferrer">
+                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                <span>GitHub</span>
+              </a>
             </div>
 
             <div class="terminal-card reveal is-visible">
@@ -45,7 +49,7 @@
                   <div class="terminal-title">~ / joshiminh / profile</div>
                 </div>
                 <div class="terminal-body">
-                  <div class="terminal-command"><span class="prompt">&#10095;</span><span class="typing-animation">cat profile.json</span></div>
+                  <div class="terminal-command"><span class="prompt">&#10095;</span><span class="typing-animation">cat assets/profile.json</span></div>
                   <div id="profile-output" class="terminal-output">
                     <p><span>"name"</span><b>:</b> <em>"Joshi Minh"</em>,</p>
                     <p><span>"role"</span><b>:</b> <em>"AI Engineer &amp; Full-Stack Builder"</em>,</p>
@@ -59,18 +63,10 @@
 
         <section id="projects" class="content-section bordered-section">
           <div class="section-heading reveal">
-            <h2>Featured Work</h2>
-            <p>A selection of my recent engineering projects and creative experiments.</p>
+            <h2>Projects</h2>
+            <p>Production applications and smaller interactive builds, grouped by category.</p>
           </div>
-          <div id="projects-grid" class="card-grid three-up"></div>
-        </section>
-
-        <section class="content-section bordered-section">
-          <div class="section-heading reveal">
-            <h2>Interactive Experiences</h2>
-            <p>Complex simulations and games built entirely with web technologies.</p>
-          </div>
-          <div id="games-grid" class="card-grid two-up"></div>
+          <div id="projects-grid" class="project-groups"></div>
         </section>
 
         <section class="tech-section bordered-section">
@@ -79,7 +75,13 @@
             <p>The stack I use to build scalable, high-performance applications.</p>
           </div>
           <div class="tech-row reveal">
-            <span>Next.js</span><span>React</span><span>TypeScript</span><span>Python</span><span>AI</span><span>PostgreSQL</span><span>Tailwind</span>
+            <span class="tech-pill tech-nextjs">Next.js</span>
+            <span class="tech-pill tech-react">React</span>
+            <span class="tech-pill tech-typescript">TypeScript</span>
+            <span class="tech-pill tech-python">Python</span>
+            <span class="tech-pill tech-ai">AI</span>
+            <span class="tech-pill tech-postgresql">PostgreSQL</span>
+            <span class="tech-pill tech-tailwind">Tailwind</span>
           </div>
         </section>
       </main>

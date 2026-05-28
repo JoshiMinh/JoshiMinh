@@ -1,0 +1,48 @@
+[
+  {
+    "category": "Production",
+    "title": "MarkBase: AI Bookmark Manager",
+    "description": "A smart bookmarking tool that automatically categorizes, tags, and summarizes your saved links using AI.",
+    "url": "https://markbase.site/",
+    "mediaLabel": "No Image Provided",
+    "tags": ["React", "PostgreSQL", "Tailwind"]
+  },
+  {
+    "category": "Production",
+    "title": "WatchBase: TV & Movie Tracking Platform",
+    "description": "A comprehensive platform to track, rate, and discover new TV shows and movies with personalized recommendations.",
+    "url": "https://watchbase.vercel.app/",
+    "mediaLabel": "No Image Provided",
+    "tags": ["Vite", "TypeScript", "React"]
+  },
+  {
+    "category": "Mini",
+    "title": "The Ball Game",
+    "description": "A physics-based puzzle game where you control a ball through intricate obstacles.",
+    "href": "./games/ballgame/",
+    "image": "./games/ballgame/preview.png",
+    "emoji": "🏀",
+    "mediaLabel": "No Image Provided",
+    "tags": ["Puzzle", "Logic", "Interactive"]
+  },
+  {
+    "category": "Mini",
+    "title": "Conway's Game of Life",
+    "description": "An interactive implementation of the classic cellular automaton.",
+    "href": "./games/conway/",
+    "image": "./games/conway/preview.png",
+    "emoji": "🧬",
+    "mediaLabel": "No Image Provided",
+    "tags": ["JavaScript", "Canvas", "Simulation"]
+  },
+  {
+    "category": "Mini",
+    "title": "iPong X",
+    "description": "A modern twist on the classic Pong game with fluid physics and sleek visuals.",
+    "href": "./games/ipong-x/",
+    "image": "./games/ipong-x/preview.png",
+    "emoji": "🍐",
+    "mediaLabel": "No Image Provided",
+    "tags": ["Game Dev", "HTML5", "Physics"]
+  }
+]
