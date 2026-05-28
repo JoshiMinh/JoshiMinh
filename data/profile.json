@@ -1,0 +1,26 @@
+{
+  "name": "Joshi Minh",
+  "realName": "Nguyen Binh Minh",
+  "role": "AI Engineer & Full-Stack Builder",
+  "mission": "Building intelligent, beautiful web experiences.",
+  "headline": "Building AI-powered applications, creative tools, and modern web experiences.",
+  "availability": "Available for new opportunities",
+  "githubUrl": "https://github.com/JoshiMinh",
+  "socialLinks": [
+    {
+      "platform": "github",
+      "label": "GitHub",
+      "url": "https://github.com/JoshiMinh"
+    },
+    {
+      "platform": "x",
+      "label": "X/Twitter",
+      "url": "https://x.com/js_minh"
+    },
+    {
+      "platform": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/nguyen-binh-minh-jm/"
+    }
+  ]
+}

@@ -35,6 +35,19 @@ function renderTags(tags = []) {
   return tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('');
 }
 
+function renderSocialIcon(platform) {
+  switch ((platform || '').toLowerCase()) {
+    case 'github':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>';
+    case 'x':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>';
+    case 'linkedin':
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>';
+    default:
+      return '';
+  }
+}
+
 function isExternalUrl(url) {
   return /^https?:\/\//i.test(url);
 }
@@ -66,12 +79,19 @@ function renderCard(item) {
 }
 
 function renderProfile(profile) {
+  const socialLinks = document.getElementById('social-links');
   const heroBadge = document.getElementById('hero-badge');
   const heroTitle = document.getElementById('hero-title');
   const heroRealName = document.getElementById('hero-real-name');
   const heroCopy = document.getElementById('hero-copy');
   const heroGithub = document.getElementById('hero-github');
   const profileOutput = document.getElementById('profile-output');
+
+  if (socialLinks && Array.isArray(profile.socialLinks)) {
+    socialLinks.innerHTML = profile.socialLinks.map((link) => (
+      `<a href="${escapeHtml(link.url || '#')}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(link.label || link.platform || 'Social link')}">${renderSocialIcon(link.platform)}</a>`
+    )).join('');
+  }
 
   if (heroBadge && profile.availability) {
     heroBadge.textContent = profile.availability;
@@ -104,6 +124,18 @@ function renderProfile(profile) {
       `<p><span>"${escapeHtml(key)}"</span><b>:</b> <em>"${escapeHtml(value)}"</em>${key === fields[fields.length - 1][0] ? '' : ','}</p>`
     )).join('');
   }
+}
+
+function renderTechnologies(technologies = []) {
+  const techRow = document.getElementById('tech-row');
+
+  if (!techRow) {
+    return;
+  }
+
+  techRow.innerHTML = technologies.map((technology) => (
+    `<span class="tech-pill ${escapeHtml(technology.className || '')}">${escapeHtml(technology.name || '')}</span>`
+  )).join('');
 }
 
 function renderCollection(elementId, items) {
@@ -217,12 +249,14 @@ async function loadJson(path) {
 
 async function initSiteData() {
   try {
-    const [profile, projects] = await Promise.all([
-      loadJson('./assets/profile.json'),
-      loadJson('./assets/projects.json'),
+    const [profile, technologies, projects] = await Promise.all([
+      loadJson('./data/profile.json'),
+      loadJson('./data/technologies.json'),
+      loadJson('./data/projects.json'),
     ]);
 
     renderProfile(profile);
+    renderTechnologies(technologies);
     renderProjectGroups('projects-grid', buildProjectGroups(projects));
     await hydrateProjectPreviews();
   } catch (error) {

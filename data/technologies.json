@@ -1,0 +1,9 @@
+[
+  { "name": "Next.js", "className": "tech-nextjs" },
+  { "name": "React", "className": "tech-react" },
+  { "name": "TypeScript", "className": "tech-typescript" },
+  { "name": "Python", "className": "tech-python" },
+  { "name": "AI", "className": "tech-ai" },
+  { "name": "PostgreSQL", "className": "tech-postgresql" },
+  { "name": "Tailwind", "className": "tech-tailwind" }
+]
