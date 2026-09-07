@@ -5,15 +5,15 @@
     "description": "A smart bookmarking tool that automatically categorizes, tags, and summarizes your saved links using AI.",
     "url": "https://markbase.site/",
     "mediaLabel": "No Image Provided",
-    "tags": ["React", "PostgreSQL", "Tailwind"]
+    "tags": ["React", "PostgreSQL", "Next.js"]
   },
   {
     "category": "Production",
     "title": "WatchBase: TV & Movie Tracking Platform",
     "description": "A comprehensive platform to track, rate, and discover new TV shows and movies with personalized recommendations.",
-    "url": "https://watchbase.vercel.app/",
+    "url": "https://watchbase.app/",
     "mediaLabel": "No Image Provided",
-    "tags": ["Vite", "TypeScript", "React"]
+    "tags": ["Next.js", "TypeScript", "React"]
   },
   {
     "category": "Mini",
